@@ -10,12 +10,12 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 用户
+ * 组织关系转移表
  *
-*/
-@TableName(value = "user")
+ */
+@TableName(value = "party_relation_transfer")
 @Data
-public class User implements Serializable {
+public class PartyRelationTransfer implements Serializable {
 
     /**
      * id
@@ -24,70 +24,54 @@ public class User implements Serializable {
     private Long id;
 
     /**
-     * 用户账号
+     * 用户ID（党员ID）
      */
-    private String userAccount;
+    private Long userId;
 
     /**
-     * 用户密码
+     * 原党组织ID
      */
-    private String userPassword;
+    private Long fromPartyId;
 
     /**
-     * 用户昵称
+     * 目标党组织ID
      */
-    private String userName;
+    private Long toPartyId;
 
     /**
-     * 用户头像
+     * 转移类型：转入/转出/内部调整
      */
-    private String userAvatar;
-
-
-    /**
-     * 用户角色：super_admin/org_admin/party_member/activist_development
-     */
-    private String userRole;
+    private String transferType;
 
     /**
-     * 所属党组织ID
+     * 转移原因
      */
-    private Long orgId;
+    private String transferReason;
 
     /**
-     * 手机号
+     * 转移时间
      */
-    private String phone;
+    private Date transferTime;
 
     /**
-     * 邮箱
+     * 审批状态：待审批/已通过/已拒绝
      */
-    private String email;
+    private String approveStatus;
 
     /**
-     * 用户类型：教师/学生
+     * 审批人ID
      */
-    private String userType;
+    private Long approveUserId;
 
     /**
-     * 状态：0-正常，1-禁用
+     * 审批时间
      */
-    private Integer status;
+    private Date approveTime;
 
     /**
-     * 申请入党日期
+     * 审批意见
      */
-    private Date joinDate;
-
-    /**
-     * 转正日期
-     */
-    private Date positiveDate;
-
-    /**
-     * 政治面貌
-     */
-    private String politicalStatus;
+    private String approveComment;
 
     /**
      * 创建时间

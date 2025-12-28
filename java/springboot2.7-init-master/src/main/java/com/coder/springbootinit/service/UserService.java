@@ -8,14 +8,19 @@ import com.coder.springbootinit.model.vo.LoginUserVO;
 import com.coder.springbootinit.model.vo.UserVO;
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
-import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
 
 /**
  * 用户服务
  *
 */
 public interface UserService extends IService<User> {
-
+    /**
+     * 校验用户是否存在
+     * @param userAccount 用户账户
+     * @return 是否存在
+     */
+    boolean existsByUserAccount(String userAccount);
+    
     /**
      * 用户注册
      *
@@ -35,15 +40,6 @@ public interface UserService extends IService<User> {
      * @return 脱敏后的用户信息
      */
     LoginUserVO userLogin(String userAccount, String userPassword, HttpServletRequest request);
-
-    /**
-     * 用户登录（微信开放平台）
-     *
-     * @param wxOAuth2UserInfo 从微信获取的用户信息
-     * @param request
-     * @return 脱敏后的用户信息
-     */
-    LoginUserVO userLoginByMpOpen(WxOAuth2UserInfo wxOAuth2UserInfo, HttpServletRequest request);
 
     /**
      * 获取当前登录用户

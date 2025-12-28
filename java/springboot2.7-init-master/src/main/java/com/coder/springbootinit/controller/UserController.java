@@ -17,30 +17,30 @@ import com.coder.springbootinit.model.dto.user.UserRegisterRequest;
 import com.coder.springbootinit.model.dto.user.UserUpdateMyRequest;
 import com.coder.springbootinit.model.dto.user.UserUpdateRequest;
 import com.coder.springbootinit.model.entity.User;
+import com.coder.springbootinit.model.enums.UserRoleEnum;
 import com.coder.springbootinit.model.vo.LoginUserVO;
 import com.coder.springbootinit.model.vo.UserVO;
 import com.coder.springbootinit.service.UserService;
+import com.coder.springbootinit.utils.EncryptUtils;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
-import me.chanjar.weixin.common.bean.WxOAuth2UserInfo;
-import me.chanjar.weixin.common.bean.oauth2.WxOAuth2AccessToken;
-import me.chanjar.weixin.mp.api.WxMpService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import static com.coder.springbootinit.service.impl.UserServiceImpl.SALT;
 
 /**
  * 用户接口
@@ -48,6 +48,7 @@ import static com.coder.springbootinit.service.impl.UserServiceImpl.SALT;
 */
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户管理")
 @Slf4j
 public class UserController {
 
@@ -66,6 +67,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/register")
+    @ApiOperation("用户注册")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -88,6 +90,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/login")
+    @ApiOperation("用户登录")
     public BaseResponse<LoginUserVO> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         if (userLoginRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -102,35 +105,13 @@ public class UserController {
     }
 
     /**
-     * 用户登录（微信开放平台）
-     */
-    @GetMapping("/login/wx_open")
-    public BaseResponse<LoginUserVO> userLoginByWxOpen(HttpServletRequest request, HttpServletResponse response,
-            @RequestParam("code") String code) {
-        WxOAuth2AccessToken accessToken;
-        try {
-            WxMpService wxService = wxOpenConfig.getWxMpService();
-            accessToken = wxService.getOAuth2Service().getAccessToken(code);
-            WxOAuth2UserInfo userInfo = wxService.getOAuth2Service().getUserInfo(accessToken, code);
-            String unionId = userInfo.getUnionId();
-            String mpOpenId = userInfo.getOpenid();
-            if (StringUtils.isAnyBlank(unionId, mpOpenId)) {
-                throw new BusinessException(ErrorCode.SYSTEM_ERROR, "登录失败，系统错误");
-            }
-            return ResultUtils.success(userService.userLoginByMpOpen(userInfo, request));
-        } catch (Exception e) {
-            log.error("userLoginByWxOpen error", e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "登录失败，系统错误");
-        }
-    }
-
-    /**
      * 用户注销
      *
      * @param request
      * @return
      */
     @PostMapping("/logout")
+    @ApiOperation("用户注销")
     public BaseResponse<Boolean> userLogout(HttpServletRequest request) {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -146,6 +127,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/get/login")
+    @ApiOperation("获取当前登录用户")
     public BaseResponse<LoginUserVO> getLoginUser(HttpServletRequest request) {
         User user = userService.getLoginUser(request);
         return ResultUtils.success(userService.getLoginUserVO(user));
@@ -163,16 +145,22 @@ public class UserController {
      * @return
      */
     @PostMapping("/add")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @ApiOperation(value = "创建用户（仅管理员）")
     public BaseResponse<Long> addUser(@RequestBody UserAddRequest userAddRequest, HttpServletRequest request) {
         if (userAddRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        // 校验账号是否重复
+        boolean exists = userService.existsByUserAccount(userAddRequest.getUserAccount());
+        if (exists) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号重复");
+        }
         User user = new User();
         BeanUtils.copyProperties(userAddRequest, user);
-        // 默认密码 12345678
-        String defaultPassword = "12345678";
-        String encryptPassword = DigestUtils.md5DigestAsHex((SALT + defaultPassword).getBytes());
+        // 默认密码 123456
+        String defaultPassword = "123456";
+        String encryptPassword = EncryptUtils.encryptPassword(defaultPassword);
         user.setUserPassword(encryptPassword);
         boolean result = userService.save(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
@@ -187,7 +175,8 @@ public class UserController {
      * @return
      */
     @PostMapping("/delete")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @ApiOperation(value = "删除用户（仅管理员）")
     public BaseResponse<Boolean> deleteUser(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -204,11 +193,15 @@ public class UserController {
      * @return
      */
     @PostMapping("/update")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @ApiOperation(value = "更新用户（仅管理员）")
     public BaseResponse<Boolean> updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
             HttpServletRequest request) {
         if (userUpdateRequest == null || userUpdateRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (userUpdateRequest.getUserPassword() != null) {
+            userUpdateRequest.setUserPassword(EncryptUtils.encryptPassword(userUpdateRequest.getUserPassword()));
         }
         User user = new User();
         BeanUtils.copyProperties(userUpdateRequest, user);
@@ -225,7 +218,8 @@ public class UserController {
      * @return
      */
     @GetMapping("/get")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @ApiOperation(value = "根据 id 获取用户（仅管理员）")
     public BaseResponse<User> getUserById(long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -243,6 +237,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/get/vo")
+    @ApiOperation(value = "根据 id 获取用户包装类）")
     public BaseResponse<UserVO> getUserVOById(long id, HttpServletRequest request) {
         BaseResponse<User> response = getUserById(id, request);
         User user = response.getData();
@@ -257,7 +252,8 @@ public class UserController {
      * @return
      */
     @PostMapping("/list/page")
-    @AuthCheck(mustRole = UserConstant.ADMIN_ROLE)
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @ApiOperation(value = "分页获取用户列表（仅管理员）")
     public BaseResponse<Page<User>> listUserByPage(@RequestBody UserQueryRequest userQueryRequest,
             HttpServletRequest request) {
         long current = userQueryRequest.getCurrent();
@@ -275,6 +271,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/list/page/vo")
+    @ApiOperation(value = "分页获取用户封装列表")
     public BaseResponse<Page<UserVO>> listUserVOByPage(@RequestBody UserQueryRequest userQueryRequest,
             HttpServletRequest request) {
         if (userQueryRequest == null) {
@@ -302,6 +299,7 @@ public class UserController {
      * @return
      */
     @PostMapping("/update/my")
+    @ApiOperation(value = "更新个人信息")
     public BaseResponse<Boolean> updateMyUser(@RequestBody UserUpdateMyRequest userUpdateMyRequest,
             HttpServletRequest request) {
         if (userUpdateMyRequest == null) {
@@ -314,5 +312,15 @@ public class UserController {
         boolean result = userService.updateById(user);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(true);
+    }
+
+    /**
+     * 获取所有角色
+     * @return 角色列表
+     */
+    @GetMapping("/list/role")
+    @ApiOperation(value = "获取所有角色")
+    public BaseResponse<Map<String, String>> listRole() {
+        return ResultUtils.success(UserRoleEnum.getRoleMap());
     }
 }

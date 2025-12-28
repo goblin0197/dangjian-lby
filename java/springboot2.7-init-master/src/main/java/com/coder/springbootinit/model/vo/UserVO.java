@@ -17,6 +17,11 @@ public class UserVO implements Serializable {
     private Long id;
 
     /**
+     * 用户账号
+     */
+    private String userAccount;
+
+    /**
      * 用户昵称
      */
     private String userName;
@@ -26,15 +31,56 @@ public class UserVO implements Serializable {
      */
     private String userAvatar;
 
-    /**
-     * 用户简介
-     */
-    private String userProfile;
 
     /**
-     * 用户角色：user/admin/ban
+     * 用户角色：super_admin/org_admin/party_member/activist_development
      */
     private String userRole;
+
+    /**
+     * 所属党组织ID
+     */
+    private Long orgId;
+
+    /**
+     * 部门/支部
+     */
+    private String orgName;
+
+    /**
+     * 手机号
+     */
+    private String phone;
+
+    /**
+     * 邮箱
+     */
+    private String email;
+
+    /**
+     * 用户类型：教师/学生
+     */
+    private String userType;
+
+    /**
+     * 状态：0-正常，1-禁用
+     */
+    private Integer status;
+
+    /**
+     * 申请入党日期
+     */
+    private Date joinDate;
+
+    /**
+     * 转正日期
+     */
+    private Date positiveDate;
+
+    /**
+     * 政治面貌
+     */
+    private String politicalStatus;
 
     /**
      * 创建时间

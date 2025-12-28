@@ -1,6 +1,8 @@
 package com.coder.springbootinit.model.dto.user;
 
 import java.io.Serializable;
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -9,6 +11,11 @@ import lombok.Data;
 */
 @Data
 public class UserUpdateMyRequest implements Serializable {
+
+    /**
+     * 用户密码
+     */
+    private String userPassword;
 
     /**
      * 用户昵称
@@ -21,9 +28,14 @@ public class UserUpdateMyRequest implements Serializable {
     private String userAvatar;
 
     /**
-     * 简介
+     * 手机号
      */
-    private String userProfile;
+    private String phone;
+
+    /**
+     * 邮箱
+     */
+    private String email;
 
     private static final long serialVersionUID = 1L;
 }

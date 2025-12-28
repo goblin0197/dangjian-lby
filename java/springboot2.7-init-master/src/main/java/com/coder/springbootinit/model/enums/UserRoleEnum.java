@@ -2,6 +2,7 @@ package com.coder.springbootinit.model.enums;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 
@@ -11,9 +12,10 @@ import org.apache.commons.lang3.ObjectUtils;
 */
 public enum UserRoleEnum {
 
-    USER("用户", "user"),
-    ADMIN("管理员", "admin"),
-    BAN("被封号", "ban");
+    SUPER_ADMIN("超级管理员", "super_admin"),
+    ORG_ADMIN("组织管理员", "org_admin"),
+    PARTY_MEMBER("党员", "party_member"),
+    ACTIVIST_DEVELOPMENT("积极分子/发展对象", "activist_development");
 
     private final String text;
 
@@ -49,6 +51,27 @@ public enum UserRoleEnum {
             }
         }
         return null;
+    }
+
+    /**
+     * 根据值列表获取枚举数组
+     *
+     * @param values
+     * @return
+     */
+    public static UserRoleEnum[] getEnumsByValues(String[] values) {
+        if (ObjectUtils.isEmpty(values)) {
+            return new UserRoleEnum[0];
+        }
+        return Arrays.stream(values).map(UserRoleEnum::getEnumByValue).toArray(UserRoleEnum[]::new);
+    }
+
+    /**
+     * 获取角色value和text列表
+     * @return
+     */
+    public static Map<String, String> getRoleMap() {
+        return Arrays.stream(values()).collect(Collectors.toMap(item -> item.getValue(), item -> item.getText()));
     }
 
     public String getValue() {

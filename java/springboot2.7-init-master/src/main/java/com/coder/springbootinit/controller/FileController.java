@@ -1,6 +1,9 @@
 package com.coder.springbootinit.controller;
 
 import cn.hutool.core.io.FileUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import com.coder.springbootinit.common.BaseResponse;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
@@ -30,6 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/file")
 @Slf4j
+@Api(tags = "文件管理")
 public class FileController {
 
     @Resource
@@ -47,6 +51,7 @@ public class FileController {
      * @return
      */
     @PostMapping("/upload")
+    @ApiOperation("文件上传")
     public BaseResponse<String> uploadFile(@RequestPart("file") MultipartFile multipartFile,
             UploadFileRequest uploadFileRequest, HttpServletRequest request) {
         String biz = uploadFileRequest.getBiz();
