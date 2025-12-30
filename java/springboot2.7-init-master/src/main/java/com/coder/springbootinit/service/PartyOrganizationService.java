@@ -43,7 +43,8 @@ public interface PartyOrganizationService extends IService<PartyOrganization> {
 
     /**
      * 绑定党组织
-     * @param partyOrganizationBindRequest 绑定请求参数
+     * @param orgId 党组织ID
+     * @param leaderId 负责人ID
      * @return 是否绑定成功
      */
     boolean bindPartyOrganizationLeader(Long orgId, Long leaderId);
@@ -51,8 +52,7 @@ public interface PartyOrganizationService extends IService<PartyOrganization> {
     /**
      * 填充党组织负责人
      * @param partyOrganization 党组织信息
-     * @param leaderId 负责人ID
      * @return 是否填充成功
      */
-    PartyOrganizationVO fillPartyOrganizationLeader(PartyOrganization partyOrganization, Long leaderId);
+    PartyOrganizationVO fillPartyOrganizationLeader(PartyOrganization partyOrganization);
 }

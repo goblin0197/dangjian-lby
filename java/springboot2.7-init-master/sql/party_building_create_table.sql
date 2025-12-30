@@ -60,7 +60,6 @@ create table if not exists party_relation_transfer
     userId            bigint                                 not null comment '用户ID（党员ID）',
     fromPartyId       bigint                                 not null comment '原党组织ID',
     toPartyId         bigint                                 not null comment '目标党组织ID',
-    transferType      INT                                    not null comment '转移类型：转入/转出/内部调整',
     transferReason    varchar(1024)                          null comment '转移原因',
     transferTime      datetime                               not null comment '转移时间',
     approveStatus     INT                                    not null comment '审批状态：1-待审批/2-已通过/3-已拒绝',

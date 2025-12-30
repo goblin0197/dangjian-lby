@@ -1,4 +1,4 @@
-package com.coder.springbootinit.model.entity;
+package com.coder.springbootinit.model.vo;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
@@ -10,14 +10,12 @@ import java.util.Date;
  * 组织关系转移表
  *
  */
-@TableName(value = "party_relation_transfer")
 @Data
-public class PartyRelationTransfer implements Serializable {
+public class PartyRelationTransferVO implements Serializable {
 
     /**
      * id
      */
-    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
@@ -31,10 +29,19 @@ public class PartyRelationTransfer implements Serializable {
     private Long fromPartyId;
 
     /**
+     * 原党组织名称
+     */
+    private String fromPartyName;
+
+    /**
      * 目标党组织ID
      */
     private Long toPartyId;
 
+    /**
+     * 目标党组织名称
+     */
+    private String toPartyName;
 
     /**
      * 转移原因
@@ -57,6 +64,11 @@ public class PartyRelationTransfer implements Serializable {
     private Long approveUserId;
 
     /**
+     * 审批人昵称
+     */
+    private String approveUserName;
+
+    /**
      * 审批时间
      */
     private Date approveTime;
@@ -76,12 +88,5 @@ public class PartyRelationTransfer implements Serializable {
      */
     private Date updateTime;
 
-    /**
-     * 是否删除
-     */
-    @TableLogic
-    private Integer isDelete;
-
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

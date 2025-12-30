@@ -10,37 +10,24 @@ import com.coder.springbootinit.config.WxOpenConfig;
 import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.exception.ThrowUtils;
-import com.coder.springbootinit.model.dto.user.UserAddRequest;
-import com.coder.springbootinit.model.dto.user.UserLoginRequest;
-import com.coder.springbootinit.model.dto.user.UserQueryRequest;
-import com.coder.springbootinit.model.dto.user.UserRegisterRequest;
-import com.coder.springbootinit.model.dto.user.UserUpdateMyRequest;
-import com.coder.springbootinit.model.dto.user.UserUpdateRequest;
+import com.coder.springbootinit.model.dto.user.*;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.enums.UserRoleEnum;
 import com.coder.springbootinit.model.vo.LoginUserVO;
 import com.coder.springbootinit.model.vo.UserVO;
 import com.coder.springbootinit.service.UserService;
 import com.coder.springbootinit.utils.EncryptUtils;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 用户接口
@@ -54,9 +41,6 @@ public class UserController {
 
     @Resource
     private UserService userService;
-
-    @Resource
-    private WxOpenConfig wxOpenConfig;
 
     // region 登录相关
 
@@ -76,7 +60,7 @@ public class UserController {
         String userPassword = userRegisterRequest.getUserPassword();
         String checkPassword = userRegisterRequest.getCheckPassword();
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         long result = userService.userRegister(userAccount, userPassword, checkPassword);
         return ResultUtils.success(result);

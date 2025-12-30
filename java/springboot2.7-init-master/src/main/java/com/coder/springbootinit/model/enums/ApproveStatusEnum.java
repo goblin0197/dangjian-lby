@@ -1,7 +1,11 @@
-package com.coder.springbootinit.enums;
+package com.coder.springbootinit.model.enums;
 
 import com.baomidou.mybatisplus.annotation.EnumValue;
 import lombok.Getter;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 审批状态枚举
@@ -29,6 +33,15 @@ public enum ApproveStatusEnum {
     ApproveStatusEnum(Integer code, String description) {
         this.code = code;
         this.description = description;
+    }
+
+    /**
+     * 获取值列表
+     *
+     * @return
+     */
+    public static List<Integer> getCodes() {
+        return Arrays.stream(values()).map(item -> item.code).collect(Collectors.toList());
     }
 
     /**

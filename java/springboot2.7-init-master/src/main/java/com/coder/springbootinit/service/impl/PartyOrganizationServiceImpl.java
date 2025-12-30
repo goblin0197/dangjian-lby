@@ -154,7 +154,7 @@ public class PartyOrganizationServiceImpl extends ServiceImpl<PartyOrganizationM
     }
 
     @Override
-    public PartyOrganizationVO fillPartyOrganizationLeader(PartyOrganization partyOrganization, Long leaderId) {
+    public PartyOrganizationVO fillPartyOrganizationLeader(PartyOrganization partyOrganization) {
         PartyOrganizationVO partyOrganizationVO = new PartyOrganizationVO();
         BeanUtils.copyProperties(partyOrganization, partyOrganizationVO);
         // 填充关联的负责人信息

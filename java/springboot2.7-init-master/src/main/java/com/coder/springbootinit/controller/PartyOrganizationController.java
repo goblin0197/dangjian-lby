@@ -2,6 +2,7 @@ package com.coder.springbootinit.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.coder.springbootinit.common.BaseResponse;
+import com.coder.springbootinit.common.DeleteRequest;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
 import com.coder.springbootinit.exception.BusinessException;
@@ -74,13 +75,13 @@ public class PartyOrganizationController {
 
     /**
      * 删除党组织
-     * @param id 党组织ID 
+     * @param deleteRequest 党组织ID
      * @return 是否删除成功
      */
     @PostMapping("/delete")
     @ApiOperation(value = "删除党组织")
-    public BaseResponse<Boolean> deletePartyOrganization(@RequestParam Long id) {
-        boolean result = partyOrganizationService.deletePartyOrganization(id);
+    public BaseResponse<Boolean> deletePartyOrganization(@RequestParam DeleteRequest deleteRequest) {
+        boolean result = partyOrganizationService.deletePartyOrganization(deleteRequest.getId());
         return ResultUtils.success(result);
     }
 
@@ -96,7 +97,7 @@ public class PartyOrganizationController {
         if (partyOrganization == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "党组织不存在");
         }
-        return ResultUtils.success(partyOrganizationService.fillPartyOrganizationLeader(partyOrganization, partyOrganization.getLeaderId()));
+        return ResultUtils.success(partyOrganizationService.fillPartyOrganizationLeader(partyOrganization));
     }
 
 
@@ -110,7 +111,7 @@ public class PartyOrganizationController {
         List<PartyOrganization> partyOrganizations = partyOrganizationService.list();
         List<PartyOrganizationVO> partyOrganizationVOList = new ArrayList<>();
         for (PartyOrganization partyOrganization : partyOrganizations) {
-            partyOrganizationVOList.add(partyOrganizationService.fillPartyOrganizationLeader(partyOrganization, partyOrganization.getLeaderId()));
+            partyOrganizationVOList.add(partyOrganizationService.fillPartyOrganizationLeader(partyOrganization));
         }
         return ResultUtils.success(partyOrganizationVOList);
     }
@@ -132,7 +133,7 @@ public class PartyOrganizationController {
                 partyOrganizationService.getQueryWrapper(partyOrganizationQueryRequest));
         List<PartyOrganizationVO> partyOrganizationVOList = new ArrayList<>();
         for (PartyOrganization partyOrganization : partyOrganizationPage.getRecords()) {
-            partyOrganizationVOList.add(partyOrganizationService.fillPartyOrganizationLeader(partyOrganization, partyOrganization.getLeaderId()));
+            partyOrganizationVOList.add(partyOrganizationService.fillPartyOrganizationLeader(partyOrganization));
         }
         Page<PartyOrganizationVO> partyOrganizationVOPage = new Page<>(current, pageSize, partyOrganizationPage.getTotal());
         partyOrganizationVOPage.setRecords(partyOrganizationVOList);

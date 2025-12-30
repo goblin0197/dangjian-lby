@@ -8,7 +8,6 @@
         <result column="user_id" property="userId"/>
         <result column="from_party_id" property="fromPartyId"/>
         <result column="to_party_id" property="toPartyId"/>
-        <result column="transfer_type" property="transferType"/>
         <result column="transfer_reason" property="transferReason"/>
         <result column="transfer_time" property="transferTime"/>
         <result column="approve_status" property="approveStatus"/>
@@ -23,7 +22,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id
-        , user_id, from_party_id, to_party_id, transfer_type, transfer_reason, transfer_time, approve_status, approve_user_id, approve_time, approve_comment, create_time, update_time, is_delete
+        , user_id, from_party_id, to_party_id, transfer_reason, transfer_time, approve_status, approve_user_id, approve_time, approve_comment, create_time, update_time, is_delete
     </sql>
 
 </mapper>
