@@ -6,7 +6,6 @@ import com.coder.springbootinit.common.BaseResponse;
 import com.coder.springbootinit.common.DeleteRequest;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
-import com.coder.springbootinit.config.WxOpenConfig;
 import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.exception.ThrowUtils;
