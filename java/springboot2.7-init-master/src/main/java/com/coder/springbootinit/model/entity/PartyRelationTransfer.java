@@ -31,10 +31,19 @@ public class PartyRelationTransfer implements Serializable {
     private Long fromPartyId;
 
     /**
+     * 原党组织名称
+     */
+    private String fromPartyName;
+
+    /**
      * 目标党组织ID
      */
     private Long toPartyId;
 
+    /**
+     * 目标党组织名称
+     */
+    private String toPartyName;
 
     /**
      * 转移原因
@@ -55,6 +64,11 @@ public class PartyRelationTransfer implements Serializable {
      * 审批人ID
      */
     private Long approveUserId;
+
+    /**
+     * 审批人姓名
+     */
+    private String approveUserName;
 
     /**
      * 审批时间

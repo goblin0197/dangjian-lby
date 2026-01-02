@@ -32,8 +32,15 @@ public class PartyRelationTransferQueryRequest extends PageRequest implements Se
      * 目标党组织ID
      */
     private Long toPartyId;
+    /**
+     * 原党组织名称
+     */
+    private String fromPartyName;
 
-    
+    /**
+     * 目标党组织名称
+     */
+    private String toPartyName;
 
     /**
      * 审批状态：1-待审批/2-已通过/3-已拒绝
@@ -44,6 +51,11 @@ public class PartyRelationTransferQueryRequest extends PageRequest implements Se
      * 审批人ID
      */
     private Long approveUserId;
+
+    /**
+     * 审批人姓名
+     */
+    private String approveUserName;
 
     /**
      * 创建时间

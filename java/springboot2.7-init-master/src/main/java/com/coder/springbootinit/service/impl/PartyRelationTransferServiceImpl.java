@@ -3,13 +3,13 @@ package com.coder.springbootinit.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.common.ErrorCode;
+import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.mapper.PartyRelationTransferMapper;
 import com.coder.springbootinit.model.entity.PartyOrganization;
 import com.coder.springbootinit.model.entity.PartyRelationTransfer;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.enums.ApproveStatusEnum;
-import com.coder.springbootinit.model.vo.PartyRelationTransferVO;
 import com.coder.springbootinit.service.PartyOrganizationService;
 import com.coder.springbootinit.service.PartyRelationTransferService;
 import com.coder.springbootinit.service.UserService;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +40,12 @@ public class PartyRelationTransferServiceImpl extends ServiceImpl<PartyRelationT
         long userId = partyRelationTransfer.getUserId();
         long fromPartyId = partyRelationTransfer.getFromPartyId();
         long toPartyId = partyRelationTransfer.getToPartyId();
-        this.validPartyRelationTransfer(userId,fromPartyId,toPartyId);
+        List<String> nameList = this.validPartyRelationTransfer(userId, fromPartyId, toPartyId);
+        if (nameList.size() != 2) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        partyRelationTransfer.setFromPartyName(nameList.get(0));
+        partyRelationTransfer.setToPartyName(nameList.get(1));
         // 设置默认值
         partyRelationTransfer.setTransferTime(new Date());
         partyRelationTransfer.setApproveStatus(ApproveStatusEnum.PENDING.getCode());
@@ -57,7 +63,7 @@ public class PartyRelationTransferServiceImpl extends ServiceImpl<PartyRelationT
         if (partyRelationTransfer.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        this.validPartyRelationTransfer(partyRelationTransfer.getUserId(),partyRelationTransfer.getFromPartyId(),partyRelationTransfer.getToPartyId());
+        this.validPartyRelationTransfer(partyRelationTransfer.getUserId(), partyRelationTransfer.getFromPartyId(), partyRelationTransfer.getToPartyId());
         // 更新组织关系转移记录
         boolean result = this.updateById(partyRelationTransfer);
         if (!result) {
@@ -82,7 +88,7 @@ public class PartyRelationTransferServiceImpl extends ServiceImpl<PartyRelationT
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public boolean approvePartyRelationTransfer(long id, int approveStatus, long approveUserId, String approveComment) {
+    public boolean approvePartyRelationTransfer(long id, int approveStatus, long approveUserId,String approveUserName, String approveComment) {
         // 验证组织关系转移ID和审批状态是否为空
         if (id < 0 || !ApproveStatusEnum.getCodes().contains(approveStatus) || approveUserId < 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -96,6 +102,7 @@ public class PartyRelationTransferServiceImpl extends ServiceImpl<PartyRelationT
         // 不检查是否已审批，允许修改审批结果
         partyRelationTransfer.setApproveStatus(approveStatus);
         partyRelationTransfer.setApproveUserId(approveUserId);
+        partyRelationTransfer.setApproveUserName(approveUserName);
         partyRelationTransfer.setApproveTime(new Date());
         partyRelationTransfer.setApproveComment(approveComment);
         // 保存审批结果
@@ -110,6 +117,10 @@ public class PartyRelationTransferServiceImpl extends ServiceImpl<PartyRelationT
                 User updateUser = new User();
                 updateUser.setId(user.getId());
                 updateUser.setOrgId(partyRelationTransfer.getToPartyId());
+                if(UserConstant.POLITICAL_STATUS_TEAM_UNION_MEMBER.equals(user.getPoliticalStatus())){
+                    // 如果是共青团员就转为预备党员
+                    updateUser.setPoliticalStatus(UserConstant.POLITICAL_STATUS_PROBATIONARY_PARTY_MEMBER);
+                }
                 boolean updated = userService.updateById(updateUser);
                 if (!updated) {
                     throw new BusinessException(ErrorCode.OPERATION_ERROR, "更新用户党组织ID失败");
@@ -141,36 +152,37 @@ public class PartyRelationTransferServiceImpl extends ServiceImpl<PartyRelationT
     }
 
     @Override
-    public void validPartyRelationTransfer(long userId, long fromPartyId, long toPartyId) {
+    public List<String> validPartyRelationTransfer(long userId, long fromPartyId, long toPartyId) {
         if (userId <= 0 || fromPartyId < 0 || toPartyId < 0 || fromPartyId == toPartyId) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        List<String> nameList = new ArrayList<>();
         // 验证用户是否存在
         User user = userService.getById(userId);
         if (user == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不存在");
         }
-        QueryWrapper<PartyOrganization> queryWrapper = new QueryWrapper<>();
+        if(user.getOrgId() != fromPartyId){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户不是该党组织的成员");
+        }
         if(fromPartyId > 0){
             // 验证原党组织是否存在
-            queryWrapper.eq("id", fromPartyId);
-            long count = partyOrganizationService.count(queryWrapper);
-            if (count == 0) {
+            PartyOrganization partyOrganization = partyOrganizationService.getById(fromPartyId);
+            if (partyOrganization == null) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "原党组织不存在");
             }
-        }
+            nameList.add(partyOrganization.getOrgName());
+        }else
+            nameList.add("无");
         if(toPartyId > 0){
             // 验证目标党组织是否存在
-            queryWrapper.eq("id", toPartyId);
-            long count = partyOrganizationService.count(queryWrapper);
-            if (count == 0) {
+            PartyOrganization partyOrganization = partyOrganizationService.getById(toPartyId);
+            if (partyOrganization == null) {
                 throw new BusinessException(ErrorCode.PARAMS_ERROR, "目标党组织不存在");
             }
-        }
-    }
-
-    @Override
-    public PartyRelationTransferVO fillPartyRelationTransferVO(PartyRelationTransfer partyRelationTransfer) {
-        return null;
+            nameList.add(partyOrganization.getOrgName());
+        }else
+            nameList.add("无");
+        return nameList;
     }
 }

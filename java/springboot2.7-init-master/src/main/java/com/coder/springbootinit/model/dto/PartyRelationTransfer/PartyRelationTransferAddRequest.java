@@ -31,7 +31,6 @@ public class PartyRelationTransferAddRequest implements Serializable {
     @ApiModelProperty(value = "目标党组织ID", required = true)
     private Long toPartyId;
 
-    
 
     /**
      * 转移原因

@@ -7,11 +7,14 @@
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="from_party_id" property="fromPartyId"/>
+        <result column="from_party_name" property="fromPartyName"/>
         <result column="to_party_id" property="toPartyId"/>
+        <result column="to_party_name" property="toPartyName"/>
         <result column="transfer_reason" property="transferReason"/>
         <result column="transfer_time" property="transferTime"/>
         <result column="approve_status" property="approveStatus"/>
         <result column="approve_user_id" property="approveUserId"/>
+        <result column="approve_user_name" property="approveUserName"/>
         <result column="approve_time" property="approveTime"/>
         <result column="approve_comment" property="approveComment"/>
         <result column="create_time" property="createTime"/>
@@ -22,7 +25,7 @@
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id
-        , user_id, from_party_id, to_party_id, transfer_reason, transfer_time, approve_status, approve_user_id, approve_time, approve_comment, create_time, update_time, is_delete
+        , user_id, from_party_id, from_party_name, to_party_id, to_party_name, transfer_reason, transfer_time, approve_status, approve_user_id, approve_user_name, approve_time, approve_comment, create_time, update_time, is_delete
     </sql>
 
 </mapper>

@@ -2,7 +2,6 @@ package com.coder.springbootinit.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.coder.springbootinit.model.entity.PartyRelationTransfer;
-import com.coder.springbootinit.model.vo.PartyRelationTransferVO;
 
 import java.util.List;
 
@@ -41,7 +40,7 @@ public interface PartyRelationTransferService extends IService<PartyRelationTran
      * @param approveComment 审批意见
      * @return 是否审批成功
      */
-    boolean approvePartyRelationTransfer(long id, int approveStatus, long approveUserId, String approveComment);
+    boolean approvePartyRelationTransfer(long id, int approveStatus, long approveUserId, String approveUserName ,String approveComment);
     
     /**
      * 根据党员ID查询组织关系转移记录
@@ -63,12 +62,5 @@ public interface PartyRelationTransferService extends IService<PartyRelationTran
      * @param fromPartyId 原党组织ID
      * @param toPartyId 目标党组织ID
      */
-    void validPartyRelationTransfer(long userId,long fromPartyId,long toPartyId);
-
-    /**
-     * 填充组织关系转移VO
-     * @param partyRelationTransfer 组织关系转移信息
-     * @return 组织关系转移VO
-     */
-    PartyRelationTransferVO fillPartyRelationTransferVO(PartyRelationTransfer partyRelationTransfer);
+    List<String> validPartyRelationTransfer(long userId,long fromPartyId,long toPartyId);
 }

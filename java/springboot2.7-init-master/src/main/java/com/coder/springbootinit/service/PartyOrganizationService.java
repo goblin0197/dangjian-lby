@@ -6,6 +6,8 @@ import com.coder.springbootinit.model.dto.PartyOrganization.PartyOrganizationQue
 import com.coder.springbootinit.model.entity.PartyOrganization;
 import com.coder.springbootinit.model.vo.PartyOrganizationVO;
 
+import java.util.Map;
+
 /**
  * 党组织表 Service 接口
  *

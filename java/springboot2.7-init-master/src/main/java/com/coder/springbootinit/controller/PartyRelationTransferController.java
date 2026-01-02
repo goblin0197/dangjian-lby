@@ -1,10 +1,12 @@
 package com.coder.springbootinit.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.coder.springbootinit.annotation.AuthCheck;
 import com.coder.springbootinit.common.BaseResponse;
 import com.coder.springbootinit.common.DeleteRequest;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
+import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.model.dto.PartyRelationTransfer.PartyRelationTransferAddRequest;
 import com.coder.springbootinit.model.dto.PartyRelationTransfer.PartyRelationTransferApproveRequest;
@@ -65,6 +67,7 @@ public class PartyRelationTransferController {
      */
     @PostMapping("/approve")
     @ApiOperation(value = "审批组织关系转移申请")
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
     public BaseResponse<Boolean> approvePartyRelationTransfer(
             @RequestBody PartyRelationTransferApproveRequest partyRelationTransferApproveRequest,
             HttpServletRequest request
@@ -72,10 +75,12 @@ public class PartyRelationTransferController {
         // 获取当前登录用户ID
         User loginUser = userService.getLoginUser(request);
         Long approveUserId = loginUser.getId();
+        String approveUserName = loginUser.getUserName();
         boolean result = partyRelationTransferService.approvePartyRelationTransfer(
                 partyRelationTransferApproveRequest.getId(),
                 partyRelationTransferApproveRequest.getApproveStatus(),
                 approveUserId,
+                approveUserName,
                 partyRelationTransferApproveRequest.getApproveComment());
         return ResultUtils.success(result);
     }
@@ -105,7 +110,7 @@ public class PartyRelationTransferController {
      */
     @PostMapping("/delete")
     @ApiOperation(value = "删除组织关系转移记录")
-    public BaseResponse<Boolean> deletePartyRelationTransfer(@RequestParam DeleteRequest deleteRequest) {
+    public BaseResponse<Boolean> deletePartyRelationTransfer(@RequestBody DeleteRequest deleteRequest) {
         boolean result = partyRelationTransferService.deletePartyRelationTransfer(deleteRequest.getId());
         return ResultUtils.success(result);
     }
