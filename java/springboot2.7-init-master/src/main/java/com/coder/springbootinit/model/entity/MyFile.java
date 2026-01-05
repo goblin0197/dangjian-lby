@@ -5,19 +5,17 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
-
 import java.io.Serializable;
 import java.util.Date;
-
 import lombok.Data;
 
 /**
- * 培养人关联表
+ * 材料表
  *
  */
-@TableName(value = "trainer_relation")
+@TableName(value = "file")
 @Data
-public class TrainerRelation implements Serializable {
+public class MyFile implements Serializable {
 
     /**
      * id
@@ -26,39 +24,39 @@ public class TrainerRelation implements Serializable {
     private Long id;
 
     /**
-     * 用户ID（被培养人）
+     * 文件名称
+     */
+    private String fileName;
+
+    /**
+     * 原始文件名
+     */
+    private String originFileName;
+
+    /**
+     * 所属党组织ID
+     */
+    private Long partyId;
+
+    /**
+     * 上传用户ID
      */
     private Long userId;
 
     /**
-     * 用户姓名
+     * 文件URL
      */
-     private String userName;
+    private String fileUrl;
 
     /**
-     * 培养人ID
+     * 文件大小（字节）
      */
-    private Long trainerId;
+    private Integer fileSize;
 
     /**
-     * 培养人姓名
+     * 是否为模板：0-否，1-是
      */
-     private String trainerName;
-
-    /**
-     * 开始日期
-     */
-    private Date startDate;
-
-    /**
-     * 结束日期
-     */
-    private Date endDate;
-
-    /**
-     * 状态：进行中/已完成/已终止
-     */
-    private Integer status;
+    private Integer isTemplate;
 
     /**
      * 创建时间

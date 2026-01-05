@@ -7,8 +7,7 @@ import com.coder.springbootinit.constant.CommonConstant;
 import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.mapper.PartyOrganizationMapper;
-import com.coder.springbootinit.model.dto.PartyOrganization.PartyOrganizationBindRequest;
-import com.coder.springbootinit.model.dto.PartyOrganization.PartyOrganizationQueryRequest;
+import com.coder.springbootinit.model.dto.partyOrganization.PartyOrganizationQueryRequest;
 import com.coder.springbootinit.model.entity.PartyOrganization;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.vo.PartyOrganizationVO;
@@ -22,9 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 

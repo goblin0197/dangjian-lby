@@ -14,8 +14,7 @@ create table if not exists user
     userName     varchar(256)                           not null comment '用户姓名',
     userAvatar   varchar(1024)                          null comment '用户头像',
     userRole     varchar(256) default 'activist_development'            not null comment '用户角色(与系统使用权限有关)：super_admin超级管理员/org_admin组织管理员/party_member党员/activist_development积极分子/发展人员',
-    orgId        bigint                                 null comment '所属党组织ID',
-    orgName      varchar(256)                           null comment '部门/支部',
+    orgId        bigint       default 0                                null comment '所属党组织ID',
     phone        varchar(32)                            null comment '手机号',
     email        varchar(256)                           null comment '邮箱',
     userType     varchar(64)  default '学生'                          not null comment '用户类型：教师/学生',
@@ -85,10 +84,13 @@ create table if not exists trainer_relation
 (
     id                bigint auto_increment comment 'id' primary key,
     userId            bigint                                 not null comment '用户ID（被培养人）',
+    userName          varchar(256)                           null comment '被培养人姓名',
     trainerId         bigint                                 not null comment '培养人ID',
+    trainerName       varchar(256)                           null comment '培养人姓名',
     startDate         date                                   not null comment '开始日期',
     endDate           date                                   null comment '结束日期',
-    status            varchar(64)                            not null comment '状态：进行中/已完成/已终止',
+    status            INT                                    not null comment '状态：1.进行中/2.已完成/3.已终止',
+    -- step              int                                    not null comment '培养阶段：1.入党积极分子 2.预备党员 3.党员',
     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete          tinyint      default 0                 not null comment '是否删除',
@@ -100,47 +102,24 @@ create table if not exists trainer_relation
 
 
 
-# 材料分类表
-create table if not exists material_category
-(
-    id           bigint auto_increment comment 'id' primary key,
-    categoryName varchar(256)                           not null comment '分类名称',
-    categoryCode varchar(64)                            not null comment '分类编码',
-    parentId     bigint                                 null comment '父分类ID',
-    categoryType varchar(64)                            not null comment '分类类型：学习报告/发展材料/活动材料/模板',
-    description  varchar(1024)                          null comment '分类描述',
-    createTime   datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime   datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete     tinyint      default 0                 not null comment '是否删除',
-    unique index uk_categoryCode (categoryCode),
-    index idx_parentId (parentId),
-    index idx_categoryType (categoryType)
-) comment '材料分类表' collate = utf8mb4_unicode_ci;
-
-# 材料表
-create table if not exists material
+# 文件表
+create table if not exists file
 (
     id              bigint auto_increment comment 'id' primary key,
-    materialName    varchar(512)                           not null comment '材料名称',
-    categoryId      bigint                                 not null comment '分类ID',
-    partyId         bigint                                 null comment '所属党组织ID',
-    userId          bigint                                 null comment '上传用户ID',
-    materialType    varchar(64)                            not null comment '材料类型：文件/图片/视频',
-    fileUrl         varchar(1024)                          not null comment '文件URL',
-    fileName        varchar(512)                           not null comment '原始文件名',
-    fileSize        bigint                                 not null comment '文件大小（字节）',
-    description     varchar(1024)                          null comment '材料描述',
-    uploadTime      datetime                               not null comment '上传时间',
-    status          varchar(64)                            not null comment '状态：已发布/草稿',
-    isTemplate      tinyint      default 0                 not null comment '是否为模板：0-否，1-是',
-    createTime      datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime      datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete        tinyint      default 0                 not null comment '是否删除',
-    index idx_categoryId (categoryId),
-    index idx_partyId (partyId),
-    index idx_userId (userId),
-    index idx_isTemplate (isTemplate)
-) comment '材料表' collate = utf8mb4_unicode_ci;
+    fileName       varchar(512)                           not null comment '文件名称',
+    originFileName varchar(512)                          not null comment '原始文件名',
+    partyId        bigint                                 null comment '所属党组织ID',
+    userId         bigint                                 null comment '上传用户ID',
+    fileUrl        varchar(1024)                          not null comment '文件URL',
+    fileSize       int                                 not null comment '文件大小（字节）',
+    isTemplate     tinyint      default 0                 not null comment '是否为模板：0-否，1-是',
+    createTime     datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime     datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete       tinyint      default 0                 not null comment '是否删除',
+    index idx_party_id (partyId),
+    index idx_user_id (userId),
+    index idx_is_template (isTemplate)
+) comment '文件表' collate = utf8mb4_unicode_ci;
 
 # 活动表
 create table if not exists activity

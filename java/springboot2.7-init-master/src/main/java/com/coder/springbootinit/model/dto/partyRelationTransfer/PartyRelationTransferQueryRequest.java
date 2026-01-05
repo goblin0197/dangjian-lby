@@ -1,4 +1,4 @@
-package com.coder.springbootinit.model.dto.PartyRelationTransfer;
+package com.coder.springbootinit.model.dto.partyRelationTransfer;
 
 import com.coder.springbootinit.common.PageRequest;
 import lombok.Data;

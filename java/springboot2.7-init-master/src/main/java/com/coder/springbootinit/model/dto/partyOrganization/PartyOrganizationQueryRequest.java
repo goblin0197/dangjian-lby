@@ -1,4 +1,4 @@
-package com.coder.springbootinit.model.dto.PartyOrganization;
+package com.coder.springbootinit.model.dto.partyOrganization;
 
 import com.coder.springbootinit.common.PageRequest;
 

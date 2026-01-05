@@ -44,12 +44,12 @@ public class UserController {
     // region 登录相关
 
     /**
-     * 用户注册
+     * 用户注册（系统不需要注册功能，用户由管理员添加）
      *
      * @param userRegisterRequest
      * @return
      */
-    @PostMapping("/register")
+//    @PostMapping("/register")
     @ApiOperation("用户注册")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         if (userRegisterRequest == null) {

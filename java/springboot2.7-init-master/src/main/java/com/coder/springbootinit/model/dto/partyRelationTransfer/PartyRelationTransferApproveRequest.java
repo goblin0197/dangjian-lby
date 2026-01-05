@@ -1,4 +1,4 @@
-package com.coder.springbootinit.model.dto.PartyRelationTransfer;
+package com.coder.springbootinit.model.dto.partyRelationTransfer;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;

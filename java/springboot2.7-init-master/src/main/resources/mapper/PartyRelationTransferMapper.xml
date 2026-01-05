@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.coder.springbootinit.mapper.PartyRelationTransferMapper">
 
-    <!-- 通用查询映射结果 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.PartyRelationTransferMapper">
     <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.PartyRelationTransfer">
-        <id column="id" property="id"/>
-        <result column="user_id" property="userId"/>
-        <result column="from_party_id" property="fromPartyId"/>
-        <result column="from_party_name" property="fromPartyName"/>
-        <result column="to_party_id" property="toPartyId"/>
-        <result column="to_party_name" property="toPartyName"/>
-        <result column="transfer_reason" property="transferReason"/>
-        <result column="transfer_time" property="transferTime"/>
-        <result column="approve_status" property="approveStatus"/>
-        <result column="approve_user_id" property="approveUserId"/>
-        <result column="approve_user_name" property="approveUserName"/>
-        <result column="approve_time" property="approveTime"/>
-        <result column="approve_comment" property="approveComment"/>
-        <result column="create_time" property="createTime"/>
-        <result column="update_time" property="updateTime"/>
-        <result column="is_delete" property="isDelete"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="fromPartyId" column="fromPartyId" jdbcType="BIGINT"/>
+        <result property="fromPartyName" column="fromPartyName" jdbcType="VARCHAR"/>
+        <result property="toPartyId" column="toPartyId" jdbcType="BIGINT"/>
+        <result property="toPartyName" column="toPartyName" jdbcType="VARCHAR"/>
+        <result property="transferReason" column="transferReason" jdbcType="VARCHAR"/>
+        <result property="transferTime" column="transferTime" jdbcType="TIMESTAMP"/>
+        <result property="approveStatus" column="approveStatus" jdbcType="INTEGER"/>
+        <result property="approveUserId" column="approveUserId" jdbcType="BIGINT"/>
+        <result property="approveUserName" column="approveUserName" jdbcType="VARCHAR"/>
+        <result property="approveTime" column="approveTime" jdbcType="TIMESTAMP"/>
+        <result property="approveComment" column="approveComment" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
     </resultMap>
 
-    <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
         id
-        , user_id, from_party_id, from_party_name, to_party_id, to_party_name, transfer_reason, transfer_time, approve_status, approve_user_id, approve_user_name, approve_time, approve_comment, create_time, update_time, is_delete
+        , userId, fromPartyId, fromPartyName, toPartyId, toPartyName, transferReason, transferTime, 
+        approveStatus, approveUserId, approveUserName, approveTime, approveComment, createTime, updateTime, isDelete
     </sql>
-
 </mapper>

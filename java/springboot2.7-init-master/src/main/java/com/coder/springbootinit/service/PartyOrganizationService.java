@@ -2,11 +2,9 @@ package com.coder.springbootinit.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.coder.springbootinit.model.dto.PartyOrganization.PartyOrganizationQueryRequest;
+import com.coder.springbootinit.model.dto.partyOrganization.PartyOrganizationQueryRequest;
 import com.coder.springbootinit.model.entity.PartyOrganization;
 import com.coder.springbootinit.model.vo.PartyOrganizationVO;
-
-import java.util.Map;
 
 /**
  * 党组织表 Service 接口
