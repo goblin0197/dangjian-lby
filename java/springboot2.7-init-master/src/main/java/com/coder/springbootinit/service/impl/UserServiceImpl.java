@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.constant.CommonConstant;
+import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.mapper.UserMapper;
 import com.coder.springbootinit.model.dto.user.UserQueryRequest;
@@ -44,7 +45,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         long count = this.baseMapper.selectCount(queryWrapper);
         return count > 0;
     }
-
+    
     @Override
     public long userRegister(String userAccount, String userPassword, String checkPassword) {
         // 1. 校验
@@ -242,4 +243,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 sortField);
         return queryWrapper;
     }
+
+    // @Override
+    // public boolean batchAddUser(List<User> userList) {
+    //     if (CollUtil.isEmpty(userList)) {
+    //         throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+    //     }
+    //     String defaultPassword = "123456";
+    //     String defaultPasswordEncrypt = EncryptUtils.encryptPassword(defaultPassword);
+        
+    //     for (User user : userList) {
+    //         // 校验必填项
+    //         if (StringUtils.isBlank(user.getUserAccount())) {
+    //             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学号不能为空");
+    //         }
+    //         if (StringUtils.isBlank(user.getUserName())) {
+    //             throw new BusinessException(ErrorCode.PARAMS_ERROR, "姓名不能为空");
+    //         }
+            
+    //         // 校验学号是否重复
+    //         if (this.existsByUserAccount(user.getUserAccount())) {
+    //             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学号" + user.getUserAccount() + "重复");
+    //         }
+            
+    //         User user = new User();
+    //         user.setUserAccount(user.getUserAccount()); // 学号作为账号
+    //         user.setUserName(user.getUserName());
+    //         // 设置默认值
+    //         user.setUserPassword(defaultPasswordEncrypt);
+    //         user.setPoliticalStatus(StringUtils.isNotBlank(user.getPoliticalStatus()) ? user.getPoliticalStatus() : "共青团员");        
+    //         user.setUserType(StringUtils.isNotBlank(user.getUserType()) ? user.getUserType() : UserConstant.USER_TYPE_STUDENT);
+    //         user.setUserRole(StringUtils.isNotBlank(user.getUserRole()) ? user.getUserRole() : UserConstant.ACTIVIST_DEVELOPMENT_ROLE);
+            
+    //         userList.add(user);
+    //     }
+        
+    //     // 批量保存用户
+    //     return this.saveBatch(userList);
+    // }
 }

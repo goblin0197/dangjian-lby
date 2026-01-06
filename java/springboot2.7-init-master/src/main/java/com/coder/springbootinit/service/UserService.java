@@ -112,4 +112,12 @@ public interface UserService extends IService<User> {
      */
     QueryWrapper<User> getQueryWrapper(UserQueryRequest userQueryRequest);
 
+    // /**
+    //  * 批量导入用户
+    //  *
+    //  * @param userBatchAddRequest 批量导入用户请求
+    //  * @return 导入结果
+    //  */
+    // boolean batchAddUser(List<User> userBatchAddRequest);
+
 }

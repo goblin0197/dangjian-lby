@@ -150,6 +150,54 @@ public class UserController {
         return ResultUtils.success(user.getId());
     }
 
+    // /**
+    //  * 批量导入用户
+    //  *
+    //  * @param userBatchAddRequest
+    //  * @param request
+    //  * @return
+    //  */
+    // @PostMapping("/batch/add")
+    // @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    // @ApiOperation(value = "批量导入用户（仅管理员）")
+    // public BaseResponse<Boolean> batchAddUser(@RequestBody List<User> userList, HttpServletRequest request) {
+    //     if (userList == null) {
+    //         throw new BusinessException(ErrorCode.PARAMS_ERROR);
+    //     }
+    //     boolean result = userService.batchAddUser(userList);
+    //     ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+    //     return ResultUtils.success(result);
+    // }
+
+    // /**
+    //  * 上传Excel文件导入用户
+    //  *
+    //  * @param file Excel文件
+    //  * @param request
+    //  * @return
+    //  */
+    // @PostMapping("/import/excel")
+    // @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    // @ApiOperation(value = "上传Excel文件导入用户（仅管理员）")
+    // public BaseResponse<Boolean> importUserByExcel(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+    //     if (file == null || file.isEmpty()) {
+    //         throw new BusinessException(ErrorCode.PARAMS_ERROR, "文件不能为空");
+    //     }
+    //     if (!file.getOriginalFilename().endsWith(".xlsx") && !file.getOriginalFilename().endsWith(".xls")) {
+    //         throw new BusinessException(ErrorCode.PARAMS_ERROR, "请上传Excel文件");
+    //     }
+    //     try {
+    //         // 使用EasyExcel解析Excel文件
+    //         EasyExcel.read(file.getInputStream(), UserBatchAddRequest.UserImportItem.class, new UserExcelListener(userService))
+    //                 .sheet() // 默认读取第一个sheet
+    //                 .doRead();
+    //         return ResultUtils.success(true);
+    //     } catch (IOException e) {
+    //         log.error("Excel文件读取失败", e);
+    //         throw new BusinessException(ErrorCode.OPERATION_ERROR, "Excel文件读取失败");
+    //     }
+    // }
+
     /**
      * 删除用户
      *
