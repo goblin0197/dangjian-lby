@@ -1,4 +1,4 @@
-package com.coder.springbootinit.model.dto.partyRelationTransfer;
+package com.coder.springbootinit.model.dto.orgRelationTransfer;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -10,7 +10,7 @@ import java.io.Serializable;
  *
  */
 @Data
-public class PartyRelationTransferApproveRequest implements Serializable {
+public class OrgRelationTransferApproveRequest implements Serializable {
 
     /**
      * id

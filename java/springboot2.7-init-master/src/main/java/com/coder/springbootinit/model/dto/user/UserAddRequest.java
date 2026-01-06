@@ -31,13 +31,15 @@ public class UserAddRequest implements Serializable {
     private String userAvatar;
 
     /**
-     * 用户角色: super_admin, org_admin, party_member, activist_development
+     * 用户角色: super_admin, org_admin, org_member, activist_development
      */
+    @ApiModelProperty(value = "用户角色, super_admin, org_admin, org_member, activist_development")
     private String userRole = UserConstant.ACTIVIST_DEVELOPMENT_ROLE;
 
     /**
      * 用户类型: 教师/学生
      */
+    @ApiModelProperty(value = "用户类型, 教师/学生")
     private String userType = UserConstant.USER_TYPE_STUDENT;
 
     private static final long serialVersionUID = 1L;

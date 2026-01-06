@@ -1,4 +1,4 @@
-package com.coder.springbootinit.model.dto.partyRelationTransfer;
+package com.coder.springbootinit.model.dto.orgRelationTransfer;
 
 import com.coder.springbootinit.common.PageRequest;
 import lombok.Data;
@@ -11,7 +11,7 @@ import java.util.Date;
  *
  */
 @Data
-public class PartyRelationTransferQueryRequest extends PageRequest implements Serializable {
+public class OrgRelationTransferQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
@@ -26,21 +26,22 @@ public class PartyRelationTransferQueryRequest extends PageRequest implements Se
     /**
      * 原党组织ID
      */
-    private Long fromPartyId;
+    private Long fromOrgId;
 
     /**
      * 目标党组织ID
      */
-    private Long toPartyId;
+    private Long toOrgId;
+
     /**
      * 原党组织名称
      */
-    private String fromPartyName;
+    private String fromOrgName;
 
     /**
      * 目标党组织名称
      */
-    private String toPartyName;
+    private String toOrgName;
 
     /**
      * 审批状态：1-待审批/2-已通过/3-已拒绝

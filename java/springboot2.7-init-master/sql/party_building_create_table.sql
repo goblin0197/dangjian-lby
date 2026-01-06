@@ -13,7 +13,7 @@ create table if not exists user
     userPassword varchar(512)                           not null comment '密码',
     userName     varchar(256)                           not null comment '用户姓名',
     userAvatar   varchar(1024)                          null comment '用户头像',
-    userRole     varchar(256) default 'activist_development'            not null comment '用户角色(与系统使用权限有关)：super_admin超级管理员/org_admin组织管理员/party_member党员/activist_development积极分子/发展人员',
+    userRole     varchar(256) default 'activist_development'            not null comment '用户角色(与系统使用权限有关)：super_admin超级管理员/org_admin组织管理员/org_member党员/activist_development积极分子/发展人员',
     orgId        bigint       default 0                                null comment '所属党组织ID',
     phone        varchar(32)                            null comment '手机号',
     email        varchar(256)                           null comment '邮箱',
@@ -31,7 +31,7 @@ create table if not exists user
 ) comment '用户表' collate = utf8mb4_unicode_ci;
 
 # 党组织表
-create table if not exists party_organization
+create table if not exists organization
 (
     id           bigint auto_increment comment 'id' primary key,
     orgName      varchar(256)                           not null comment '组织名称',
@@ -53,14 +53,14 @@ create table if not exists party_organization
 
 
 # 组织关系转移表
-create table if not exists party_relation_transfer
+create table if not exists org_relation_transfer
 (
     id                bigint auto_increment comment 'id' primary key,
     userId            bigint                                 not null comment '用户ID（党员ID）',
-    fromPartyId       bigint                                 not null comment '原党组织ID',
-    fromPartyName     varchar(256)                           null comment '原党组织名称',
-    toPartyId         bigint                                 not null comment '目标党组织ID',
-    toPartyName       varchar(256)                           null comment '目标党组织名称',
+    fromOrgId         bigint                                 not null comment '原党组织ID',
+    fromOrgName       varchar(256)                           null comment '原党组织名称',
+    toOrgId           bigint                                 not null comment '目标党组织ID',
+    toOrgName         varchar(256)                           null comment '目标党组织名称',
     transferReason    varchar(1024)                          null comment '转移原因',
     transferTime      datetime                               not null comment '转移时间',
     approveStatus     INT                                    not null comment '审批状态：1-待审批/2-已通过/3-已拒绝',
@@ -72,8 +72,8 @@ create table if not exists party_relation_transfer
     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete          tinyint      default 0                 not null comment '是否删除',
     index idx_userId (userId),
-    index idx_fromPartyId (fromPartyId),
-    index idx_toPartyId (toPartyId),
+    index idx_fromOrgId (fromOrgId),
+    index idx_toOrgId (toOrgId),
     index idx_approveStatus (approveStatus)
 ) comment '组织关系转移表' collate = utf8mb4_unicode_ci;
 
@@ -108,7 +108,7 @@ create table if not exists file
     id              bigint auto_increment comment 'id' primary key,
     fileName       varchar(512)                           not null comment '文件名称',
     originFileName varchar(512)                          not null comment '原始文件名',
-    partyId        bigint                                 null comment '所属党组织ID',
+    orgId          bigint                                 null comment '所属党组织ID',
     userId         bigint                                 null comment '上传用户ID',
     fileUrl        varchar(1024)                          not null comment '文件URL',
     fileSize       int                                 not null comment '文件大小（字节）',
@@ -116,7 +116,7 @@ create table if not exists file
     createTime     datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime     datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete       tinyint      default 0                 not null comment '是否删除',
-    index idx_party_id (partyId),
+    index idx_org_id (orgId),
     index idx_user_id (userId),
     index idx_is_template (isTemplate)
 ) comment '文件表' collate = utf8mb4_unicode_ci;
@@ -126,23 +126,25 @@ create table if not exists activity
 (
     id                bigint auto_increment comment 'id' primary key,
     activityName      varchar(512)                           not null comment '活动名称',
-    partyId           bigint                                 not null comment '所属党组织ID',
-    creatorId         bigint                                 not null comment '创建人ID',
-    activityType      varchar(64)                            not null comment '活动类型：会议/志愿活动/学习/其他',
-    activityContent   text                                   not null comment '活动内容',
-    activityTime      datetime                               not null comment '活动时间',
+    orgId             bigint                                 not null comment '所属党组织ID',
+    userId            bigint                                 not null comment '创建人ID',
+    activityType      int                                    not null comment '活动类型:1.会议/2.志愿活动/3.学习/4.其他',
+    activityContent   text                                   not null comment '活动描述',
+    enrollDeadline     datetime                              not null comment '报名截止时间',    
+    startTime      datetime                                  not null comment '开始时间',
+    endTime        datetime                                  not null comment '结束时间',
     location          varchar(512)                           not null comment '活动地点',
-    maxParticipants   int                                    null comment '最大参与人数',
-    currentParticipants int                                  default 0 not null comment '当前参与人数',
-    status            varchar(64)                            not null comment '活动状态：草稿/待发布/已发布/进行中/已结束',
-    signInType        varchar(64)                            null comment '签到方式：扫码签到/手动签到',
-    QRCodeUrl         varchar(1024)                          null comment '签到二维码URL',
-    reviewContent     text                                   null comment '活动回顾',
+    maxNum   int                                        DEFAULT 1 not null  comment '最大参与人数',
+    currentNum int                                      default 0 not null comment '当前参与人数',
+    status            int                                    not null comment '活动状态:1.待发布/2.已发布/3.进行中/4.已结束',
+    signInType        int                                    null comment '签到方式:1.扫码签到/2.手动签到',
+    QRCodeUrl         varchar(1024)                          null comment '签到二维码URL(系统生成)',
+    reviewContent     text                                   null comment '活动总结',
     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete          tinyint      default 0                 not null comment '是否删除',
-    index idx_partyId (partyId),
-    index idx_creatorId (creatorId),
+    index idx_orgId (orgId),
+    index idx_creatorId (userId),
     index idx_activityType (activityType),
     index idx_status (status)
 ) comment '活动表' collate = utf8mb4_unicode_ci;
@@ -154,8 +156,9 @@ create table if not exists activity_enroll
     activityId        bigint                                 not null comment '活动ID',
     userId            bigint                                 not null comment '用户ID',
     enrollTime        datetime                               not null comment '报名时间',
-    participantStatus varchar(64)                            not null comment '参与状态：已报名/已取消/已参与/未参与',
+    participantStatus int                                    not null comment '参与状态:1.已报名/2.已取消/3.已参与/4.未参与',
     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    opUserId          bigint                                 not null comment '操作人ID',
     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
     isDelete          tinyint      default 0                 not null comment '是否删除',
     unique index uk_activityId_userId (activityId, userId),
@@ -165,115 +168,116 @@ create table if not exists activity_enroll
 ) comment '活动报名记录表' collate = utf8mb4_unicode_ci;
 
 # 签到表
-create table if not exists sign_in
-(
-    id                bigint auto_increment comment 'id' primary key,
-    activityId        bigint                                 not null comment '活动ID',
-    userId            bigint                                 not null comment '用户ID',
-    signInTime        datetime                               not null comment '签到时间',
-    signInType        varchar(64)                            not null comment '签到方式：扫码签到/手动签到',
-    signInStatus      varchar(64)                            not null comment '签到状态：已签到/迟到/未签到',
-    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete          tinyint      default 0                 not null comment '是否删除',
-    unique index uk_activityId_userId (activityId, userId),
-    index idx_activityId (activityId),
-    index idx_userId (userId),
-    index idx_signInStatus (signInStatus)
-) comment '签到表' collate = utf8mb4_unicode_ci;
+-- create table if not exists sign_in
+-- (
+--     id                bigint auto_increment comment 'id' primary key,
+--     activityId        bigint                                 not null comment '活动ID',
+--     userId            bigint                                 not null comment '用户ID',
+--     signInTime        datetime                               not null comment '签到时间',
+--     signInType        varchar(64)                            not null comment '签到方式：扫码签到/手动签到',
+--     signInStatus      varchar(64)                            not null comment '签到状态：已签到/迟到/未签到',
+--     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+--     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+--     isDelete          tinyint      default 0                 not null comment '是否删除',
+--     unique index uk_activityId_userId (activityId, userId),
+--     index idx_activityId (activityId),
+--     index idx_userId (userId),
+--     index idx_signInStatus (signInStatus)
+-- ) comment '签到表' collate = utf8mb4_unicode_ci;
+
 
 # 发展阶段表
-create table if not exists development_stage
-(
-    id                bigint auto_increment comment 'id' primary key,
-    userId            bigint                                 not null comment '用户ID',
-    trainerId         bigint                                 not null comment '培养人ID',
-    stageName         varchar(256)                           not null comment '阶段名称：入党申请/积极分子/发展对象/预备党员/正式党员',
-    stageStartTime    date                                   not null comment '阶段开始时间',
-    stageEndTime      date                                   null comment '阶段结束时间',
-    stageStatus       varchar(64)                            not null comment '阶段状态：进行中/已完成/已终止',
-    assessmentContent text                                   null comment '考察内容',
-    assessmentResult  varchar(64)                            null comment '考察结果：合格/不合格',
-    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete          tinyint      default 0                 not null comment '是否删除',
-    index idx_userId (userId),
-    index idx_trainerId (trainerId),
-    index idx_stageName (stageName),
-    index idx_stageStatus (stageStatus)
-) comment '发展阶段表' collate = utf8mb4_unicode_ci;
+-- create table if not exists development_stage
+-- (
+--     id                bigint auto_increment comment 'id' primary key,
+--     userId            bigint                                 not null comment '用户ID',
+--     trainerId         bigint                                 not null comment '培养人ID',
+--     stageName         varchar(256)                           not null comment '阶段名称：入党申请/积极分子/发展对象/预备党员/正式党员',
+--     stageStartTime    date                                   not null comment '阶段开始时间',
+--     stageEndTime      date                                   null comment '阶段结束时间',
+--     stageStatus       varchar(64)                            not null comment '阶段状态：进行中/已完成/已终止',
+--     assessmentContent text                                   null comment '考察内容',
+--     assessmentResult  varchar(64)                            null comment '考察结果：合格/不合格',
+--     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+--     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+--     isDelete          tinyint      default 0                 not null comment '是否删除',
+--     index idx_userId (userId),
+--     index idx_trainerId (trainerId),
+--     index idx_stageName (stageName),
+--     index idx_stageStatus (stageStatus)
+-- ) comment '发展阶段表' collate = utf8mb4_unicode_ci;
 
-# 系统公告表
-create table if not exists system_announcement
-(
-    id                bigint auto_increment comment 'id' primary key,
-    title             varchar(512)                           not null comment '公告标题',
-    content           text                                   not null comment '公告内容',
-    publisherId       bigint                                 not null comment '发布人ID',
-    partyId           bigint                                 null comment '所属党组织ID（null表示系统公告）',
-    announcementType  varchar(64)                            not null comment '公告类型：系统公告/支部公告',
-    publishTime       datetime                               not null comment '发布时间',
-    expireTime        datetime                               null comment '过期时间',
-    isTop             tinyint      default 0                 not null comment '是否置顶：0-否，1-是',
-    status            varchar(64)                            not null comment '状态：已发布/已撤回',
-    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete          tinyint      default 0                 not null comment '是否删除',
-    index idx_partyId (partyId),
-    index idx_publisherId (publisherId),
-    index idx_announcementType (announcementType),
-    index idx_isTop (isTop)
-) comment '系统公告表' collate = utf8mb4_unicode_ci;
+-- # 系统公告表
+-- create table if not exists system_announcement
+-- (
+--     id                bigint auto_increment comment 'id' primary key,
+--     title             varchar(512)                           not null comment '公告标题',
+--     content           text                                   not null comment '公告内容',
+--     publisherId       bigint                                 not null comment '发布人ID',
+--     orgId           bigint                                 null comment '所属党组织ID（null表示系统公告）',
+--     announcementType  varchar(64)                            not null comment '公告类型：系统公告/支部公告',
+--     publishTime       datetime                               not null comment '发布时间',
+--     expireTime        datetime                               null comment '过期时间',
+--     isTop             tinyint      default 0                 not null comment '是否置顶：0-否，1-是',
+--     status            varchar(64)                            not null comment '状态：已发布/已撤回',
+--     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+--     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+--     isDelete          tinyint      default 0                 not null comment '是否删除',
+--     index idx_orgId (orgId),
+--     index idx_publisherId (publisherId),
+--     index idx_announcementType (announcementType),
+--     index idx_isTop (isTop)
+-- ) comment '系统公告表' collate = utf8mb4_unicode_ci;
 
-# 量化统计表
-create table if not exists quantitative_statistics
-(
-    id                bigint auto_increment comment 'id' primary key,
-    partyId           bigint                                 null comment '党组织ID（null表示个人统计）',
-    userId            bigint                                 null comment '用户ID（null表示组织统计）',
-    statisticType     varchar(64)                            not null comment '统计类型：活动参与率/签到率/材料完成率',
-    statisticValue    decimal(5,2)                           not null comment '统计值（百分比）',
-    statisticDate     date                                   not null comment '统计日期',
-    statisticPeriod   varchar(64)                            not null comment '统计周期：日/周/月/年',
-    activityCount     int                                    default 0 not null comment '活动总数',
-    participateCount  int                                    default 0 not null comment '参与活动数',
-    signInCount       int                                    default 0 not null comment '签到次数',
-    materialCount     int                                    default 0 not null comment '应提交材料数',
-    completeCount     int                                    default 0 not null comment '已完成材料数',
-    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete          tinyint      default 0                 not null comment '是否删除',
-    index idx_partyId (partyId),
-    index idx_userId (userId),
-    index idx_statisticType (statisticType),
-    index idx_statisticDate (statisticDate),
-    index idx_statisticPeriod (statisticPeriod)
-) comment '量化统计表' collate = utf8mb4_unicode_ci;
+-- # 量化统计表
+-- create table if not exists quantitative_statistics
+-- (
+--     id                bigint auto_increment comment 'id' primary key,
+--     orgId           bigint                                 null comment '党组织ID（null表示个人统计）',
+--     userId            bigint                                 null comment '用户ID（null表示组织统计）',
+--     statisticType     varchar(64)                            not null comment '统计类型：活动参与率/签到率/材料完成率',
+--     statisticValue    decimal(5,2)                           not null comment '统计值（百分比）',
+--     statisticDate     date                                   not null comment '统计日期',
+--     statisticPeriod   varchar(64)                            not null comment '统计周期：日/周/月/年',
+--     activityCount     int                                    default 0 not null comment '活动总数',
+--     participateCount  int                                    default 0 not null comment '参与活动数',
+--     signInCount       int                                    default 0 not null comment '签到次数',
+--     materialCount     int                                    default 0 not null comment '应提交材料数',
+--     completeCount     int                                    default 0 not null comment '已完成材料数',
+--     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+--     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+--     isDelete          tinyint      default 0                 not null comment '是否删除',
+--     index idx_orgId (orgId),
+--     index idx_userId (userId),
+--     index idx_statisticType (statisticType),
+--     index idx_statisticDate (statisticDate),
+--     index idx_statisticPeriod (statisticPeriod)
+-- ) comment '量化统计表' collate = utf8mb4_unicode_ci;
 
-# 发展材料关联表
-create table if not exists development_material_relation
-(
-    id                bigint auto_increment comment 'id' primary key,
-    stageId           bigint                                 not null comment '发展阶段ID',
-    materialId        bigint                                 not null comment '材料ID',
-    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete          tinyint      default 0                 not null comment '是否删除',
-    unique index uk_stageId_materialId (stageId, materialId),
-    index idx_stageId (stageId),
-    index idx_materialId (materialId)
-) comment '发展材料关联表' collate = utf8mb4_unicode_ci;
+-- # 发展材料关联表
+-- create table if not exists development_material_relation
+-- (
+--     id                bigint auto_increment comment 'id' primary key,
+--     stageId           bigint                                 not null comment '发展阶段ID',
+--     materialId        bigint                                 not null comment '材料ID',
+--     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+--     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+--     isDelete          tinyint      default 0                 not null comment '是否删除',
+--     unique index uk_stageId_materialId (stageId, materialId),
+--     index idx_stageId (stageId),
+--     index idx_materialId (materialId)
+-- ) comment '发展材料关联表' collate = utf8mb4_unicode_ci;
 
-# 角色权限表
-create table if not exists role_permission
-(
-    id                bigint auto_increment comment 'id' primary key,
-    roleName          varchar(256)                           not null comment '角色名称',
-    permissionCode    varchar(256)                           not null comment '权限编码',
-    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
-    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
-    isDelete          tinyint      default 0                 not null comment '是否删除',
-    unique index uk_roleName_permissionCode (roleName, permissionCode),
-    index idx_roleName (roleName),
-    index idx_permissionCode (permissionCode)
-) comment '角色权限表' collate = utf8mb4_unicode_ci;
+-- # 角色权限表
+-- create table if not exists role_permission
+-- (
+--     id                bigint auto_increment comment 'id' primary key,
+--     roleName          varchar(256)                           not null comment '角色名称',
+--     permissionCode    varchar(256)                           not null comment '权限编码',
+--     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+--     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+--     isDelete          tinyint      default 0                 not null comment '是否删除',
+--     unique index uk_roleName_permissionCode (roleName, permissionCode),
+--     index idx_roleName (roleName),
+--     index idx_permissionCode (permissionCode)
+-- ) comment '角色权限表' collate = utf8mb4_unicode_ci;

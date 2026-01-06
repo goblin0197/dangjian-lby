@@ -26,7 +26,7 @@ public interface UserConstant {
     /**
      * 党员角色
      */
-    String PARTY_MEMBER_ROLE = "party_member";
+    String ORG_MEMBER_ROLE = "org_member";
 
     /**
      * 积极分子/发展对象角色
@@ -44,8 +44,8 @@ public interface UserConstant {
 
     // region 用户政治面貌
 
-    String POLITICAL_STATUS_PARTY_MEMBER = "党员";
-    String POLITICAL_STATUS_PROBATIONARY_PARTY_MEMBER = "预备党员";
+    String POLITICAL_STATUS_ORG_MEMBER = "党员";
+    String POLITICAL_STATUS_PROBATIONARY_ORG_MEMBER = "预备党员";
     String POLITICAL_STATUS_TEAM_UNION_MEMBER = "共青团员";
     // endregion
 }

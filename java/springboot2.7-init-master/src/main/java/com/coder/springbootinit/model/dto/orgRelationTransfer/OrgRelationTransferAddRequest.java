@@ -1,6 +1,6 @@
-package com.coder.springbootinit.model.dto.partyRelationTransfer;
+package com.coder.springbootinit.model.dto.orgRelationTransfer;
 
-import com.coder.springbootinit.constant.PartyRealtionTransferConstant;
+import com.coder.springbootinit.constant.OrgRealtionTransferConstant;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.io.Serializable;
  *
  */
 @Data
-public class PartyRelationTransferAddRequest implements Serializable {
+public class OrgRelationTransferAddRequest implements Serializable {
 
     /**
      * 用户ID（党员ID）
@@ -23,13 +23,13 @@ public class PartyRelationTransferAddRequest implements Serializable {
      * 原党组织ID
      */
     @ApiModelProperty(value = "原党组织ID,无组织时为0", required = true)
-    private Long fromPartyId = PartyRealtionTransferConstant.DEFAULT_PARTY_ID;
+    private Long fromOrgId = OrgRealtionTransferConstant.DEFAULT_ORG_ID;
 
     /**
      * 目标党组织ID
      */
     @ApiModelProperty(value = "目标党组织ID", required = true)
-    private Long toPartyId;
+    private Long toOrgId;
 
 
     /**

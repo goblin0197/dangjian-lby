@@ -1,7 +1,6 @@
 package com.coder.springbootinit.model.dto.user;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import lombok.Data;
 

@@ -1,9 +1,10 @@
-package com.coder.springbootinit.model.dto.partyOrganization;
+package com.coder.springbootinit.model.vo;
 
-import com.coder.springbootinit.common.PageRequest;
+import com.coder.springbootinit.model.entity.User;
 
 import java.io.Serializable;
 import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -11,7 +12,7 @@ import lombok.Data;
  *
  */
 @Data
-public class PartyOrganizationQueryRequest extends PageRequest implements Serializable {
+public class OrganizationVO implements Serializable {
 
     /**
      * id
@@ -44,11 +45,6 @@ public class PartyOrganizationQueryRequest extends PageRequest implements Serial
     private Integer orgLevel;
 
     /**
-     * 负责人ID
-     */
-    private Long leaderId;
-
-    /**
      * 地址
      */
     private String address;
@@ -64,9 +60,14 @@ public class PartyOrganizationQueryRequest extends PageRequest implements Serial
     private Date createTime;
 
     /**
-     * 是否删除
+     * 更新时间
      */
-    private Integer isDelete;
+    private Date updateTime;
+
+    /**
+     * 负责人
+     */
+    private User leader;
 
     private static final long serialVersionUID = 1L;
 }

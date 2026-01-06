@@ -1,17 +1,15 @@
-package com.coder.springbootinit.model.dto.partyOrganization;
-
-
-import io.swagger.annotations.ApiModelProperty;
+package com.coder.springbootinit.model.dto.organization;
 
 import java.io.Serializable;
+
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 /**
- * 党组织表
- *
+ * 组织绑定请求
  */
 @Data
-public class PartyOrganizationBindRequest implements Serializable {
+public class OrganizationBindRequest implements Serializable {
 
     /**
      * 党组织ID

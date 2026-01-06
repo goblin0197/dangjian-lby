@@ -3,14 +3,14 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.coder.springbootinit.mapper.PartyRelationTransferMapper">
-    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.PartyRelationTransfer">
+<mapper namespace="com.coder.springbootinit.mapper.OrgRelationTransferMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.OrgRelationTransfer">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="userId" column="userId" jdbcType="BIGINT"/>
-        <result property="fromPartyId" column="fromPartyId" jdbcType="BIGINT"/>
-        <result property="fromPartyName" column="fromPartyName" jdbcType="VARCHAR"/>
-        <result property="toPartyId" column="toPartyId" jdbcType="BIGINT"/>
-        <result property="toPartyName" column="toPartyName" jdbcType="VARCHAR"/>
+        <result property="fromOrgId" column="fromOrgId" jdbcType="BIGINT"/>
+        <result property="fromOrgName" column="fromOrgName" jdbcType="VARCHAR"/>
+        <result property="toOrgId" column="toOrgId" jdbcType="BIGINT"/>
+        <result property="toOrgName" column="toOrgName" jdbcType="VARCHAR"/>
         <result property="transferReason" column="transferReason" jdbcType="VARCHAR"/>
         <result property="transferTime" column="transferTime" jdbcType="TIMESTAMP"/>
         <result property="approveStatus" column="approveStatus" jdbcType="INTEGER"/>
@@ -25,7 +25,7 @@
 
     <sql id="Base_Column_List">
         id
-        , userId, fromPartyId, fromPartyName, toPartyId, toPartyName, transferReason, transferTime, 
+        , userId, fromOrgId, fromOrgName, toOrgId, toOrgName, transferReason, transferTime, 
         approveStatus, approveUserId, approveUserName, approveTime, approveComment, createTime, updateTime, isDelete
     </sql>
 </mapper>

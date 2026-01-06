@@ -1,21 +1,26 @@
-package com.coder.springbootinit.model.dto.partyOrganization;
+package com.coder.springbootinit.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableLogic;
+import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-
-import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
 import lombok.Data;
 
 /**
- * 党组织表
+ * 党组织
  *
- */
+*/
+@TableName(value = "organization")
 @Data
-public class PartyOrganizationUpdateRequest implements Serializable {
+public class Organization implements Serializable {
 
     /**
      * id
      */
-    @ApiModelProperty(value = "id", required = true)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -59,10 +64,21 @@ public class PartyOrganizationUpdateRequest implements Serializable {
     private String description;
 
     /**
+     * 创建时间
+     */
+    private Date createTime;
+
+    /**
+     * 更新时间
+     */
+    private Date updateTime;
+
+    /**
      * 是否删除
      */
+    @TableLogic
     private Integer isDelete;
 
-
+    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

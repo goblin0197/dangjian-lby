@@ -36,7 +36,7 @@ public class TrainerRelationController {
      */
     @PostMapping("/add")
     @ApiOperation(value = "添加培养人关联")
-    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE,UserConstant.ORG_ADMIN_ROLE,UserConstant.PARTY_MEMBER_ROLE})
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE,UserConstant.ORG_ADMIN_ROLE,UserConstant.ORG_MEMBER_ROLE})
     public BaseResponse<TrainerRelation> addTrainerRelation(@RequestBody TrainerRelationAddRequest trainerRelationAddRequest) {
         if(trainerRelationAddRequest == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -52,7 +52,7 @@ public class TrainerRelationController {
      */
     @GetMapping("/trainer/byUserId")
     @ApiOperation(value = "根据用户ID查询被培养情况")
-    public BaseResponse<TrainerRelation> getTrainerRelationByPartyMemberId(@RequestParam Long userId) {
+    public BaseResponse<TrainerRelation> getTrainerRelationByUserId(@RequestParam Long userId) {
         QueryWrapper<TrainerRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("userId", userId);
         TrainerRelation trainerRelations = trainerRelationService.getOne(queryWrapper);

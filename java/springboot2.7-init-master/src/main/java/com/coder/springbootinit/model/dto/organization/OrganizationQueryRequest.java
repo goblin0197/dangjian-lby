@@ -1,28 +1,21 @@
-package com.coder.springbootinit.model.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
-import com.baomidou.mybatisplus.annotation.TableName;
+package com.coder.springbootinit.model.dto.organization;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import com.coder.springbootinit.common.PageRequest;
 import lombok.Data;
 
 /**
- * 党组织表
+ * 党组织查询请求
  *
- */
-@TableName(value = "party_organization")
+*/
 @Data
-public class PartyOrganization implements Serializable {
+public class OrganizationQueryRequest extends PageRequest implements Serializable {
 
     /**
      * id
      */
-    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -71,16 +64,9 @@ public class PartyOrganization implements Serializable {
     private Date createTime;
 
     /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
      * 是否删除
      */
-    @TableLogic
     private Integer isDelete;
 
-    @TableField(exist = false)
     private static final long serialVersionUID = 1L;
 }

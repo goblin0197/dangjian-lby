@@ -15,7 +15,7 @@ import com.coder.springbootinit.model.entity.MyFile;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.enums.FileUploadBizEnum;
 import com.coder.springbootinit.service.FileService;
-import com.coder.springbootinit.service.PartyOrganizationService;
+import com.coder.springbootinit.service.OrganizationService;
 import com.coder.springbootinit.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -52,7 +52,7 @@ public class FileController {
     private FileService fileService;
 
     @Resource
-    private PartyOrganizationService partyOrganizationService;
+    private OrganizationService organizationService;
 
     // 本地文件存储路径
     private static final Path STATIC_PATH = Paths.get(System.getProperty("user.dir"), "static");
@@ -73,7 +73,7 @@ public class FileController {
             UploadFileRequest uploadFileRequest, HttpServletRequest request) {
         // 获取上传文件的业务类型
         String biz = uploadFileRequest.getBiz();
-        Long partyId = uploadFileRequest.getPartyId();
+        Long orgId = uploadFileRequest.getOrgId();
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         if (fileUploadBizEnum == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -101,8 +101,8 @@ public class FileController {
         myFile.setUserId(loginUser.getId());
         myFile.setIsTemplate(FileUploadBizEnum.TEMPLATE.equals(fileUploadBizEnum) ? 1 : 0);
         myFile.setFileSize((int) multipartFile.getSize());
-        if(partyOrganizationService.getById(partyId) != null){
-            myFile.setPartyId(partyId);
+        if(organizationService.getById(orgId) != null){
+            myFile.setOrgId(orgId);
         }
         // 构建相对路径
         String relativePath = fileService.getRelativePath(fileUploadBizEnum, loginUser.getId(), randomFileName);
@@ -246,11 +246,11 @@ public class FileController {
      */
     @GetMapping("/template/list")
     @ApiOperation("模板文件列表(没有校验权限)")
-    public BaseResponse<List<MyFile>> getTemplateList(@RequestParam Long partyId) {
+    public BaseResponse<List<MyFile>> getTemplateList(@RequestParam Long orgId) {
         QueryWrapper<MyFile> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("isTemplate", 1);
-        if(partyId != null){
-            queryWrapper.eq("partyId", partyId);
+        if(orgId != null){
+            queryWrapper.eq("orgId", orgId);
         }
         List<MyFile> fileList = fileService.list(queryWrapper);
         return ResultUtils.success(fileList);

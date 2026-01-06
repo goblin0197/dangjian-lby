@@ -45,7 +45,7 @@ public class User implements Serializable {
 
 
     /**
-     * 用户角色：super_admin/org_admin/party_member/activist_development
+     * 用户角色：super_admin/org_admin/org_member/activist_development
      */
     private String userRole;
 

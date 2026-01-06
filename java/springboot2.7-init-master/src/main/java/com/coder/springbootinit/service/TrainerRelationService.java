@@ -32,8 +32,8 @@ public interface TrainerRelationService extends IService<TrainerRelation> {
      * 用户类型为学生
      * 用户角色为积极分子/发展对象角色
      * 政治面貌为团员
-     * @param partyMemberId 党员ID（被培养人）
+     * @param orgMemberId 组织党员ID（被培养人）
      * @return 是否合法
      */
-    boolean validatePartyMember(Long partyMemberId);
+    boolean validateOrgMember(Long orgMemberId);
 }

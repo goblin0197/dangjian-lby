@@ -3,8 +3,8 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.coder.springbootinit.mapper.PartyOrganizationMapper">
-    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.PartyOrganization">
+<mapper namespace="com.coder.springbootinit.mapper.OrgOrganizationMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.OrgOrganization">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="orgName" column="orgName" jdbcType="VARCHAR"/>
         <result property="orgCode" column="orgCode" jdbcType="VARCHAR"/>

@@ -30,7 +30,7 @@ public class UserQueryRequest extends PageRequest implements Serializable {
     private String userName;
 
     /**
-     * 用户角色：super_admin/org_admin/party_member/activist_development
+     * 用户角色：super_admin/org_admin/org_member/activist_development
      */
     private String userRole;
 

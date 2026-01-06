@@ -22,7 +22,7 @@ public class UploadFileRequest implements Serializable {
      * 组织ID
      */
     @ApiModelProperty(value = "党组织ID,业务为template时必填")
-    private Long partyId;
+    private Long orgId;
 
     private static final long serialVersionUID = 1L;
 }

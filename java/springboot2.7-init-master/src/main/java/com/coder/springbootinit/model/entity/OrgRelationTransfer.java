@@ -10,9 +10,9 @@ import java.util.Date;
  * 组织关系转移表
  *
  */
-@TableName(value = "party_relation_transfer")
+@TableName(value = "org_relation_transfer")
 @Data
-public class PartyRelationTransfer implements Serializable {
+public class OrgRelationTransfer implements Serializable {
 
     /**
      * id
@@ -28,22 +28,22 @@ public class PartyRelationTransfer implements Serializable {
     /**
      * 原党组织ID
      */
-    private Long fromPartyId;
+    private Long fromOrgId;
 
     /**
      * 原党组织名称
      */
-    private String fromPartyName;
+    private String fromOrgName;
 
     /**
      * 目标党组织ID
      */
-    private Long toPartyId;
+    private Long toOrgId;
 
     /**
      * 目标党组织名称
      */
-    private String toPartyName;
+    private String toOrgName;
 
     /**
      * 转移原因

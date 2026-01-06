@@ -14,7 +14,7 @@ public enum UserRoleEnum {
 
     SUPER_ADMIN("超级管理员", "super_admin"),
     ORG_ADMIN("组织管理员", "org_admin"),
-    PARTY_MEMBER("党员", "party_member"),
+    ORG_MEMBER("党员", "org_member"),
     ACTIVIST_DEVELOPMENT("积极分子/发展对象", "activist_development");
 
     private final String text;

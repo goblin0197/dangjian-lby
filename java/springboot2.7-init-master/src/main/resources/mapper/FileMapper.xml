@@ -8,7 +8,7 @@
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="fileName" column="fileName" jdbcType="VARCHAR"/>
         <result property="originFileName" column="originFileName" jdbcType="VARCHAR"/>
-        <result property="partyId" column="partyId" jdbcType="BIGINT"/>
+        <result property="orgId" column="orgId" jdbcType="BIGINT"/>
         <result property="userId" column="userId" jdbcType="BIGINT"/>
         <result property="fileUrl" column="fileUrl" jdbcType="VARCHAR"/>
         <result property="fileSize" column="fileSize" jdbcType="INTEGER"/>
@@ -20,7 +20,7 @@
 
     <sql id="Base_Column_List">
         id
-        , fileName, originFileName, partyId, userId, fileUrl, fileSize, isTemplate, 
+        , fileName, originFileName, orgId, userId, fileUrl, fileSize, isTemplate, 
         createTime, updateTime, isDelete
     </sql>
 </mapper>

@@ -38,7 +38,7 @@ public class TrainerRelationServiceImpl extends ServiceImpl<TrainerRelationMappe
         }
 
         // 验证被培养人是否合法
-        if (!validatePartyMember(userId)) {
+        if (!validateOrgMember(userId)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "积极分子/发展对象只能是学生");
         }
         User trainer = userService.getById(trainerId);
@@ -71,11 +71,11 @@ public class TrainerRelationServiceImpl extends ServiceImpl<TrainerRelationMappe
         // 政治面貌为党员
         return UserConstant.USER_TYPE_TEACHER.equals(trainer.getUserType()) && 
                !UserConstant.ACTIVIST_DEVELOPMENT_ROLE.equals(trainer.getUserRole()) &&
-               UserConstant.POLITICAL_STATUS_PARTY_MEMBER.equals(trainer.getPoliticalStatus());
+               UserConstant.POLITICAL_STATUS_ORG_MEMBER.equals(trainer.getPoliticalStatus());
     }
 
     @Override
-    public boolean validatePartyMember(Long userId) {
+    public boolean validateOrgMember(Long userId) {
         // 获取被培养人用户信息
         User user = userService.getById(userId);
         if (user == null) {

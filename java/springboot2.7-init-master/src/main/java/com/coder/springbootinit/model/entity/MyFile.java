@@ -36,7 +36,7 @@ public class MyFile implements Serializable {
     /**
      * 所属党组织ID
      */
-    private Long partyId;
+    private Long orgId;
 
     /**
      * 上传用户ID
