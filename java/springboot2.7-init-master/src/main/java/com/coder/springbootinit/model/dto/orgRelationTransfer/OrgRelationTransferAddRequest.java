@@ -1,6 +1,6 @@
 package com.coder.springbootinit.model.dto.orgRelationTransfer;
 
-import com.coder.springbootinit.constant.OrgRealtionTransferConstant;
+import com.coder.springbootinit.constant.OrgRelationTransferConstant;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,7 +23,7 @@ public class OrgRelationTransferAddRequest implements Serializable {
      * 原党组织ID
      */
     @ApiModelProperty(value = "原党组织ID,无组织时为0", required = true)
-    private Long fromOrgId = OrgRealtionTransferConstant.DEFAULT_ORG_ID;
+    private Long fromOrgId = OrgRelationTransferConstant.DEFAULT_ORG_ID;
 
     /**
      * 目标党组织ID

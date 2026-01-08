@@ -57,7 +57,7 @@ public class FileController {
     // 本地文件存储路径
     private static final Path STATIC_PATH = Paths.get(System.getProperty("user.dir"), "static");
     // 文件访问前缀
-    private static final String FILE_ACCESS_PREFIX = "/static";
+    // private static final String FILE_ACCESS_PREFIX = "/static";
 
     /**
      * 文件上传
