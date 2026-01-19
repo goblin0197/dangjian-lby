@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.ActivityEnrollMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.ActivityEnroll">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="activityId" column="activityId" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="enrollTime" column="enrollTime" jdbcType="TIMESTAMP"/>
+        <result property="participantStatus" column="participantStatus" jdbcType="INTEGER"/>
+        <result property="isSign" column="isSign" jdbcType="TINYINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="opUserId" column="opUserId" jdbcType="BIGINT"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        , activityId, userId, enrollTime, participantStatus, isSign, 
+        createTime, opUserId, updateTime, isDelete
+    </sql>
+
+    <!-- 签到操作
+    <update id="signIn">
+        UPDATE activity_enroll
+        SET is_sign = #{isSign},
+            participant_status = #{participantStatus},
+            op_user_id = #{opUserId},
+            update_time = #{updateTime}
+        WHERE id = #{id}
+        AND is_delete = 0
+    </update> -->
+</mapper>

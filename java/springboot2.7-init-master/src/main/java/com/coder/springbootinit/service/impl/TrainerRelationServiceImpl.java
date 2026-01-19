@@ -39,7 +39,7 @@ public class TrainerRelationServiceImpl extends ServiceImpl<TrainerRelationMappe
 
         // 验证被培养人是否合法
         if (!validateOrgMember(userId)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "积极分子/发展对象只能是学生");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "积极分子/发展对象只能是学生团员");
         }
         User trainer = userService.getById(trainerId);
         User user = userService.getById(userId);

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.ActivityMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.Activity">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="activityName" column="activityName" jdbcType="VARCHAR"/>
+        <result property="orgId" column="orgId" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="activityType" column="activityType" jdbcType="INTEGER"/>
+        <result property="activityContent" column="activityContent" jdbcType="VARCHAR"/>
+        <result property="enrollDeadline" column="enrollDeadline" jdbcType="TIMESTAMP"/>
+        <result property="startTime" column="startTime" jdbcType="TIMESTAMP"/>
+        <result property="endTime" column="endTime" jdbcType="TIMESTAMP"/>
+        <result property="location" column="location" jdbcType="VARCHAR"/>
+        <result property="maxNum" column="maxNum" jdbcType="INTEGER"/>
+        <result property="currentNum" column="currentNum" jdbcType="INTEGER"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="reviewContent" column="reviewContent" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        , activityName, orgId, userId, activityType, activityContent, enrollDeadline, startTime, endTime, 
+        location, maxNum, currentNum, status, reviewContent, createTime, updateTime, isDelete
+    </sql>
+
+    <!-- 活动当前参与人数自减1 -->
+    <update id="decreaseCurrentNum">
+        UPDATE activity
+        SET current_num = current_num - 1
+        WHERE id = #{id}
+        AND current_num > 0
+    </update>
+</mapper>

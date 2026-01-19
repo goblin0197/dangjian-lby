@@ -63,15 +63,5 @@ public class OrgRelationTransferQueryRequest extends PageRequest implements Seri
      */
     private Date createTime;
 
-    /**
-     * 创建时间（起始）
-     */
-    private Date createTimeStart;
-
-    /**
-     * 创建时间（结束）
-     */
-    private Date createTimeEnd;
-
     private static final long serialVersionUID = 1L;
 }
