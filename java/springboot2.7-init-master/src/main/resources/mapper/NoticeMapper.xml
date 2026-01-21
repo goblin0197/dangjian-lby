@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.NoticeMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.Notice">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="content" column="content" jdbcType="LONGVARCHAR"/>
+        <result property="publisherId" column="publisherId" jdbcType="BIGINT"/>
+        <result property="orgId" column="orgId" jdbcType="BIGINT"/>
+        <result property="publishTime" column="publishTime" jdbcType="TIMESTAMP"/>
+        <result property="expireTime" column="expireTime" jdbcType="TIMESTAMP"/>
+        <result property="isTop" column="isTop" jdbcType="TINYINT"/>
+        <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        , title, content, publisherId, orgId, publishTime, expireTime, isTop, status, 
+        createTime, updateTime, isDelete
+    </sql>
+</mapper>

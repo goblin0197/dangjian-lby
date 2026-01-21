@@ -168,6 +168,26 @@ create table if not exists activity_enroll
     index idx_participantStatus (participantStatus)
 ) comment '活动报名记录表' collate = utf8mb4_unicode_ci;
 
+# 系统公告表
+create table if not exists notice
+(
+    id                bigint auto_increment comment 'id' primary key,
+    title             varchar(512)                           not null comment '公告标题',
+    content           text                                   not null comment '公告内容',
+    publisherId       bigint                                 not null comment '发布人ID',
+    orgId           bigint                                 null comment '所属党组织ID(null表示系统公告)',
+    publishTime       datetime                               null comment '首次发布时间',
+    expireTime        datetime                               null comment '过期时间',
+    isTop             tinyint      default 0                 not null comment '是否置顶:0-否,1-是',
+    status            tinyint      default 0                 not null comment '状态:0-草稿/1-已发布',
+    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete          tinyint      default 0                 not null comment '是否删除',
+    index idx_orgId (orgId),
+    index idx_publisherId (publisherId)
+) comment '公告表' collate = utf8mb4_unicode_ci;
+
+
 # 签到表
 -- create table if not exists sign_in
 -- (
@@ -208,27 +228,6 @@ create table if not exists activity_enroll
 --     index idx_stageStatus (stageStatus)
 -- ) comment '发展阶段表' collate = utf8mb4_unicode_ci;
 
--- # 系统公告表
--- create table if not exists system_announcement
--- (
---     id                bigint auto_increment comment 'id' primary key,
---     title             varchar(512)                           not null comment '公告标题',
---     content           text                                   not null comment '公告内容',
---     publisherId       bigint                                 not null comment '发布人ID',
---     orgId           bigint                                 null comment '所属党组织ID（null表示系统公告）',
---     announcementType  varchar(64)                            not null comment '公告类型：系统公告/支部公告',
---     publishTime       datetime                               not null comment '发布时间',
---     expireTime        datetime                               null comment '过期时间',
---     isTop             tinyint      default 0                 not null comment '是否置顶：0-否，1-是',
---     status            varchar(64)                            not null comment '状态：已发布/已撤回',
---     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
---     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
---     isDelete          tinyint      default 0                 not null comment '是否删除',
---     index idx_orgId (orgId),
---     index idx_publisherId (publisherId),
---     index idx_announcementType (announcementType),
---     index idx_isTop (isTop)
--- ) comment '系统公告表' collate = utf8mb4_unicode_ci;
 
 -- # 量化统计表
 -- create table if not exists quantitative_statistics
