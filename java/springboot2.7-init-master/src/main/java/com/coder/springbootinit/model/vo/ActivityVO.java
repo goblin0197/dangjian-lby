@@ -110,18 +110,23 @@ public class ActivityVO {
      */
     private Date updateTime;
 
+    // /**
+    //  * 是否已报名
+    //  */
+    // private Boolean isEnrolled;
+    
     /**
-     * 是否已报名
+     * 总参与人数（已报名人数）
      */
-    private Boolean isEnrolled;
+    private Integer totalParticipant;
 
     /**
-     * 参与状态
+     * 实际参与人数（已签到人数）
      */
-    private Integer participantStatus;
+    private Integer actualParticipant;
 
     /**
-     * 参与状态名称
+     * 签到率（实际参与人数/总参与人数）
      */
-    private String participantStatusName;
+    private Double signRate;
 }

@@ -78,4 +78,17 @@ public interface ActivityService extends IService<Activity> {
      * @return 是否成功
      */
     boolean decreaseCurrentNum(Long id);
+
+    /**
+     * 更新指定活动的参与和签到情况统计
+     * @param id 活动ID
+     * @return 是否成功
+     */
+    boolean updateActivityStatistics(Long id);
+
+    /**
+     * 更新所有活动的参与和签到情况统计
+     * @return 是否成功
+     */
+    boolean updateAllActivityStatistics();
 }

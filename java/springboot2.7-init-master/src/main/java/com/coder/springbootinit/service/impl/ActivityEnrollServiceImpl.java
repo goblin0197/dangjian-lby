@@ -11,7 +11,7 @@ import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollCancelReq
 import com.coder.springbootinit.model.entity.Activity;
 import com.coder.springbootinit.model.entity.ActivityEnroll;
 import com.coder.springbootinit.model.enums.ActivityEnrollStatusEnum;
-import com.coder.springbootinit.model.enums.ActivitySignStatusEnum;
+import com.coder.springbootinit.model.enums.ActivityEnrollSignEnum;
 import com.coder.springbootinit.model.enums.ActivityStatusEnum;
 import com.coder.springbootinit.service.ActivityEnrollService;
 import com.coder.springbootinit.service.ActivityService;
@@ -111,7 +111,7 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
         ThrowUtils.throwIf(activityEnroll == null, ErrorCode.NOT_FOUND_ERROR, "未找到报名记录");
 
         // 检查是否已签到
-        if (ActivitySignStatusEnum.SIGNED.getCode().equals(activityEnroll.getIsSign())) {
+        if (ActivityEnrollSignEnum.SIGNED.getCode().equals(activityEnroll.getIsSign())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "已签到，无法取消报名");
         }
 
@@ -161,12 +161,12 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
         }
 
         // 检查是否已签到
-        if (ActivitySignStatusEnum.SIGNED.getCode().equals(activityEnroll.getIsSign())) {
+        if (ActivityEnrollSignEnum.SIGNED.getCode().equals(activityEnroll.getIsSign())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "已签到，无法重复签到");
         }
 
         // 更新签到状态
-        activityEnroll.setIsSign(ActivitySignStatusEnum.SIGNED.getCode()); // 已签到
+        activityEnroll.setIsSign(ActivityEnrollSignEnum.SIGNED.getCode()); // 已签到
         activityEnroll.setOpUserId(opUserId);
         activityEnroll.setUpdateTime(new Date());
 

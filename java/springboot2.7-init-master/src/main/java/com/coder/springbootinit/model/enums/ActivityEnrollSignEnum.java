@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
  *
  */
 @Getter
-public enum ActivitySignStatusEnum {
+public enum ActivityEnrollSignEnum {
     /**
      * 未签到
      */
@@ -26,7 +26,7 @@ public enum ActivitySignStatusEnum {
     private final Integer code;
     private final String description;
 
-    ActivitySignStatusEnum(Integer code, String description) {
+    ActivityEnrollSignEnum(Integer code, String description) {
         this.code = code;
         this.description = description;
     }
@@ -45,10 +45,10 @@ public enum ActivitySignStatusEnum {
      * @param code 代码
      * @return 枚举
      */
-    public static ActivitySignStatusEnum getByCode(Integer code) {
-        for (ActivitySignStatusEnum activitySignStatusEnum : ActivitySignStatusEnum.values()) {
-            if (activitySignStatusEnum.getCode().equals(code)) {
-                return activitySignStatusEnum;
+    public static ActivityEnrollSignEnum getByCode(Integer code) {
+        for (ActivityEnrollSignEnum activityEnrollSignEnum : ActivityEnrollSignEnum.values()) {
+            if (activityEnrollSignEnum.getCode().equals(code)) {
+                return activityEnrollSignEnum;
             }
         }
         return null;

@@ -7,7 +7,11 @@ import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 活动
@@ -15,6 +19,9 @@ import lombok.Data;
 */
 @TableName(value = "activity")
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Activity implements Serializable {
 
     /**
@@ -77,6 +84,21 @@ public class Activity implements Serializable {
      * 当前参与人数
      */
     private Integer currentNum;
+
+    /**
+     * 总参与人数（已报名人数）
+     */
+    private Integer totalParticipant;
+
+    /**
+     * 实际参与人数（已签到人数）
+     */
+    private Integer actualParticipant;
+
+    /**
+     * 签到率（实际参与人数/总参与人数）
+     */
+    private Double signRate;
 
     /**
      * 活动状态:1.待发布/2.已发布/3.进行中/4.已结束

@@ -189,4 +189,38 @@ public class ActivityController {
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(result);
     }
+
+    /**
+     * 更新指定活动的参与和签到情况统计
+     *
+     * @param id
+     * @param request
+     * @return
+     */
+    @PostMapping("/statistics/update")
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @ApiOperation(value = "更新指定活动的参与和签到情况统计（仅管理员）")
+    public BaseResponse<Boolean> updateActivityStatistics(long id, HttpServletRequest request) {
+        if (id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        boolean result = activityService.updateActivityStatistics(id);
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 更新所有活动的参与和签到情况统计
+     *
+     * @param request
+     * @return
+     */
+    @PostMapping("/statistics/update/all")
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @ApiOperation(value = "更新所有活动的参与和签到情况统计（仅管理员）")
+    public BaseResponse<Boolean> updateAllActivityStatistics(HttpServletRequest request) {
+        boolean result = activityService.updateAllActivityStatistics();
+        ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
+        return ResultUtils.success(result);
+    }
 }

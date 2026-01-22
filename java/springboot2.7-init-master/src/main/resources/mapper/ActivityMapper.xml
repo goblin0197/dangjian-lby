@@ -17,6 +17,9 @@
         <result property="location" column="location" jdbcType="VARCHAR"/>
         <result property="maxNum" column="maxNum" jdbcType="INTEGER"/>
         <result property="currentNum" column="currentNum" jdbcType="INTEGER"/>
+        <result property="totalParticipant" column="totalParticipant" jdbcType="INTEGER"/>
+        <result property="actualParticipant" column="actualParticipant" jdbcType="INTEGER"/>
+        <result property="signRate" column="signRate" jdbcType="DOUBLE"/>
         <result property="status" column="status" jdbcType="INTEGER"/>
         <result property="reviewContent" column="reviewContent" jdbcType="VARCHAR"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
@@ -27,7 +30,7 @@
     <sql id="Base_Column_List">
         id
         , activityName, orgId, userId, activityType, activityContent, enrollDeadline, startTime, endTime, 
-        location, maxNum, currentNum, status, reviewContent, createTime, updateTime, isDelete
+        location, maxNum, currentNum, totalParticipant, actualParticipant, signRate, status, reviewContent, createTime, updateTime, isDelete
     </sql>
 
     <!-- 活动当前参与人数自减1 -->
