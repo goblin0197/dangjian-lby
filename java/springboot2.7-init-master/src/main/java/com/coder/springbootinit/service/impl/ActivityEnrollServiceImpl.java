@@ -10,12 +10,16 @@ import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollAddReques
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollCancelRequest;
 import com.coder.springbootinit.model.entity.Activity;
 import com.coder.springbootinit.model.entity.ActivityEnroll;
+import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.enums.ActivityEnrollStatusEnum;
 import com.coder.springbootinit.model.enums.ActivityEnrollSignEnum;
 import com.coder.springbootinit.model.enums.ActivityStatusEnum;
 import com.coder.springbootinit.service.ActivityEnrollService;
 import com.coder.springbootinit.service.ActivityService;
+import com.coder.springbootinit.service.OrganizationService;
+import com.coder.springbootinit.service.UserService;
 import java.util.Date;
+import java.util.List;
 import javax.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +33,12 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
 
     @Resource
     private ActivityService activityService;
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private OrganizationService organizationService;
 
     @Override
     @Transactional
@@ -53,6 +63,18 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
         // 检查是否已达到最大参与人数
         if (activity.getCurrentNum() >= activity.getMaxNum()) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "活动人数已满");
+        }
+
+        // 检查组织权限：用户只能参加本组织及父组织的活动
+        User user = userService.getById(userId);
+        ThrowUtils.throwIf(user == null, ErrorCode.NOT_FOUND_ERROR, "用户不存在");
+        
+        // 获取用户所在组织及其所有父组织的ID列表
+        List<Long> userOrgIdList = organizationService.getAllParentOrgIds(user.getOrgId());
+        
+        // 检查活动所属组织是否在用户的组织列表中
+        if (!userOrgIdList.contains(activity.getOrgId())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "无法参加该活动");
         }
 
         // 检查是否已经报名

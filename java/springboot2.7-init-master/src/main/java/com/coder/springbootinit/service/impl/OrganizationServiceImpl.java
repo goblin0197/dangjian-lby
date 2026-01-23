@@ -1,5 +1,6 @@
 package com.coder.springbootinit.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.common.ErrorCode;
@@ -20,7 +21,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -162,5 +165,58 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             organizationVO.setLeader(leader);
         }
         return organizationVO;
+    }
+
+    @Override
+    public List<Long> getAllSubOrgIds(Long orgId) {
+        List<Long> orgIdList = new ArrayList<>();
+        // 先添加当前组织ID
+        orgIdList.add(orgId);
+        // 递归获取所有子组织ID
+        getSubOrgIdsRecursive(orgId, orgIdList);
+        return orgIdList;
+    }
+
+    /**
+     * 递归获取所有子组织ID
+     * @param orgId 当前组织ID
+     * @param orgIdList 组织ID列表，用于存储结果
+     */
+    private void getSubOrgIdsRecursive(Long orgId, List<Long> orgIdList) {
+        // 查询直接子组织
+        List<Organization> subOrgList = this.lambdaQuery().eq(Organization::getParentId, orgId).list();
+        
+        // 遍历子组织，添加到结果列表，并递归获取其子组织
+        for (Organization subOrg : subOrgList) {
+            orgIdList.add(subOrg.getId());
+            getSubOrgIdsRecursive(subOrg.getId(), orgIdList);
+        }
+    }
+    
+    @Override
+    public List<Long> getAllParentOrgIds(Long orgId) {
+        List<Long> orgIdList = new ArrayList<>();
+        // 先添加当前组织ID
+        orgIdList.add(orgId);
+        // 递归获取所有父组织ID
+        getParentOrgIdsRecursive(orgId, orgIdList);
+        return orgIdList;
+    }
+    
+    /**
+     * 递归获取所有父组织ID
+     * @param orgId 当前组织ID
+     * @param orgIdList 组织ID列表，用于存储结果
+     */
+    private void getParentOrgIdsRecursive(Long orgId, List<Long> orgIdList) {
+        // 查询当前组织的父组织
+        Organization currentOrg = this.getById(orgId);
+        if (currentOrg != null && currentOrg.getParentId() != null) {
+            // 添加父组织ID到结果列表
+            Long parentId = currentOrg.getParentId();
+            orgIdList.add(parentId);
+            // 递归获取父组织的父组织
+            getParentOrgIdsRecursive(parentId, orgIdList);
+        }
     }
 }

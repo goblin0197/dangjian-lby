@@ -21,6 +21,9 @@ import com.coder.springbootinit.model.vo.ActivityVO;
 import com.coder.springbootinit.service.ActivityService;
 import com.coder.springbootinit.service.OrganizationService;
 import com.coder.springbootinit.service.UserService;
+
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +37,7 @@ import org.springframework.stereotype.Service;
  *
 */
 @Service
+@Slf4j
 public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> implements ActivityService {
 
     @Resource
@@ -154,13 +158,31 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
     }
 
     @Override
-    public boolean updateActivityStatistics(Long id) {
+    public boolean updateActivityStatisticsById(Long id) {
         // 获取活动信息
         Activity activity = this.getById(id);
         if (activity == null) {
             throw new RuntimeException("活动不存在");
         }
+        return this.updateActivityStatisticsByActivity(activity);
+        
+    }
 
+    @Override
+    public boolean updateAllActivityStatistics() {
+        // 获取所有未删除的活动
+        List<Activity> activityList = this.list();
+        // 遍历所有活动，逐个更新统计信息
+        for (Activity activity : activityList) {
+            this.updateActivityStatisticsByActivity(activity);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean updateActivityStatisticsByActivity(Activity activity) {
+        Long id = activity.getId();
+        log.info("更新活动统计信息，活动ID：{}", id);
         // 统计活动的总参与人数（已报名人数）
         QueryWrapper<ActivityEnroll> enrollQueryWrapper = new QueryWrapper<>();
         enrollQueryWrapper.eq("activityId", id);
@@ -170,6 +192,7 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         // 统计活动的实际参与人数（已签到人数）
         QueryWrapper<ActivityEnroll> signQueryWrapper = new QueryWrapper<>();
         signQueryWrapper.eq("activityId", id);
+        signQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode()); // 已报名
         signQueryWrapper.eq("isSign", ActivityEnrollSignEnum.SIGNED.getCode()); // 已签到
         int actualParticipant = Math.toIntExact(activityEnrollMapper.selectCount(signQueryWrapper));
 
@@ -186,41 +209,6 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
 
         // 保存更新后的活动数据
         return this.updateById(updateActivity);
-    }
-
-    @Override
-    public boolean updateAllActivityStatistics() {
-        // 获取所有未删除的活动
-        List<Activity> activityList = this.list();
-
-        for (Activity activity : activityList) {
-            // 统计活动的总参与人数（已报名人数）
-            QueryWrapper<ActivityEnroll> enrollQueryWrapper = new QueryWrapper<>();
-            enrollQueryWrapper.eq("activityId", activity.getId());
-            enrollQueryWrapper.eq("participantStatus", 1); // 已报名
-            int totalParticipant = Math.toIntExact(activityEnrollMapper.selectCount(enrollQueryWrapper));
-
-            // 统计活动的实际参与人数（已签到人数）
-            QueryWrapper<ActivityEnroll> signQueryWrapper = new QueryWrapper<>();
-            signQueryWrapper.eq("activityId", activity.getId());
-            signQueryWrapper.eq("isSign", 1); // 已签到
-            int actualParticipant = Math.toIntExact(activityEnrollMapper.selectCount(signQueryWrapper));
-
-            // 计算签到率，并保留两位小数
-            double signRate = totalParticipant > 0 ? (double) actualParticipant / totalParticipant : 0.0;
-            // 保留两位小数
-            signRate = Math.round(signRate * 100.0) / 100.0;
-            Activity updateActivity = Activity.builder()
-                    .id(activity.getId())
-                    .totalParticipant(totalParticipant)
-                    .actualParticipant(actualParticipant)
-                    .signRate(signRate)
-                    .build();
-
-            // 保存更新后的活动数据
-            this.updateById(updateActivity);
-        }
-        return true;
     }
 
     /**

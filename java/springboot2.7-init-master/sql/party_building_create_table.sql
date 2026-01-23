@@ -136,6 +136,9 @@ create table if not exists activity
     location          varchar(512)                           not null comment '活动地点',
     maxNum   int                                        DEFAULT 1 not null  comment '最大参与人数',
     currentNum int                                      default 0 not null comment '当前参与人数',
+    totalParticipant  int                                      default 0 not null comment '总参与人数（已报名人数）',
+    actualParticipant int                                      default 0 not null comment '实际参与人数（已签到人数）',
+    signRate          double                                   default 0.00 not null comment '签到率（实际参与人数/总参与人数）',
     status            int                                    not null comment '活动状态:1.待发布/2.已发布/3.进行中/4.已结束',
     signInType        int                                    null comment '签到方式:1.扫码签到/2.手动签到',
     QRCodeUrl         varchar(1024)                          null comment '签到二维码URL(系统生成)',
@@ -186,6 +189,45 @@ create table if not exists notice
     index idx_orgId (orgId),
     index idx_publisherId (publisherId)
 ) comment '公告表' collate = utf8mb4_unicode_ci;
+
+# 用户量化统计表
+create table if not exists user_quantify
+(
+    id                  bigint auto_increment comment 'id' primary key,
+    userId              bigint                                 not null comment '用户ID',
+    statDate            date                                   not null comment '统计日期',
+    totalActivity       int                                    default 0 not null comment '所属组织及其父组织开展总活动数',
+    participateActivity int                                    default 0 not null comment '参与活动数',
+    participateRate     double                                 default 0.0 not null comment '活动参与度(参与活动数/总活动数)',
+    signActivity        int                                    default 0 not null comment '签到活动数',
+    signRate            double                                 default 0.0 not null comment '签到率(签到活动数/参与活动数)',
+    fileCount           int                                    default 0 not null comment '材料文件数量',
+    createTime          datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime          datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete            tinyint      default 0                 not null comment '是否删除',
+    unique index uk_userId_statDate (userId, statDate),
+    index idx_userId (userId),
+    index idx_statDate (statDate)
+) comment '用户量化统计表' collate = utf8mb4_unicode_ci;
+
+# 组织量化统计表
+create table if not exists org_quantify
+(
+    id                  bigint auto_increment comment 'id' primary key,
+    orgId               bigint                                 not null comment '组织ID',
+    statDate            date                                   not null comment '统计日期',
+    activityCount       int                                    default 0 not null comment '活动次数',
+    totalParticipant    int                                    default 0 not null comment '总参与人数',
+    totalSign           int                                    default 0 not null comment '总签到人数',
+    avgParticipant      double                                 default 0.0 not null comment '平均每次活动参与人数',
+    avgSign             double                                 default 0.0 not null comment '平均每次活动签到人数',
+    createTime          datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime          datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete            tinyint      default 0                 not null comment '是否删除',
+    unique index uk_orgId_statDate (orgId, statDate),
+    index idx_orgId (orgId),
+    index idx_statDate (statDate)
+) comment '组织量化统计表' collate = utf8mb4_unicode_ci;
 
 
 # 签到表
