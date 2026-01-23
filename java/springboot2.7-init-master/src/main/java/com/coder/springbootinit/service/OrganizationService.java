@@ -1,5 +1,7 @@
 package com.coder.springbootinit.service;
 
+import java.util.List;
+
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.coder.springbootinit.model.dto.organization.OrganizationQueryRequest;
@@ -55,4 +57,18 @@ public interface OrganizationService extends IService<Organization> {
      * @return 是否填充成功
      */
     OrganizationVO fillOrganizationLeader(Organization organization);
+
+    /**
+     * 获取指定组织及其所有子组织（递归）的ID列表
+     * @param orgId 组织ID
+     * @return 组织ID列表
+     */
+    List<Long> getAllSubOrgIds(Long orgId);
+    
+    /**
+     * 获取指定组织及其所有父组织（递归）的ID列表
+     * @param orgId 组织ID
+     * @return 组织ID列表
+     */
+    List<Long> getAllParentOrgIds(Long orgId);
 }
