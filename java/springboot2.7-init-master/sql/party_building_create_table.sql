@@ -29,6 +29,12 @@ create table if not exists user
     index idx_userRole (userRole),
     index idx_userType (userType)
 ) comment '用户表' collate = utf8mb4_unicode_ci;
+INSERT INTO `user` VALUES (2004440568437137410, 'stest', '160d06e9d66b05f2ca1124e12d6a317e', 'tester', '', 'super_admin', 0, NULL, NULL, '教师', 0, NULL, NULL, '党员', '2025-12-26 14:34:06', '2025-12-28 16:32:11', 0);
+INSERT INTO `user` VALUES (2004442313254998018, 'otest', '160d06e9d66b05f2ca1124e12d6a317e', 'tester', '', 'org_admin', 0, NULL, NULL, '教师', 0, NULL, NULL, NULL, '2025-12-26 14:41:02', '2025-12-28 16:32:11', 0);
+INSERT INTO `user` VALUES (2004442386789535746, 'ptest', '160d06e9d66b05f2ca1124e12d6a317e', 'tester', '', 'party_member', 0, NULL, NULL, '教师', 0, NULL, NULL, NULL, '2025-12-26 14:41:20', '2025-12-28 16:32:11', 0);
+INSERT INTO `user` VALUES (2004442425519738881, 'atest', '160d06e9d66b05f2ca1124e12d6a317e', 'tester', '', 'activist_development', 0, NULL, NULL, '学生', 0, NULL, NULL, '共青团员', '2025-12-26 14:41:29', '2026-01-17 17:03:15', 0);
+INSERT INTO `user` VALUES (2004816881140359169, 'test2', '160d06e9d66b05f2ca1124e12d6a317e', '测试', '11111', 'activist_development', 2, '111111', 'qqqq', '学生', 1, '2025-12-12', '2025-12-12', '预备党员', '2025-12-27 15:29:26', '2025-12-31 17:04:36', 0);
+
 
 # 党组织表
 create table if not exists organization
@@ -49,7 +55,8 @@ create table if not exists organization
     index idx_parentId (parentId),
     index idx_orgType (orgType)
 ) comment '党组织表' collate = utf8mb4_unicode_ci;
-
+INSERT INTO `organization` VALUES (1, '广州城市理工学院', 'GCU', 0, '党委', 1, NULL, NULL, NULL, '2025-12-27 16:20:27', '2025-12-27 16:20:27', 0);
+INSERT INTO `organization` VALUES (2, '计算机工程学院/大数据学院', 'COMPUTER', 1, '党总支', 2, 2004440568437137410, NULL, NULL, '2025-12-27 16:21:19', '2025-12-28 16:34:18', 0);
 
 
 # 组织关系转移表
