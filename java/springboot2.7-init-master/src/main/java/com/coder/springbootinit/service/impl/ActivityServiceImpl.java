@@ -174,7 +174,10 @@ public class ActivityServiceImpl extends ServiceImpl<ActivityMapper, Activity> i
         List<Activity> activityList = this.list();
         // 遍历所有活动，逐个更新统计信息
         for (Activity activity : activityList) {
-            this.updateActivityStatisticsByActivity(activity);
+            boolean result = this.updateActivityStatisticsByActivity(activity);
+            if (!result) {
+                log.error("更新活动统计信息失败，活动ID：{}", activity.getId());
+            }
         }
         return true;
     }

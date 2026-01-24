@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.UserQuantifyMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.UserQuantify">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="statDate" column="statDate" jdbcType="DATE"/>
+        <result property="totalActivity" column="totalActivity" jdbcType="INTEGER"/>
+        <result property="participateActivity" column="participateActivity" jdbcType="INTEGER"/>
+        <result property="participateRate" column="participateRate" jdbcType="DOUBLE"/>
+        <result property="signActivity" column="signActivity" jdbcType="INTEGER"/>
+        <result property="signRate" column="signRate" jdbcType="DOUBLE"/>
+        <result property="fileCount" column="fileCount" jdbcType="INTEGER"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        , userId, statDate, totalActivity, participateActivity, participateRate,
+        signActivity, signRate, fileCount, createTime, updateTime, isDelete
+    </sql>
+</mapper>

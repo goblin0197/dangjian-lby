@@ -204,7 +204,7 @@ public class ActivityController {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean result = activityService.updateActivityStatistics(id);
+        boolean result = activityService.updateActivityStatisticsById(id);
         ThrowUtils.throwIf(!result, ErrorCode.OPERATION_ERROR);
         return ResultUtils.success(result);
     }

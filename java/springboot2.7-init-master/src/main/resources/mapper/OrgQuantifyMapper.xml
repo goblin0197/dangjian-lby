@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.OrgQuantifyMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.OrgQuantify">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orgId" column="orgId" jdbcType="BIGINT"/>
+        <result property="statDate" column="statDate" jdbcType="DATE"/>
+        <result property="activityCount" column="activityCount" jdbcType="INTEGER"/>
+        <result property="totalParticipant" column="totalParticipant" jdbcType="INTEGER"/>
+        <result property="totalSign" column="totalSign" jdbcType="INTEGER"/>
+        <result property="avgParticipant" column="avgParticipant" jdbcType="DOUBLE"/>
+        <result property="avgSign" column="avgSign" jdbcType="DOUBLE"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        , orgId, statDate, activityCount, totalParticipant, totalSign,
+        avgParticipant, avgSign, createTime, updateTime, isDelete
+    </sql>
+</mapper>
