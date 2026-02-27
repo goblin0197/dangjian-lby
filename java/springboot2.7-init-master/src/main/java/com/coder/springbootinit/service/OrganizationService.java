@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.coder.springbootinit.model.dto.organization.OrganizationQueryRequest;
 import com.coder.springbootinit.model.entity.Organization;
+import com.coder.springbootinit.model.vo.OrganizationGradedVO;
 import com.coder.springbootinit.model.vo.OrganizationVO;
 
 /**
@@ -71,4 +72,11 @@ public interface OrganizationService extends IService<Organization> {
      * @return 组织ID列表
      */
     List<Long> getAllParentOrgIds(Long orgId);
+
+    /**
+     * 获取指定组织及其所有子组织（递归）的组织信息列表
+     * @param orgId 组织ID
+     * @return 组织信息列表
+     */
+    OrganizationGradedVO getSubGradedOrgs(Long orgId);
 }

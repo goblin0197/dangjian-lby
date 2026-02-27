@@ -1,5 +1,6 @@
 package com.coder.springbootinit.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.coder.springbootinit.annotation.AuthCheck;
 import com.coder.springbootinit.common.BaseResponse;
@@ -354,4 +355,23 @@ public class UserController {
     public BaseResponse<Map<String, String>> listRole() {
         return ResultUtils.success(UserRoleEnum.getRoleMap());
     }
+
+    /**
+     * 获取用户封装列表
+     * @param userQueryRequest 用户查询请求
+     * @param request HTTP请求
+     * @return 用户封装列表
+     */
+    @PostMapping("/list")
+    @ApiOperation(value = "获取用户封装列表")
+    public BaseResponse<List<UserVO>> listUserVO(@RequestBody UserQueryRequest userQueryRequest,
+            HttpServletRequest request) {
+        if (userQueryRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        QueryWrapper<User> queryWrapper = userService.getQueryWrapper(userQueryRequest);
+        List<UserVO> userVOList = userService.getUserVO(userService.list(queryWrapper));
+        return ResultUtils.success(userVOList);
+    }
+    
 }

@@ -11,6 +11,7 @@ import com.coder.springbootinit.model.dto.organization.OrganizationBindRequest;
 import com.coder.springbootinit.model.dto.organization.OrganizationQueryRequest;
 import com.coder.springbootinit.model.dto.organization.OrganizationUpdateRequest;
 import com.coder.springbootinit.model.entity.Organization;
+import com.coder.springbootinit.model.vo.OrganizationGradedVO;
 import com.coder.springbootinit.model.vo.OrganizationVO;
 import com.coder.springbootinit.service.OrganizationService;
 import com.coder.springbootinit.service.UserService;
@@ -155,5 +156,17 @@ public class OrganizationController {
         Long leaderId = organizationBindRequest.getLeaderId();
         boolean result = organizationService.bindOrganizationLeader(orgId, leaderId);
         return ResultUtils.success(result);
+    }
+    
+    /**
+     * 获取党组织及其子党组织
+     * @param orgId 党组织ID
+     * @return 党组织及其子党组织列表
+     */
+    @GetMapping("/get/graded")
+    @ApiOperation(value = "获取党组织及其子党组织")
+    public BaseResponse<OrganizationGradedVO> getOrganizationGradedById(@RequestParam Long orgId) {
+        OrganizationGradedVO organizationGradedVO = organizationService.getSubGradedOrgs(orgId);
+        return ResultUtils.success(organizationGradedVO);
     }
 }

@@ -1,6 +1,5 @@
 package com.coder.springbootinit.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.common.ErrorCode;
@@ -11,6 +10,7 @@ import com.coder.springbootinit.mapper.OrganizationMapper;
 import com.coder.springbootinit.model.dto.organization.OrganizationQueryRequest;
 import com.coder.springbootinit.model.entity.Organization;
 import com.coder.springbootinit.model.entity.User;
+import com.coder.springbootinit.model.vo.OrganizationGradedVO;
 import com.coder.springbootinit.model.vo.OrganizationVO;
 import com.coder.springbootinit.service.OrganizationService;
 import com.coder.springbootinit.service.UserService;
@@ -217,6 +217,38 @@ public class OrganizationServiceImpl extends ServiceImpl<OrganizationMapper, Org
             orgIdList.add(parentId);
             // 递归获取父组织的父组织
             getParentOrgIdsRecursive(parentId, orgIdList);
+        }
+    }
+
+    @Override
+    public OrganizationGradedVO getSubGradedOrgs(Long orgId) {
+        OrganizationGradedVO orgGradedVO = new OrganizationGradedVO();
+        // 先添加当前组织
+        Organization org = this.getById(orgId);
+        if (org == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "党组织不存在");
+        }
+        BeanUtils.copyProperties(org, orgGradedVO);
+        // 递归获取所有子组织
+        getSubOrgsRecursive(orgId, orgGradedVO);
+        return orgGradedVO;
+    }
+
+    /**
+     * 递归获取所有子组织
+     * @param orgId 当前组织ID
+     * @param orgGradedVO 组织VO，用于存储结果
+     */
+    private void getSubOrgsRecursive(Long orgId, OrganizationGradedVO orgGradedVO) {
+        // 查询直接子组织
+        List<Organization> subOrgList = this.lambdaQuery().eq(Organization::getParentId, orgId).list();
+        
+        // 遍历子组织，添加到结果列表，并递归获取其子组织
+        for (Organization subOrg : subOrgList) {
+            OrganizationGradedVO subOrgVO = new OrganizationGradedVO();
+            BeanUtils.copyProperties(subOrg, subOrgVO);
+            orgGradedVO.getSubOrgList().add(subOrgVO);
+            getSubOrgsRecursive(subOrg.getId(), subOrgVO);
         }
     }
 }
