@@ -23,4 +23,12 @@
         , userId, userName, trainerId, trainerName, startDate, endDate, status, 
         createTime, updateTime, isDelete
     </sql>
+
+    <!-- 根据组织ID查询培养关系列表 -->
+    <select id="getTrainerRelationsByOrgId" resultMap="BaseResultMap">
+        SELECT tr.*
+        FROM trainer_relation tr
+        INNER JOIN user u ON tr.userId = u.id
+        WHERE u.orgId = #{orgId} AND tr.isDelete = 0 AND u.isDelete = 0
+    </select>
 </mapper>

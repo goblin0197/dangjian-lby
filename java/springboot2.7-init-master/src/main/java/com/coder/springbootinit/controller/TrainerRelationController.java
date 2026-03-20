@@ -3,6 +3,7 @@ package com.coder.springbootinit.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.coder.springbootinit.annotation.AuthCheck;
 import com.coder.springbootinit.common.BaseResponse;
+import com.coder.springbootinit.common.DeleteRequest;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
 import com.coder.springbootinit.constant.UserConstant;
@@ -71,6 +72,35 @@ public class TrainerRelationController {
         queryWrapper.eq("trainerId", trainerId);
         List<TrainerRelation> trainerRelations = trainerRelationService.list(queryWrapper);
         return ResultUtils.success(trainerRelations);
+    }
+
+    /**
+     * 根据组织ID获取培养关系列表
+     * @param orgId 组织ID
+     * @return 培养关系列表
+     */
+    @GetMapping("/list/byOrgId")
+    @ApiOperation(value = "根据组织ID获取培养关系列表")
+    // @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    public BaseResponse<List<TrainerRelation>> getTrainerRelationsByOrgId(@RequestParam Long orgId) {
+        List<TrainerRelation> trainerRelations = trainerRelationService.getTrainerRelationsByOrgId(orgId);
+        return ResultUtils.success(trainerRelations);
+    }
+
+    /**
+     * 删除培养关系
+     * @param deleteRequest 删除请求
+     * @return 是否删除成功
+     */
+    @PostMapping("/delete")
+    @ApiOperation(value = "删除培养关系")
+    // @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    public BaseResponse<Boolean> deleteTrainerRelation(@RequestBody DeleteRequest deleteRequest) {
+        if (deleteRequest == null || deleteRequest.getId() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        boolean result = trainerRelationService.deleteTrainerRelation(deleteRequest.getId());
+        return ResultUtils.success(result);
     }
 
 //    /**

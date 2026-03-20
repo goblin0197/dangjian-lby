@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 培养人关联表 Service 实现类
@@ -25,6 +26,9 @@ public class TrainerRelationServiceImpl extends ServiceImpl<TrainerRelationMappe
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private TrainerRelationMapper trainerRelationMapper;
 
     @Override
     public TrainerRelation addTrainerRelation(TrainerRelationAddRequest trainerRelationAddRequest) {
@@ -90,5 +94,36 @@ public class TrainerRelationServiceImpl extends ServiceImpl<TrainerRelationMappe
         UserConstant.ACTIVIST_DEVELOPMENT_ROLE.equals(user.getUserRole()) &&
         UserConstant.POLITICAL_STATUS_TEAM_UNION_MEMBER.equals(user.getPoliticalStatus());
     
+    }
+
+    /**
+     * 根据组织ID获取培养关系列表
+     * @param orgId 组织ID
+     * @return 培养关系列表
+     */
+    @Override
+    public List<TrainerRelation> getTrainerRelationsByOrgId(Long orgId) {
+        if (orgId == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "组织ID不能为空");
+        }
+        return trainerRelationMapper.getTrainerRelationsByOrgId(orgId);
+    }
+
+    /**
+     * 删除培养关系
+     * @param id 培养关系ID
+     * @return 是否删除成功
+     */
+    @Override
+    public boolean deleteTrainerRelation(Long id) {
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "培养关系ID不能为空");
+        }
+        // 检查培养关系是否存在
+        TrainerRelation trainerRelation = this.getById(id);
+        if (trainerRelation == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "培养关系不存在");
+        }
+        return this.removeById(id);
     }
 }

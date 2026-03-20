@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.coder.springbootinit.model.dto.trainerRelation.TrainerRelationAddRequest;
 import com.coder.springbootinit.model.entity.TrainerRelation;
 
+import java.util.List;
+
 /**
  * 培养人关联表 Service 接口
  *
@@ -36,4 +38,18 @@ public interface TrainerRelationService extends IService<TrainerRelation> {
      * @return 是否合法
      */
     boolean validateOrgMember(Long orgMemberId);
+
+    /**
+     * 根据组织ID获取培养关系列表
+     * @param orgId 组织ID
+     * @return 培养关系列表
+     */
+    List<TrainerRelation> getTrainerRelationsByOrgId(Long orgId);
+
+    /**
+     * 删除培养关系
+     * @param id 培养关系ID
+     * @return 是否删除成功
+     */
+    boolean deleteTrainerRelation(Long id);
 }
