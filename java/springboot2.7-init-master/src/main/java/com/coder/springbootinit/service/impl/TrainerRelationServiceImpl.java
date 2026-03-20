@@ -1,5 +1,6 @@
 package com.coder.springbootinit.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.constant.UserConstant;
@@ -11,6 +12,7 @@ import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.enums.TrainerRelationStatusEnum;
 import com.coder.springbootinit.service.TrainerRelationService;
 import com.coder.springbootinit.service.UserService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 
@@ -125,5 +127,34 @@ public class TrainerRelationServiceImpl extends ServiceImpl<TrainerRelationMappe
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "培养关系不存在");
         }
         return this.removeById(id);
+    }
+
+    /**
+     * 获取可选的培养人列表
+     * 培养人条件：用户类型为教师、政治面貌为党员、用户角色不为积极分子/发展对象
+     * @param orgId 组织ID（可选）
+     * @param userType 用户类型（可选）
+     * @return 培养人列表
+     */
+    @Override
+    public List<User> getAvailableTrainers(Long orgId, String userType) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        // 培养人必须是教师
+        queryWrapper.eq("userType", UserConstant.USER_TYPE_TEACHER);
+        // 政治面貌为党员（包括正式党员和预备党员）
+        queryWrapper.in("politicalStatus", UserConstant.POLITICAL_STATUS_ORG_MEMBER, UserConstant.POLITICAL_STATUS_PROBATIONARY_ORG_MEMBER);
+        // 用户角色不能是积极分子/发展对象
+        queryWrapper.ne("userRole", UserConstant.ACTIVIST_DEVELOPMENT_ROLE);
+        // 可选条件：组织ID
+        if (orgId != null) {
+            queryWrapper.eq("orgId", orgId);
+        }
+        // 可选条件：用户类型（如果前端需要筛选）
+        if (StringUtils.isNotBlank(userType)) {
+            queryWrapper.eq("userType", userType);
+        }
+        // 按创建时间降序排列
+        queryWrapper.orderByDesc("createTime");
+        return userService.list(queryWrapper);
     }
 }

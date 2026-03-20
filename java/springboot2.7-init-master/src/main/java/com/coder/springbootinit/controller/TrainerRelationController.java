@@ -10,9 +10,11 @@ import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.model.dto.trainerRelation.TrainerRelationAddRequest;
 import com.coder.springbootinit.model.entity.TrainerRelation;
+import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.service.TrainerRelationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -101,6 +103,21 @@ public class TrainerRelationController {
         }
         boolean result = trainerRelationService.deleteTrainerRelation(deleteRequest.getId());
         return ResultUtils.success(result);
+    }
+
+    /**
+     * 获取可选的培养人列表
+     * @param orgId 组织ID（可选）
+     * @param userType 用户类型（可选）
+     * @return 培养人列表
+     */
+    @GetMapping("/listAvailableTrainers")
+    @ApiOperation(value = "获取可选的培养人列表")
+    public BaseResponse<List<User>> listAvailableTrainers(
+            @ApiParam(value = "组织ID") @RequestParam(required = false) Long orgId,
+            @ApiParam(value = "用户类型") @RequestParam(required = false) String userType) {
+        List<User> trainers = trainerRelationService.getAvailableTrainers(orgId, userType);
+        return ResultUtils.success(trainers);
     }
 
 //    /**
