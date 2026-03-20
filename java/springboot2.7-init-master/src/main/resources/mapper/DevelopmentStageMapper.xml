@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.DevelopmentStageMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.DevelopmentStage">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="trainerId" column="trainerId" jdbcType="BIGINT"/>
+        <result property="stageName" column="stageName" jdbcType="VARCHAR"/>
+        <result property="stageStartTime" column="stageStartTime" jdbcType="DATE"/>
+        <result property="stageEndTime" column="stageEndTime" jdbcType="DATE"/>
+        <result property="stageStatus" column="stageStatus" jdbcType="TINYINT"/>
+        <result property="assessmentContent" column="assessmentContent" jdbcType="VARCHAR"/>
+        <result property="assessmentResult" column="assessmentResult" jdbcType="TINYINT"/>
+        <result property="auditUserId" column="auditUserId" jdbcType="BIGINT"/>
+        <result property="auditTime" column="auditTime" jdbcType="TIMESTAMP"/>
+        <result property="auditRemark" column="auditRemark" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, userId, trainerId, stageName, stageStartTime, stageEndTime, stageStatus,
+        assessmentContent, assessmentResult, auditUserId, auditTime, auditRemark, createTime, updateTime, isDelete
+    </sql>
+
+    <!-- 根据用户ID查询发展阶段列表 -->
+    <select id="getDevelopmentStagesByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM development_stage
+        WHERE userId = #{userId} AND isDelete = 0
+        ORDER BY stageStartTime DESC
+    </select>
+
+    <!-- 根据组织ID查询发展阶段列表 -->
+    <select id="getDevelopmentStagesByOrgId" resultMap="BaseResultMap">
+        SELECT ds.*
+        FROM development_stage ds
+        INNER JOIN user u ON ds.userId = u.id
+        WHERE u.orgId = #{orgId} AND ds.isDelete = 0 AND u.isDelete = 0
+        ORDER BY ds.stageStartTime DESC
+    </select>
+</mapper>

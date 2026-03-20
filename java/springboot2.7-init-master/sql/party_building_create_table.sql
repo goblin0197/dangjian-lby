@@ -117,6 +117,7 @@ create table if not exists file
     originFileName varchar(512)                          not null comment '原始文件名',
     orgId          bigint                                 null comment '所属党组织ID',
     userId         bigint                                 null comment '上传用户ID',
+    stageId        bigint                                 null comment '所属发展阶段ID',
     fileUrl        varchar(1024)                          not null comment '文件URL',
     fileSize       int                                 not null comment '文件大小（字节）',
     isTemplate     tinyint      default 0                 not null comment '是否为模板：0-否，1-是',
@@ -257,25 +258,46 @@ create table if not exists org_quantify
 
 
 # 发展阶段表
--- create table if not exists development_stage
--- (
---     id                bigint auto_increment comment 'id' primary key,
---     userId            bigint                                 not null comment '用户ID',
---     trainerId         bigint                                 not null comment '培养人ID',
---     stageName         varchar(256)                           not null comment '阶段名称：入党申请/积极分子/发展对象/预备党员/正式党员',
---     stageStartTime    date                                   not null comment '阶段开始时间',
---     stageEndTime      date                                   null comment '阶段结束时间',
---     stageStatus       varchar(64)                            not null comment '阶段状态：进行中/已完成/已终止',
---     assessmentContent text                                   null comment '考察内容',
---     assessmentResult  varchar(64)                            null comment '考察结果：合格/不合格',
---     createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
---     updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
---     isDelete          tinyint      default 0                 not null comment '是否删除',
---     index idx_userId (userId),
---     index idx_trainerId (trainerId),
---     index idx_stageName (stageName),
---     index idx_stageStatus (stageStatus)
--- ) comment '发展阶段表' collate = utf8mb4_unicode_ci;
+create table if not exists development_stage
+(
+    id                bigint auto_increment comment 'id' primary key,
+    userId            bigint                                 not null comment '用户ID',
+    trainerId         bigint                                 not null comment '培养人ID',
+    stageName         varchar(256)                           not null comment '阶段名称：积极分子/发展对象/预备党员/正式党员',
+    stageStartTime    date                                   not null comment '阶段开始时间',
+    stageEndTime      date                                   null comment '阶段结束时间',
+    stageStatus       tinyint      default 0                 not null comment '阶段状态：0进行中/1已完成/2已终止',
+    assessmentContent text                                   null comment '考察内容',
+    assessmentResult  tinyint                                null comment '考察结果：1合格/0不合格/2未审核',
+    auditUserId       bigint                                 null comment '审核人员ID',
+    auditTime         datetime                               null comment '审核时间',
+    auditRemark       text                                   null comment '审核意见',
+    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    updateTime        datetime     default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    isDelete          tinyint      default 0                 not null comment '是否删除',
+    index idx_userId (userId),
+    index idx_trainerId (trainerId),
+    index idx_stageName (stageName),
+    index idx_stageStatus (stageStatus)
+) comment '发展阶段表' collate = utf8mb4_unicode_ci;
+
+# 发展阶段变更日志表
+create table if not exists development_stage_log
+(
+    id                bigint auto_increment comment 'id' primary key,
+    stageId           bigint                                 not null comment '发展阶段记录ID',
+    userId            bigint                                 not null comment '用户ID',
+    operationType     varchar(64)                            not null comment '操作类型：创建/更新/提交审核/审核/删除',
+    operatorId        bigint                                 not null comment '操作人ID',
+    operatorName      varchar(128)                           not null comment '操作人姓名',
+    beforeData        text                                   null comment '变更前数据（JSON格式）',
+    afterData         text                                   null comment '变更后数据（JSON格式）',
+    remark            text                                   null comment '备注说明',
+    createTime        datetime     default CURRENT_TIMESTAMP not null comment '创建时间',
+    index idx_stageId (stageId),
+    index idx_userId (userId),
+    index idx_operationType (operationType)
+) comment '发展阶段变更日志表' collate = utf8mb4_unicode_ci;
 
 
 -- # 量化统计表

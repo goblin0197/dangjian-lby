@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.coder.springbootinit.mapper.DevelopmentStageLogMapper">
+    <resultMap id="BaseResultMap" type="com.coder.springbootinit.model.entity.DevelopmentStageLog">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="stageId" column="stageId" jdbcType="BIGINT"/>
+        <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="operationType" column="operationType" jdbcType="VARCHAR"/>
+        <result property="operatorId" column="operatorId" jdbcType="BIGINT"/>
+        <result property="operatorName" column="operatorName" jdbcType="VARCHAR"/>
+        <result property="beforeData" column="beforeData" jdbcType="VARCHAR"/>
+        <result property="afterData" column="afterData" jdbcType="VARCHAR"/>
+        <result property="remark" column="remark" jdbcType="VARCHAR"/>
+        <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, stageId, userId, operationType, operatorId, operatorName, beforeData, afterData, remark, createTime
+    </sql>
+
+    <!-- 根据发展阶段ID查询变更日志列表 -->
+    <select id="getLogsByStageId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM development_stage_log
+        WHERE stageId = #{stageId}
+        ORDER BY createTime DESC
+    </select>
+
+    <!-- 根据用户ID查询变更日志列表 -->
+    <select id="getLogsByUserId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM development_stage_log
+        WHERE userId = #{userId}
+        ORDER BY createTime DESC
+    </select>
+</mapper>

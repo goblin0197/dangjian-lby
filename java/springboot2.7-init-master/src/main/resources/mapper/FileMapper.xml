@@ -10,6 +10,7 @@
         <result property="originFileName" column="originFileName" jdbcType="VARCHAR"/>
         <result property="orgId" column="orgId" jdbcType="BIGINT"/>
         <result property="userId" column="userId" jdbcType="BIGINT"/>
+        <result property="stageId" column="stageId" jdbcType="BIGINT"/>
         <result property="fileUrl" column="fileUrl" jdbcType="VARCHAR"/>
         <result property="fileSize" column="fileSize" jdbcType="INTEGER"/>
         <result property="isTemplate" column="isTemplate" jdbcType="TINYINT"/>
@@ -20,7 +21,7 @@
 
     <sql id="Base_Column_List">
         id
-        , fileName, originFileName, orgId, userId, fileUrl, fileSize, isTemplate, 
+        , fileName, originFileName, orgId, userId, stageId, fileUrl, fileSize, isTemplate, 
         createTime, updateTime, isDelete
     </sql>
 </mapper>

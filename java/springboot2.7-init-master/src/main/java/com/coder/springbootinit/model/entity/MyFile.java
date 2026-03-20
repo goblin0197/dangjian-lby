@@ -44,6 +44,11 @@ public class MyFile implements Serializable {
     private Long userId;
 
     /**
+     * 所属发展阶段ID
+     */
+    private Long stageId;
+
+    /**
      * 文件URL
      */
     private String fileUrl;

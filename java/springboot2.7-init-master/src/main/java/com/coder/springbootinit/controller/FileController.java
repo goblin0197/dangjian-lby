@@ -14,6 +14,7 @@ import com.coder.springbootinit.model.dto.file.UploadFileRequest;
 import com.coder.springbootinit.model.entity.MyFile;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.enums.FileUploadBizEnum;
+import com.coder.springbootinit.service.DevelopmentStageService;
 import com.coder.springbootinit.service.FileService;
 import com.coder.springbootinit.service.OrganizationService;
 import com.coder.springbootinit.service.UserService;
@@ -54,6 +55,9 @@ public class FileController {
     @Resource
     private OrganizationService organizationService;
 
+    @Resource
+    private DevelopmentStageService developmentStageService;
+
     // 本地文件存储路径
     private static final Path STATIC_PATH = Paths.get(System.getProperty("user.dir"), "static");
     // 文件访问前缀
@@ -74,6 +78,7 @@ public class FileController {
         // 获取上传文件的业务类型
         String biz = uploadFileRequest.getBiz();
         Long orgId = uploadFileRequest.getOrgId();
+        Long stageId = uploadFileRequest.getStageId();
         FileUploadBizEnum fileUploadBizEnum = FileUploadBizEnum.getEnumByValue(biz);
         if (fileUploadBizEnum == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
@@ -103,6 +108,9 @@ public class FileController {
         myFile.setFileSize((int) multipartFile.getSize());
         if(organizationService.getById(orgId) != null){
             myFile.setOrgId(orgId);
+        }
+        if(developmentStageService.getById(stageId) != null){
+            myFile.setStageId(stageId);
         }
         // 构建相对路径
         String relativePath = fileService.getRelativePath(fileUploadBizEnum, loginUser.getId(), randomFileName);

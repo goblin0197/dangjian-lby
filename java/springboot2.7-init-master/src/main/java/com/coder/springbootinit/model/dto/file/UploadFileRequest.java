@@ -24,5 +24,11 @@ public class UploadFileRequest implements Serializable {
     @ApiModelProperty(value = "党组织ID,业务为template时必填")
     private Long orgId;
 
+    /**
+     * 阶段发展ID
+     */
+    @ApiModelProperty(value = "发展阶段ID,用户上传自己的材料时必填")
+    private Long stageId;
+
     private static final long serialVersionUID = 1L;
 }
