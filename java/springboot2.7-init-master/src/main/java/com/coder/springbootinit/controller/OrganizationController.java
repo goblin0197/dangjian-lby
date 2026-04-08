@@ -81,7 +81,7 @@ public class OrganizationController {
      */
     @PostMapping("/delete")
     @ApiOperation(value = "删除党组织")
-    public BaseResponse<Boolean> deleteOrganization(@RequestParam DeleteRequest deleteRequest) {
+    public BaseResponse<Boolean> deleteOrganization(@RequestBody DeleteRequest deleteRequest) {
         boolean result = organizationService.deleteOrganization(deleteRequest.getId());
         return ResultUtils.success(result);
     }
