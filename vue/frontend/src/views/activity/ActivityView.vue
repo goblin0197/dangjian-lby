@@ -11,6 +11,34 @@
       </div>
     </div>
 
+    <!-- 统计卡片区域 -->
+    <div class="stats-container" v-if="!loading">
+      <div class="stat-card">
+        <div class="stat-number" style="color: #1890ff">
+          {{ activityStats.total }}
+        </div>
+        <div class="stat-label">总活动数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color: #52c41a">
+          {{ activityStats.published }}
+        </div>
+        <div class="stat-label">已发布</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color: #faad14">
+          {{ activityStats.ongoing }}
+        </div>
+        <div class="stat-label">进行中</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" style="color: #f5222d">
+          {{ activityStats.ended }}
+        </div>
+        <div class="stat-label">已结束</div>
+      </div>
+    </div>
+
     <!-- 主要内容区 -->
     <!-- 筛选区域 -->
     <a-card class="filter-card">
@@ -20,6 +48,7 @@
             v-model="filterForm.activityName"
             placeholder="请输入活动名称"
             allow-clear
+            style="width: 200px"
           />
         </a-form-item>
         <a-form-item label="活动类型">
@@ -27,6 +56,7 @@
             v-model="filterForm.activityType"
             placeholder="请选择活动类型"
             allow-clear
+            style="width: 150px"
           >
             <a-option value="1">会议</a-option>
             <a-option value="2">志愿活动</a-option>
@@ -39,6 +69,7 @@
             v-model="filterForm.orgId"
             placeholder="请选择所属党组织"
             allow-clear
+            style="width: 200px"
           >
             <a-option
               v-for="option in orgOptions"
@@ -54,6 +85,7 @@
             v-model="filterForm.status"
             placeholder="请选择活动状态"
             allow-clear
+            style="width: 120px"
           >
             <a-option value="1">待发布</a-option>
             <a-option value="2">已发布</a-option>
@@ -66,7 +98,25 @@
             v-model="filterForm.timeRange"
             format="YYYY-MM-DD"
             placeholder="请选择活动时间范围"
+            style="width: 300px"
           />
+        </a-form-item>
+        <a-form-item label="排序方式">
+          <a-select
+            v-model="filterForm.sortBy"
+            placeholder="请选择排序方式"
+            style="width: 150px"
+          >
+            <a-option value="createTime">创建时间</a-option>
+            <a-option value="startTime">开始时间</a-option>
+            <a-option value="status">活动状态</a-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item label="排序顺序">
+          <a-select v-model="filterForm.sortOrder" style="width: 100px">
+            <a-option value="desc">降序</a-option>
+            <a-option value="asc">升序</a-option>
+          </a-select>
         </a-form-item>
         <a-form-item>
           <a-button type="primary" @click="handleSearch">查询</a-button>
@@ -77,6 +127,11 @@
 
     <!-- 活动列表 -->
     <a-card class="list-card" style="margin-top: 16px">
+      <template #loading>
+        <div style="display: flex; justify-content: center; padding: 40px">
+          <a-spin size="large" tip="加载中..." />
+        </div>
+      </template>
       <a-table
         :data="activityList"
         :loading="loading"
@@ -214,6 +269,7 @@
       v-model:visible="activityModalVisible"
       :title="isEdit ? '编辑活动' : '创建活动'"
       width="800px"
+      :ok-loading="buttonLoading.save"
       @ok="handleSaveActivity"
     >
       <a-form
@@ -317,8 +373,15 @@
     >
       <a-tabs v-model:active-key="detailActiveKey">
         <a-tab-pane key="base" title="基本信息">
-          <!-- 新增：报名/取消报名按钮 -->
-          <div style="margin-bottom: 16px">
+          <!-- 操作按钮区域 -->
+          <div
+            style="
+              margin-bottom: 20px;
+              display: flex;
+              gap: 12px;
+              flex-wrap: wrap;
+            "
+          >
             <a-button
               type="primary"
               @click="handleEnrollActivity(currentActivity)"
@@ -339,8 +402,82 @@
             >
               取消报名
             </a-button>
+            <a-button
+              type="success"
+              @click="handlePublishActivity(currentActivity)"
+              v-if="currentActivity?.status === 1"
+            >
+              发布活动
+            </a-button>
+            <a-button
+              type="primary"
+              @click="handleEditActivity(currentActivity)"
+              v-if="[1, 2].includes(currentActivity?.status)"
+            >
+              编辑活动
+            </a-button>
+            <a-button
+              type="success"
+              @click="handleSignIn(currentActivity)"
+              v-if="currentActivity?.status === 3"
+            >
+              签到管理
+            </a-button>
+            <a-button
+              type="danger"
+              @click="handleDeleteActivity(currentActivity?.id)"
+              v-if="currentActivity?.status === 1"
+            >
+              删除活动
+            </a-button>
           </div>
-          <a-descriptions :column="2" bordered>
+
+          <!-- 活动状态和统计信息卡片 -->
+          <div
+            style="
+              margin-bottom: 20px;
+              display: flex;
+              gap: 16px;
+              flex-wrap: wrap;
+            "
+          >
+            <div
+              class="stat-card"
+              style="flex: 1; min-width: 150px; padding: 16px"
+            >
+              <div class="stat-number" style="font-size: 24px; color: #1890ff">
+                {{ currentActivity?.totalParticipant || 0 }}/{{
+                  currentActivity?.maxNum || 0
+                }}
+              </div>
+              <div class="stat-label">报名情况</div>
+            </div>
+            <div
+              class="stat-card"
+              style="flex: 1; min-width: 150px; padding: 16px"
+            >
+              <div class="stat-number" style="font-size: 24px; color: #52c41a">
+                {{ currentActivity?.actualParticipant || 0 }}
+              </div>
+              <div class="stat-label">签到人数</div>
+            </div>
+            <div
+              class="stat-card"
+              style="flex: 1; min-width: 150px; padding: 16px"
+            >
+              <div class="stat-number" style="font-size: 24px; color: #faad14">
+                {{
+                  currentActivity?.signRate
+                    ? (currentActivity.signRate * 100).toFixed(0) + "%"
+                    : "0%"
+                }}
+              </div>
+              <div class="stat-label">签到率</div>
+            </div>
+          </div>
+
+          <!-- 活动基本信息 -->
+          <a-descriptions :column="2" bordered style="margin-bottom: 20px">
             <a-descriptions-item label="活动ID"
               >{{ currentActivity?.id }}
             </a-descriptions-item>
@@ -356,8 +493,10 @@
             <a-descriptions-item label="活动类型"
               >{{ typeLabelMap[currentActivity?.activityType] }}
             </a-descriptions-item>
-            <a-descriptions-item label="活动状态"
-              >{{ statusLabelMap[currentActivity?.status] }}
+            <a-descriptions-item label="活动状态">
+              <a-tag :color="statusColorMap[currentActivity?.status]">
+                {{ statusLabelMap[currentActivity?.status] }}
+              </a-tag>
             </a-descriptions-item>
             <a-descriptions-item label="活动开始时间"
               >{{ formatDate(currentActivity?.startTime) }}
@@ -383,36 +522,79 @@
             <a-descriptions-item label="实际签到人数"
               >{{ currentActivity?.actualParticipant || 0 }}
             </a-descriptions-item>
-            <a-descriptions-item label="签到率">
-              {{
-                currentActivity?.signRate
-                  ? (currentActivity.signRate * 100).toFixed(2) + "%"
-                  : "0%"
-              }}
-            </a-descriptions-item>
             <a-descriptions-item label="创建时间"
               >{{ formatDate(currentActivity?.createTime) }}
             </a-descriptions-item>
-            <a-descriptions-item label="活动描述" :span="2"
-              >{{ currentActivity?.activityContent || "-" }}
-            </a-descriptions-item>
-            <a-descriptions-item label="活动总结" :span="2"
-              >{{ currentActivity?.reviewContent || "-" }}
+            <a-descriptions-item label="更新时间"
+              >{{ formatDate(currentActivity?.updateTime) }}
             </a-descriptions-item>
           </a-descriptions>
+
+          <!-- 活动描述 -->
+          <a-card style="margin-bottom: 20px">
+            <template #title>
+              <span style="font-weight: 600">活动描述</span>
+            </template>
+            <div style="line-height: 1.6">
+              {{ currentActivity?.activityContent || "-" }}
+            </div>
+          </a-card>
+
+          <!-- 活动总结 -->
+          <a-card v-if="currentActivity?.reviewContent">
+            <template #title>
+              <span style="font-weight: 600">活动总结</span>
+            </template>
+            <div style="line-height: 1.6">
+              {{ currentActivity?.reviewContent }}
+            </div>
+          </a-card>
         </a-tab-pane>
         <a-tab-pane key="participant" title="参与人员">
+          <div
+            style="
+              margin-bottom: 16px;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <div>
+              <span style="margin-right: 16px"
+                >总参与人数：{{ currentActivity?.totalParticipant || 0 }}</span
+              >
+              <span
+                >已签到人数：{{ currentActivity?.actualParticipant || 0 }}</span
+              >
+            </div>
+            <a-button
+              type="primary"
+              @click="handleSignIn(currentActivity)"
+              v-if="currentActivity?.status === 3"
+            >
+              进入签到管理
+            </a-button>
+          </div>
           <a-table
             :data="currentActivity?.participants || []"
             border
             row-key="id"
+            :pagination="{
+              current: 1,
+              pageSize: 10,
+              showSizeChanger: true,
+              showTotal: (total) => `共 ${total} 条记录`,
+            }"
           >
             <template #columns>
+              <a-table-column title="序号" type="index" width="80" />
               <a-table-column title="党员ID" data-index="id" />
               <a-table-column title="姓名" data-index="name" />
               <a-table-column title="党员类型" data-index="type">
                 <template #cell="{ value }">
-                  {{ value === "student" ? "学生党员" : "教师党员" }}
+                  <a-tag :color="value === 'student' ? 'blue' : 'green'">
+                    {{ value === "student" ? "学生党员" : "教师党员" }}
+                  </a-tag>
                 </template>
               </a-table-column>
               <a-table-column title="报名时间" data-index="signUpTime">
@@ -432,26 +614,37 @@
         </a-tab-pane>
         <a-tab-pane key="review" title="活动回顾">
           <div class="review-content">
-            <a-textarea
-              v-model="reviewContent"
-              placeholder="请输入活动总结内容"
-              :rows="6"
-              style="margin-bottom: 16px"
-            />
-            <a-upload
-              v-model="reviewFiles"
-              action="/api/file/upload"
-              list-type="picture-card"
-              :multiple="true"
-              placeholder="上传活动回顾图片/文档"
-            />
-            <a-button
-              type="primary"
-              style="margin-top: 16px"
-              @click="saveReview"
-            >
-              保存活动回顾
-            </a-button>
+            <a-card style="margin-bottom: 20px">
+              <template #title>
+                <span style="font-weight: 600">活动总结</span>
+              </template>
+              <a-textarea
+                v-model="reviewContent"
+                placeholder="请输入活动总结内容"
+                :rows="6"
+                style="margin-bottom: 16px"
+              />
+            </a-card>
+
+            <a-card style="margin-bottom: 20px">
+              <template #title>
+                <span style="font-weight: 600">活动回顾文件</span>
+              </template>
+              <a-upload
+                v-model="reviewFiles"
+                action="/api/file/upload"
+                list-type="picture-card"
+                :multiple="true"
+                placeholder="上传活动回顾图片/文档"
+              />
+            </a-card>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px">
+              <a-button @click="detailModalVisible = false">取消</a-button>
+              <a-button type="primary" @click="saveReview">
+                保存活动回顾
+              </a-button>
+            </div>
           </div>
         </a-tab-pane>
       </a-tabs>
@@ -461,7 +654,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
-import { Message } from "@arco-design/web-vue";
+import { Message, Spin } from "@arco-design/web-vue";
 import { IconPlus } from "@arco-design/web-vue/es/icon";
 import { Service } from "../../../generated"; // 请根据实际路径调整
 import { useStore } from "vuex";
@@ -565,6 +758,17 @@ const detailActiveKey = ref("base");
 const reviewFiles = ref([]);
 const reviewContent = ref("");
 
+// 按钮加载状态
+const buttonLoading = reactive({
+  create: false,
+  save: false,
+  publish: false,
+  enroll: false,
+  cancelEnroll: false,
+  delete: false,
+  saveReview: false,
+});
+
 const orgData = ref<Record<number, string>>({});
 const orgOptions = ref<{ label: string; value: number }[]>([]);
 
@@ -580,6 +784,8 @@ const filterForm = reactive({
   orgId: "",
   status: "",
   timeRange: [],
+  sortBy: "createTime",
+  sortOrder: "desc",
 });
 
 const activityFormRef = ref();
@@ -612,6 +818,14 @@ const activityFormRules = {
 const currentActivity = ref<Activity | null>(null);
 const activityList = ref<Activity[]>([]);
 
+// 活动统计数据
+const activityStats = reactive({
+  total: 0,
+  published: 0,
+  ongoing: 0,
+  ended: 0,
+});
+
 const store = useStore();
 
 // ========== 工具方法 ==========
@@ -632,6 +846,28 @@ const showMessage = (msg: string, type: "success" | "error" = "success") => {
   } else {
     Message.error(msg);
   }
+};
+
+// 更新活动统计数据
+const updateActivityStats = (activities: Activity[]) => {
+  const stats = {
+    total: activities.length,
+    published: 0,
+    ongoing: 0,
+    ended: 0,
+  };
+
+  activities.forEach((activity) => {
+    if (activity.status === 2) {
+      stats.published++;
+    } else if (activity.status === 3) {
+      stats.ongoing++;
+    } else if (activity.status === 4) {
+      stats.ended++;
+    }
+  });
+
+  Object.assign(activityStats, stats);
 };
 
 // ========== 党组织相关方法 ==========
@@ -664,9 +900,11 @@ const loadAllOrganizations = async () => {
       const optionsTemp: { label: string; value: number }[] = [];
 
       orgList.forEach((org: OrganizationVO) => {
-        if (org.id && org.name) {
-          orgMapTemp[org.id] = org.name;
-          optionsTemp.push({ label: org.name, value: org.id });
+        if (org.id && (org.orgName || org.name)) {
+          const orgId = Number(org.id);
+          const orgName = org.orgName || org.name;
+          orgMapTemp[orgId] = orgName;
+          optionsTemp.push({ label: orgName, value: orgId });
         }
       });
 
@@ -680,7 +918,6 @@ const loadAllOrganizations = async () => {
       showMessage(res.message || "加载党组织列表失败", "error");
     }
   } catch (error) {
-    console.error("加载党组织列表失败:", error);
     showMessage("网络请求异常，加载党组织失败", "error");
   }
 };
@@ -701,7 +938,6 @@ const checkEnrolledStatus = async (activityId: number) => {
   try {
     // 获取当前登录用户ID
     const loginUser = store.state.user.loginUser;
-    // console.log("store", store.state.user.loginUser);
     if (!loginUser?.id) {
       showMessage("请先登录", "error");
       return false;
@@ -716,54 +952,71 @@ const checkEnrolledStatus = async (activityId: number) => {
 };
 
 // ========== 业务方法 ==========
+// 查询活动列表
 const handleSearch = async () => {
   try {
     loading.value = true;
-    const queryParams: ActivityQueryRequest = {
-      activityName: filterForm.activityName,
-      activityType: filterForm.activityType
-        ? Number(filterForm.activityType)
-        : undefined,
-      orgId: filterForm.orgId ? Number(filterForm.orgId) : undefined,
-      status: filterForm.status ? Number(filterForm.status) : undefined,
-      startTime: filterForm.timeRange?.[0]
-        ? new Date(filterForm.timeRange[0]).toISOString()
-        : undefined,
-      endTime: filterForm.timeRange?.[1]
-        ? new Date(filterForm.timeRange[1]).toISOString()
-        : undefined,
-      current: pagination.current,
-      pageSize: pagination.pageSize,
-    };
+    const queryParams = buildQueryParams();
 
     const res = await Service.listActivityByPageUsingPost(queryParams);
     if (res.code === 0) {
       const activityRecords = res.data.records || [];
       // 补充党组织名称 + 报名状态
-      const activityListWithExtra = await Promise.all(
-        activityRecords.map(async (activity) => {
-          const orgName = await getOrgName(activity.orgId);
-          const hasEnrolled = await checkEnrolledStatus(activity.id);
-          return { ...activity, orgName, hasEnrolled };
-        }),
-      );
+      const activityListWithExtra = await enrichActivityData(activityRecords);
       activityList.value = activityListWithExtra;
       pagination.total = res.data.total || 0;
+
+      // 更新活动统计数据
+      updateActivityStats(activityListWithExtra);
     } else {
       showMessage(res.message || "查询失败", "error");
     }
   } catch (error) {
-    console.error("查询活动失败:", error);
     showMessage("网络请求异常，查询失败", "error");
   } finally {
     loading.value = false;
   }
 };
 
+// 构建查询参数
+const buildQueryParams = (): ActivityQueryRequest => {
+  return {
+    activityName: filterForm.activityName,
+    activityType: filterForm.activityType
+      ? Number(filterForm.activityType)
+      : undefined,
+    orgId: filterForm.orgId ? Number(filterForm.orgId) : undefined,
+    status: filterForm.status ? Number(filterForm.status) : undefined,
+    startTime: filterForm.timeRange?.[0]
+      ? new Date(filterForm.timeRange[0]).toISOString()
+      : undefined,
+    endTime: filterForm.timeRange?.[1]
+      ? new Date(filterForm.timeRange[1]).toISOString()
+      : undefined,
+    current: pagination.current,
+    pageSize: pagination.pageSize,
+  };
+};
+
+// 丰富活动数据（添加党组织名称和报名状态）
+const enrichActivityData = async (activities: any[]): Promise<Activity[]> => {
+  return await Promise.all(
+    activities.map(async (activity) => {
+      const orgName = await getOrgName(activity.orgId);
+      const hasEnrolled = await checkEnrolledStatus(activity.id);
+      return { ...activity, orgName, hasEnrolled };
+    }),
+  );
+};
+
 const handleResetFilter = () => {
   Object.keys(filterForm).forEach((key) => {
     if (key === "timeRange") {
       filterForm[key] = [];
+    } else if (key === "sortBy") {
+      filterForm[key] = "createTime";
+    } else if (key === "sortOrder") {
+      filterForm[key] = "desc";
     } else {
       filterForm[key] = "";
     }
@@ -774,25 +1027,29 @@ const handleResetFilter = () => {
 };
 
 const handleCreateActivity = () => {
-  isEdit.value = false;
-  Object.keys(activityForm).forEach((key) => {
-    if (["startTime", "endTime", "enrollDeadline"].includes(key)) {
-      activityForm[key] = null;
-    } else if (key === "maxNum") {
-      activityForm[key] = 0;
-    } else if (key === "activityType" || key === "status") {
-      activityForm[key] = 1;
-    } else if (key === "orgId" && orgOptions.value.length > 0) {
-      activityForm[key] = orgOptions.value[0].value;
-    } else {
-      activityForm[key] = "";
+  buttonLoading.create = true;
+  setTimeout(() => {
+    isEdit.value = false;
+    Object.keys(activityForm).forEach((key) => {
+      if (["startTime", "endTime", "enrollDeadline"].includes(key)) {
+        activityForm[key] = null;
+      } else if (key === "maxNum") {
+        activityForm[key] = 0;
+      } else if (key === "activityType" || key === "status") {
+        activityForm[key] = 1;
+      } else if (key === "orgId" && orgOptions.value.length > 0) {
+        activityForm[key] = orgOptions.value[0].value;
+      } else {
+        activityForm[key] = "";
+      }
+    });
+    const loginUser = store.state.user.currentUser;
+    if (loginUser) {
+      activityForm.userId = loginUser.id;
     }
-  });
-  const loginUser = store.state.user.currentUser;
-  if (loginUser) {
-    activityForm.userId = loginUser.id;
-  }
-  activityModalVisible.value = true;
+    activityModalVisible.value = true;
+    buttonLoading.create = false;
+  }, 300);
 };
 
 const handleEditActivity = (record: Activity) => {
@@ -827,7 +1084,6 @@ const handlePublishActivity = async (record: Activity) => {
       showMessage(res.message || `【${record.activityName}】发布失败`, "error");
     }
   } catch (error) {
-    console.error("发布活动失败:", error);
     showMessage("网络请求异常，发布失败", "error");
   } finally {
     loading.value = false;
@@ -877,7 +1133,6 @@ const handleEnrollActivity = async (activity: Activity) => {
       );
     }
   } catch (error) {
-    console.error("报名活动失败:", error);
     showMessage("网络请求异常，报名失败", "error");
   } finally {
     loading.value = false;
@@ -919,7 +1174,6 @@ const handleCancelEnroll = async (activity: Activity) => {
       );
     }
   } catch (error) {
-    console.error("取消报名失败:", error);
     showMessage("网络请求异常，取消报名失败", "error");
   } finally {
     loading.value = false;
@@ -929,7 +1183,7 @@ const handleCancelEnroll = async (activity: Activity) => {
 const handleSaveActivity = async () => {
   try {
     await activityFormRef.value?.validate();
-    loading.value = true;
+    buttonLoading.save = true;
 
     if (!isEdit.value) {
       const addParams: ActivityAddRequest = {
@@ -980,11 +1234,10 @@ const handleSaveActivity = async () => {
     }
   } catch (error) {
     if (error.name !== "ValidationError") {
-      console.error("保存活动失败:", error);
       showMessage("网络请求异常，保存失败", "error");
     }
   } finally {
-    loading.value = false;
+    buttonLoading.save = false;
   }
 };
 
@@ -1033,7 +1286,6 @@ const handleDeleteActivity = async (id: number) => {
       showMessage(res.message || "删除活动失败", "error");
     }
   } catch (error) {
-    console.error("删除活动失败:", error);
     showMessage("网络请求异常，删除失败", "error");
   } finally {
     loading.value = false;
@@ -1068,7 +1320,6 @@ const saveReview = async () => {
       showMessage(res.message || "保存活动回顾失败", "error");
     }
   } catch (error) {
-    console.error("保存活动回顾失败:", error);
     showMessage("网络请求异常，保存失败", "error");
   } finally {
     loading.value = false;
@@ -1085,7 +1336,7 @@ onMounted(async () => {
 <style scoped>
 .activity-container {
   padding: 20px;
-  background-color: #f5f5f5;
+  background-color: #f0f2f5;
   min-height: 100vh;
 }
 
@@ -1093,23 +1344,109 @@ onMounted(async () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1890ff;
+  margin: 0;
 }
 
 .filter-card {
   background: #fff;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
 .filter-form {
-  padding: 16px 0;
+  padding: 20px;
 }
 
 .list-card {
   background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
 .review-content {
-  padding: 8px 0;
+  padding: 16px 0;
+}
+
+/* 统计卡片样式 */
+.stats-container {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 200px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stat-number {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .activity-container {
+    padding: 10px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .filter-form {
+    padding: 12px;
+  }
+
+  .stats-container {
+    flex-direction: column;
+  }
+
+  .stat-card {
+    min-width: 100%;
+  }
+
+  .a-table {
+    font-size: 12px;
+  }
+
+  .a-table-column {
+    min-width: 100px;
+  }
 }
 </style>

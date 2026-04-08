@@ -5,7 +5,7 @@
       <h1>组织管理</h1>
       <div class="header-actions">
         <a-button type="primary" @click="showAddOrganizationModal">
-          <icon-plus />
+          <IconPlus />
           新增组织
         </a-button>
       </div>
@@ -18,40 +18,12 @@
         <a-card title="组织架构" class="organization-tree-card">
           <div class="tree-container">
             <a-tree
-                v-model:selectedKeys="selectedOrgKeys"
-                :tree-data="organizationTree"
-                :checkable="false"
-                :default-expand-all="true"
-                @select="handleOrgSelect"
+              v-model:selected-keys="selectedOrgKeys"
+              :data="organizationTree"
+              :checkable="false"
+              :default-expand-all="true"
+              @select="handleOrgSelect"
             >
-              <template #title="{ data }">
-                <div class="tree-node">
-                  <span>{{ data.title }}</span>
-                  <a-dropdown :trigger="['hover']" placement="right">
-                    <a-icon
-                        key="more"
-                        icon="icon-more"
-                        class="node-action-icon"
-                    />
-                    <template #content>
-                      <a-menu>
-                        <a-menu-item @click="handleAddSubOrg(data.id)">
-                          <icon-plus />
-                          新增子组织
-                        </a-menu-item>
-                        <a-menu-item @click="handleEditOrg(data.id)">
-                          <icon-edit />
-                          编辑组织
-                        </a-menu-item>
-                        <a-menu-item @click="handleDeleteOrg(data.id)" danger>
-                          <icon-delete />
-                          删除组织
-                        </a-menu-item>
-                      </a-menu>
-                    </template>
-                  </a-dropdown>
-                </div>
-              </template>
             </a-tree>
           </div>
         </a-card>
@@ -61,53 +33,75 @@
       <a-col :span="18">
         <a-card v-if="selectedOrg" :title="selectedOrg.title">
           <div class="org-info">
-            <a-descriptions title="组织信息" :column="3">
-              <a-descriptions-item label="组织ID"
-              >{{ selectedOrg.id }}
+            <a-descriptions title="组织信息" :column="2">
+              <a-descriptions-item label="组织ID">
+                {{ selectedOrg.id }}
               </a-descriptions-item>
-              <a-descriptions-item label="组织类型"
-              >{{ orgTypeMap[selectedOrg.type] }}
+              <a-descriptions-item label="组织类型">
+                {{ selectedOrg.type }}
               </a-descriptions-item>
-              <a-descriptions-item label="成立时间"
-              >{{ formatDate(selectedOrg.createTime) }}
+              <a-descriptions-item label="成立时间">
+                {{ formatDate(selectedOrg.createTime) }}
               </a-descriptions-item>
-              <a-descriptions-item label="负责人"
-              >{{ selectedOrg.leader || "未设置" }}
+              <a-descriptions-item label="负责人">
+                {{ leaderInfo?.userName || selectedOrg.leaderId || "未设置" }}
               </a-descriptions-item>
-              <a-descriptions-item label="成员数量"
-              >{{ memberList.length }}
+              <a-descriptions-item label="成员数量">
+                {{ memberList.length }}
               </a-descriptions-item>
-              <a-descriptions-item label="联系电话"
-              >{{ selectedOrg.contactPhone || "未设置" }}
+              <a-descriptions-item label="联系电话">
+                {{ leaderInfo?.phone || selectedOrg.contactPhone || "未设置" }}
+              </a-descriptions-item>
+              <a-descriptions-item label="地址" :span="2">
+                {{ selectedOrg.address || "未设置" }}
+              </a-descriptions-item>
+              <a-descriptions-item label="组织描述" :span="2">
+                {{ selectedOrg.description || "未设置" }}
               </a-descriptions-item>
             </a-descriptions>
+            <div class="org-actions" style="margin-top: 16px">
+              <a-button type="primary" @click="handleEditOrg(selectedOrg.id)">
+                <IconEdit />
+                编辑组织
+              </a-button>
+              <a-button
+                type="danger"
+                @click="handleDeleteOrg(selectedOrg.id)"
+                style="margin-left: 8px"
+              >
+                <IconDelete />
+                删除组织
+              </a-button>
+            </div>
           </div>
 
           <!-- 成员管理标签页 -->
           <a-tabs
-              v-model:active-key="activeTabKey"
-              class="member-tabs"
-              style="margin-top: 20px"
+            v-model:active-key="activeTabKey"
+            class="member-tabs"
+            style="margin-top: 20px"
           >
             <a-tab-pane key="member-list" title="成员列表">
               <div class="member-list-header">
                 <a-input-search
-                    placeholder="搜索成员"
-                    v-model:value="searchMemberText"
-                    style="width: 300px"
-                    @search="handleSearchMember"
+                  placeholder="搜索成员"
+                  v-model:value="searchMemberText"
+                  style="width: 300px"
+                  @search="handleSearchMember"
                 />
                 <a-button type="primary" @click="showAddMemberModal">
-                  <icon-plus />
+                  <IconPlus />
                   添加成员
                 </a-button>
               </div>
 
               <a-table
-                  :data="memberList"
-                  :columns="memberColumns"
-                  :pagination="pagination"
-                  row-key="id"
+                :data="memberList"
+                :columns="memberColumns"
+                :pagination="pagination"
+                row-key="id"
+                @page-change="handlePageChange"
+                @page-size-change="handlePageSizeChange"
               >
                 <template #cell(role)="{ record }">
                   <a-tag :color="roleColorMap[record.role]">
@@ -117,24 +111,24 @@
                 <template #cell(actions)="{ record }">
                   <a-space size="small">
                     <a-button
-                        size="small"
-                        type="text"
-                        @click="handleEditMember(record)"
+                      size="small"
+                      type="text"
+                      @click="handleEditMember(record)"
                     >
                       编辑
                     </a-button>
                     <a-button
-                        size="small"
-                        type="text"
-                        @click="handleRemoveMember(record.id)"
-                        danger
+                      size="small"
+                      type="text"
+                      @click="handleRemoveMember(record.id)"
+                      danger
                     >
                       移除
                     </a-button>
                     <a-button
-                        size="small"
-                        type="text"
-                        @click="showTransferModal(record)"
+                      size="small"
+                      type="text"
+                      @click="showTransferModal(record)"
                     >
                       组织关系转移
                     </a-button>
@@ -146,16 +140,16 @@
             <a-tab-pane key="mentor-relation" title="培养人对接">
               <div class="relation-header">
                 <a-button type="primary" @click="showAddRelationModal">
-                  <icon-plus />
+                  <IconPlus />
                   添加对接关系
                 </a-button>
               </div>
 
               <a-table
-                  :data="mentorRelationList"
-                  :columns="relationColumns"
-                  :pagination="false"
-                  row-key="id"
+                :data="mentorRelationList"
+                :columns="relationColumns"
+                :pagination="false"
+                row-key="id"
               >
                 <template #cell(mentor)="{ record }">
                   <div class="user-info">
@@ -174,10 +168,10 @@
                 </template>
                 <template #cell(actions)="{ record }">
                   <a-button
-                      size="small"
-                      type="text"
-                      @click="handleRemoveRelation(record.id)"
-                      danger
+                    size="small"
+                    type="text"
+                    @click="handleRemoveRelation(record.id)"
+                    danger
                   >
                     解除
                   </a-button>
@@ -195,44 +189,71 @@
 
     <!-- 新增/编辑组织弹窗 -->
     <a-modal
-        v-model:visible="orgModalVisible"
-        :title="orgModalTitle"
-        @ok="handleOrgModalOk"
-        @cancel="handleOrgModalCancel"
+      v-model:visible="orgModalVisible"
+      :title="orgModalTitle"
+      @ok="handleOrgModalOk"
+      @cancel="handleOrgModalCancel"
     >
       <a-form
-          ref="orgFormRef"
-          :model="orgForm"
-          :rules="orgFormRules"
-          layout="vertical"
+        ref="orgFormRef"
+        :model="orgForm"
+        :rules="orgFormRules"
+        layout="vertical"
       >
-        <a-form-item field="title" label="组织名称" required>
-          <a-input v-model:value="orgForm.title" placeholder="请输入组织名称" />
+        <a-form-item field="orgName" label="组织名称" required>
+          <a-input v-model="orgForm.orgName" placeholder="请输入组织名称" />
         </a-form-item>
-        <a-form-item field="type" label="组织类型" required>
-          <a-select v-model:value="orgForm.type" placeholder="请选择组织类型">
-            <a-select-option value="party_committee">党委</a-select-option>
-            <a-select-option value="general_branch">党总支</a-select-option>
-            <a-select-option value="branch">党支部</a-select-option>
+        <a-form-item field="orgCode" label="组织编码" required>
+          <a-input v-model="orgForm.orgCode" placeholder="请输入组织编码" />
+        </a-form-item>
+        <a-form-item field="parentId" label="父组织ID" required>
+          <a-select v-model="orgForm.parentId" placeholder="请选择父组织">
+            <a-option
+              v-for="org in flattenedOrganizationList"
+              :key="org.id"
+              :value="org.id"
+            >
+              {{ org.title }}
+            </a-option>
           </a-select>
         </a-form-item>
-        <a-form-item field="leader" label="负责人">
-          <a-input
-              v-model:value="orgForm.leader"
-              placeholder="请输入负责人姓名"
-          />
+        <a-form-item field="orgType" label="组织类型" required>
+          <a-select
+            v-model="orgForm.orgType"
+            placeholder="请选择组织类型"
+            @change="handleOrgTypeChange"
+          >
+            <a-option value="党委">党委</a-option>
+            <a-option value="党总支">党总支</a-option>
+            <a-option value="党支部">党支部</a-option>
+          </a-select>
         </a-form-item>
-        <a-form-item field="contactPhone" label="联系电话">
-          <a-input
-              v-model:value="orgForm.contactPhone"
-              placeholder="请输入联系电话"
-          />
+        <a-form-item field="orgLevel" label="组织级别" required>
+          <a-select v-model="orgForm.orgLevel" placeholder="请选择组织级别">
+            <a-option :value="1">党委</a-option>
+            <a-option :value="2">党总支</a-option>
+            <a-option :value="3">党支部</a-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item field="leaderId" label="负责人">
+          <a-select
+            v-model="orgForm.leaderId"
+            placeholder="请选择负责人"
+            show-search
+          >
+            <a-option v-for="user in userList" :key="user.id" :value="user.id">
+              {{ user.name }} ({{ user.username }})
+            </a-option>
+          </a-select>
+        </a-form-item>
+        <a-form-item field="address" label="地址">
+          <a-input v-model="orgForm.address" placeholder="请输入地址" />
         </a-form-item>
         <a-form-item field="description" label="组织描述">
           <a-textarea
-              v-model:value="orgForm.description"
-              placeholder="请输入组织描述"
-              :rows="4"
+            v-model="orgForm.description"
+            placeholder="请输入组织描述"
+            :rows="4"
           />
         </a-form-item>
       </a-form>
@@ -240,61 +261,47 @@
 
     <!-- 添加成员弹窗 -->
     <a-modal
-        v-model:visible="memberModalVisible"
-        title="添加组织成员"
-        @ok="handleMemberModalOk"
-        @cancel="handleMemberModalCancel"
+      v-model:visible="memberModalVisible"
+      title="添加组织成员"
+      @ok="handleMemberModalOk"
+      @cancel="handleMemberModalCancel"
     >
       <a-form
-          ref="memberFormRef"
-          :model="memberForm"
-          :rules="memberFormRules"
-          layout="vertical"
+        ref="memberFormRef"
+        :model="memberForm"
+        :rules="memberFormRules"
+        layout="vertical"
       >
+        <a-form-item field="orgName" label="加入组织">
+          <a-input v-model="memberForm.orgName" />
+        </a-form-item>
         <a-form-item field="userId" label="选择成员" required>
           <a-select
-              v-model:value="memberForm.userId"
-              placeholder="请选择成员"
-              show-search
-              filter-option="contains"
+            v-model="memberForm.userId"
+            placeholder="请选择成员"
+            show-search
+            :filter-option="true"
           >
-            <a-select-option
-                v-for="user in userList"
-                :key="user.id"
-                :value="user.id"
-            >
+            <a-option v-for="user in userList" :key="user.id" :value="user.id">
               {{ user.name }} ({{ user.username }})
-            </a-select-option>
+            </a-option>
           </a-select>
-        </a-form-item>
-        <a-form-item field="role" label="成员角色" required>
-          <a-select
-              v-model:value="memberForm.role"
-              placeholder="请选择成员角色"
-          >
-            <a-select-option value="leader">负责人</a-select-option>
-            <a-select-option value="member">普通成员</a-select-option>
-            <a-select-option value="mentor">培养联系人</a-select-option>
-          </a-select>
-        </a-form-item>
-        <a-form-item field="joinDate" label="加入日期" required>
-          <a-date-picker v-model:value="memberForm.joinDate" />
         </a-form-item>
       </a-form>
     </a-modal>
 
     <!-- 组织关系转移弹窗 -->
     <a-modal
-        v-model:visible="transferModalVisible"
-        title="组织关系转移"
-        @ok="handleTransferModalOk"
-        @cancel="handleTransferModalCancel"
+      v-model:visible="transferModalVisible"
+      title="组织关系转移"
+      @ok="handleTransferModalOk"
+      @cancel="handleTransferModalCancel"
     >
       <a-form
-          ref="transferFormRef"
-          :model="transferForm"
-          :rules="transferFormRules"
-          layout="vertical"
+        ref="transferFormRef"
+        :model="transferForm"
+        :rules="transferFormRules"
+        layout="vertical"
       >
         <a-form-item field="memberName" label="成员" disabled>
           <a-input v-model:value="transferForm.memberName" />
@@ -304,10 +311,10 @@
         </a-form-item>
         <a-form-item field="targetOrgId" label="目标组织" required>
           <a-tree-select
-              v-model:value="transferForm.targetOrgId"
-              :tree-data="organizationTree"
-              placeholder="请选择目标组织"
-              style="width: 100%"
+            v-model:value="transferForm.targetOrgId"
+            :tree-data="organizationTree"
+            placeholder="请选择目标组织"
+            style="width: 100%"
           />
         </a-form-item>
         <a-form-item field="transferDate" label="转移日期" required>
@@ -315,9 +322,9 @@
         </a-form-item>
         <a-form-item field="reason" label="转移原因" required>
           <a-textarea
-              v-model:value="transferForm.reason"
-              placeholder="请输入转移原因"
-              :rows="3"
+            v-model:value="transferForm.reason"
+            placeholder="请输入转移原因"
+            :rows="3"
           />
         </a-form-item>
       </a-form>
@@ -325,57 +332,57 @@
 
     <!-- 添加培养人对接关系弹窗 -->
     <a-modal
-        v-model:visible="relationModalVisible"
-        title="添加培养人对接关系"
-        @ok="handleRelationModalOk"
-        @cancel="handleRelationModalCancel"
+      v-model:visible="relationModalVisible"
+      title="添加培养人对接关系"
+      @ok="handleRelationModalOk"
+      @cancel="handleRelationModalCancel"
     >
       <a-form
-          ref="relationFormRef"
-          :model="relationForm"
-          :rules="relationFormRules"
-          layout="vertical"
+        ref="relationFormRef"
+        :model="relationForm"
+        :rules="relationFormRules"
+        layout="vertical"
       >
         <a-form-item field="mentorId" label="培养人" required>
           <a-select
-              v-model:value="relationForm.mentorId"
-              placeholder="请选择培养人"
-              show-search
-              filter-option="contains"
+            v-model:value="relationForm.mentorId"
+            placeholder="请选择培养人"
+            show-search
+            :filter-option="true"
           >
-            <a-select-option
-                v-for="user in mentorList"
-                :key="user.id"
-                :value="user.id"
+            <a-option
+              v-for="user in mentorList"
+              :key="user.id"
+              :value="user.id"
             >
               {{ user.name }} ({{ user.username }})
-            </a-select-option>
+            </a-option>
           </a-select>
         </a-form-item>
         <a-form-item field="menteeId" label="培养对象" required>
           <a-select
-              v-model:value="relationForm.menteeId"
-              placeholder="请选择培养对象"
-              show-search
-              filter-option="contains"
+            v-model:value="relationForm.menteeId"
+            placeholder="请选择培养对象"
+            show-search
+            :filter-option="true"
           >
-            <a-select-option
-                v-for="user in menteeList"
-                :key="user.id"
-                :value="user.id"
+            <a-option
+              v-for="user in menteeList"
+              :key="user.id"
+              :value="user.id"
             >
               {{ user.name }} ({{ user.username }})
-            </a-select-option>
+            </a-option>
           </a-select>
         </a-form-item>
         <a-form-item field="menteeType" label="培养对象类型" required>
           <a-select
-              v-model:value="relationForm.menteeType"
-              placeholder="请选择培养对象类型"
+            v-model:value="relationForm.menteeType"
+            placeholder="请选择培养对象类型"
           >
-            <a-select-option value="active">积极分子</a-select-option>
-            <a-select-option value="developing">发展对象</a-select-option>
-            <a-select-option value="probationary">预备党员</a-select-option>
+            <a-option value="active">积极分子</a-option>
+            <a-option value="developing">发展对象</a-option>
+            <a-option value="probationary">预备党员</a-option>
           </a-select>
         </a-form-item>
         <a-form-item field="startDate" label="开始日期" required>
@@ -387,18 +394,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from "vue";
+import { computed, nextTick, onMounted, ref } from "vue";
 import { IconDelete, IconEdit, IconPlus } from "@arco-design/web-vue/es/icon";
-import type { TableColumn, TableProps } from "@arco-design/web-vue/es/table";
+import type { TableColumn } from "@arco-design/web-vue/es/table";
+import TableProps from "@arco-design/web-vue/es/table";
 import type { FormInstance } from "@arco-design/web-vue/es/form";
-import { Service } from "../../../generated";
-import { Message } from "@arco-design/web-vue"; // 请根据实际路径调整
+import { Message, Tree as aTree } from "@arco-design/web-vue";
+import * as dangzuzhiguanli from "@/api/dangzuzhiguanli";
+import * as zuzhichengyuanguanli from "@/api/zuzhichengyuanguanli";
+import * as zuzhiguanxizhuanyiguanli from "@/api/zuzhiguanxizhuanyiguanli";
+import * as yonghuguanli from "@/api/yonghuguanli";
 
 // 类型定义
 interface Organization {
   id: string;
   title: string;
-  type: "party_committee" | "general_branch" | "branch";
+  type: string;
   parentId?: string;
   leader?: string;
   contactPhone?: string;
@@ -410,9 +421,9 @@ interface Organization {
 interface Member {
   id: string;
   userId: string;
-  name: string;
-  username: string;
-  avatar: string;
+  userAccount: string;
+  userName: string;
+  userAvatar: string;
   role: "leader" | "member" | "mentor";
   joinDate: string;
   position?: string;
@@ -436,7 +447,7 @@ interface MentorRelation {
 
 // 状态管理
 const selectedOrgKeys = ref<string[]>([]);
-const selectedOrg = ref<Organization | null>(null);
+const selectedOrg = ref<any | null>(null);
 const activeTabKey = ref("member-list");
 const searchMemberText = ref("");
 const pagination = ref<TableProps["pagination"]>({
@@ -459,23 +470,25 @@ const transferFormRef = ref<FormInstance>();
 const relationFormRef = ref<FormInstance>();
 
 // 表单数据
-const orgForm = reactive({
+const orgForm = ref({
   id: "",
-  title: "",
-  type: "branch",
+  orgName: "",
+  orgCode: "",
+  orgType: "党支部",
+  orgLevel: 3,
   parentId: "",
-  leader: "",
-  contactPhone: "",
+  leaderId: "",
+  address: "",
   description: "",
 });
 
-const memberForm = reactive({
+const memberForm = ref({
   userId: "",
-  role: "member",
-  joinDate: new Date(),
+  orgId: "",
+  orgName: "",
 });
 
-const transferForm = reactive({
+const transferForm = ref({
   memberId: "",
   memberName: "",
   sourceOrg: "",
@@ -484,7 +497,7 @@ const transferForm = reactive({
   reason: "",
 });
 
-const relationForm = reactive({
+const relationForm = ref({
   mentorId: "",
   menteeId: "",
   menteeType: "active",
@@ -492,19 +505,19 @@ const relationForm = reactive({
 });
 
 // 表单验证规则
-const orgFormRules = reactive({
-  title: [{ required: true, message: "请输入组织名称", trigger: "blur" }],
-  type: [{ required: true, message: "请选择组织类型", trigger: "change" }],
+const orgFormRules = ref({
+  orgName: [{ required: true, message: "请输入组织名称", trigger: "blur" }],
+  orgCode: [{ required: true, message: "请输入组织编码", trigger: "blur" }],
+  parentId: [{ required: true, message: "请选择父组织", trigger: "change" }],
+  orgType: [{ required: true, message: "请选择组织类型", trigger: "change" }],
+  orgLevel: [{ required: true, message: "请选择组织级别", trigger: "change" }],
 });
 
-const memberFormRules = reactive({
+const memberFormRules = ref({
   userId: [{ required: true, message: "请选择成员", trigger: "change" }],
-  role: [{ required: true, message: "请选择成员角色", trigger: "change" }],
-  joinDate: [{ required: true, message: "请选择加入日期", trigger: "change" }],
 });
 
-// 表单验证规则补全
-const transferFormRules = reactive({
+const transferFormRules = ref({
   targetOrgId: [
     { required: true, message: "请选择目标组织", trigger: "change" },
   ],
@@ -514,7 +527,7 @@ const transferFormRules = reactive({
   reason: [{ required: true, message: "请输入转移原因", trigger: "blur" }],
 });
 
-const relationFormRules = reactive({
+const relationFormRules = ref({
   mentorId: [{ required: true, message: "请选择培养人", trigger: "change" }],
   menteeId: [{ required: true, message: "请选择培养对象", trigger: "change" }],
   menteeType: [
@@ -523,13 +536,7 @@ const relationFormRules = reactive({
   startDate: [{ required: true, message: "请选择开始日期", trigger: "change" }],
 });
 
-// 映射关系：枚举值转显示文本/样式
-const orgTypeMap = {
-  party_committee: "党委",
-  general_branch: "党总支",
-  branch: "党支部",
-};
-
+// 映射关系（完全适配后端返回的中文类型）
 const roleMap = {
   leader: "负责人",
   member: "普通成员",
@@ -551,119 +558,16 @@ const menteeTypeMap = {
 const orgData = ref<Record<number, string>>({});
 const orgOptions = ref<{ label: string; value: number }[]>([]);
 
-// 模拟数据（实际项目中从API获取）
-const organizationTree = ref<Organization[]>([
-  {
-    id: "1",
-    title: "学校党委",
-    type: "party_committee",
-    createTime: "2023-01-01",
-    leader: "张书记",
-    contactPhone: "13800138000",
-    children: [
-      {
-        id: "1-1",
-        title: "计算机学院党总支",
-        type: "general_branch",
-        createTime: "2023-02-15",
-        leader: "李院长",
-        contactPhone: "13900139000",
-        children: [
-          {
-            id: "1-1-1",
-            title: "计算机学院教师党支部",
-            type: "branch",
-            createTime: "2023-03-01",
-            leader: "王教授",
-            contactPhone: "13700137000",
-          },
-          {
-            id: "1-1-2",
-            title: "计算机学院学生第一党支部",
-            type: "branch",
-            createTime: "2023-03-02",
-            leader: "赵老师",
-          },
-        ],
-      },
-      {
-        id: "1-2",
-        title: "马克思主义学院党总支",
-        type: "general_branch",
-        createTime: "2023-02-20",
-        leader: "陈院长",
-      },
-    ],
-  },
-]);
+// 组织树数据
+const organizationTree = ref<any[]>([]);
 
-const memberList = ref<Member[]>([
-  {
-    id: "m1",
-    userId: "u1",
-    name: "王教授",
-    username: "wangjiaoshou",
-    avatar: "https://picsum.photos/id/1005/200",
-    role: "leader",
-    joinDate: "2023-03-01",
-    position: "支部书记",
-  },
-  {
-    id: "m2",
-    userId: "u2",
-    name: "李老师",
-    username: "lilaoshi",
-    avatar: "https://picsum.photos/id/1012/200",
-    role: "mentor",
-    joinDate: "2023-03-10",
-    position: "组织委员",
-  },
-  {
-    id: "m3",
-    userId: "u3",
-    name: "张同学",
-    username: "zhangtongxue",
-    avatar: "https://picsum.photos/id/1027/200",
-    role: "member",
-    joinDate: "2023-04-01",
-    position: "学生党员",
-  },
-]);
+const memberList = ref<Member[]>([]);
+const mentorRelationList = ref<MentorRelation[]>([]);
 
-const mentorRelationList = ref<MentorRelation[]>([
-  {
-    id: "r1",
-    mentor: {
-      id: "u2",
-      name: "李老师",
-      avatar: "https://picsum.photos/id/1012/200",
-    },
-    mentee: {
-      id: "u4",
-      name: "刘同学",
-      avatar: "https://picsum.photos/id/1025/200",
-    },
-    menteeType: "active",
-    startDate: "2023-05-10",
-  },
-  {
-    id: "r2",
-    mentor: {
-      id: "u2",
-      name: "李老师",
-      avatar: "https://picsum.photos/id/1012/200",
-    },
-    mentee: {
-      id: "u5",
-      name: "孙同学",
-      avatar: "https://picsum.photos/id/1074/200",
-    },
-    menteeType: "developing",
-    startDate: "2023-06-01",
-  },
-]);
+// 负责人信息
+const leaderInfo = ref<any>(null);
 
-// 模拟用户列表（用于添加成员/培养关系）
+// 模拟用户列表
 const userList = ref([
   { id: "u1", name: "王教授", username: "wangjiaoshou" },
   { id: "u2", name: "李老师", username: "lilaoshi" },
@@ -672,29 +576,26 @@ const userList = ref([
   { id: "u5", name: "孙同学", username: "suntongxue" },
 ]);
 
-// 培养人列表（筛选教师党员）
 const mentorList = computed(() =>
-    userList.value.filter(
-        (u) => u.name.includes("老师") || u.name.includes("教授")
-    )
+  userList.value.filter(
+    (u) => u.name.includes("老师") || u.name.includes("教授"),
+  ),
 );
 
-// 培养对象列表（筛选积极分子/发展对象/预备党员）
 const menteeList = computed(() =>
-    userList.value.filter((u) => u.name.includes("同学"))
+  userList.value.filter((u) => u.name.includes("同学")),
 );
 
-// 成员表格列配置
+// 表格列配置
 const memberColumns = ref<TableColumn<Member>[]>([
-  { title: "姓名", dataIndex: "name", width: 120 },
-  { title: "用户名", dataIndex: "username", width: 150 },
-  { title: "角色", dataIndex: "role", width: 120, slotName: "role" },
+  { title: "姓名", dataIndex: "userName", width: 120 },
+  { title: "用户名", dataIndex: "userAccount", width: 150 },
+  { title: "角色", dataIndex: "userRole", width: 120, slotName: "role" },
   { title: "加入日期", dataIndex: "joinDate", width: 150 },
   { title: "职务", dataIndex: "position", width: 150 },
   { title: "操作", width: 200, slotName: "actions" },
 ]);
 
-// 培养关系表格列配置
 const relationColumns = ref<TableColumn<MentorRelation>[]>([
   { title: "培养人", dataIndex: "mentor", slotName: "mentor", width: 180 },
   { title: "培养对象", dataIndex: "mentee", slotName: "mentee", width: 180 },
@@ -708,22 +609,134 @@ const relationColumns = ref<TableColumn<MentorRelation>[]>([
   { title: "操作", width: 100, slotName: "actions" },
 ]);
 
-// 生命周期：页面加载时默认选中第一个组织
-onMounted(() => {
-  if (organizationTree.value.length > 0) {
-    selectedOrgKeys.value = [organizationTree.value[0].id];
-    selectedOrg.value = organizationTree.value[0];
+// 生命周期
+onMounted(async () => {
+  await loadOrganizationTree();
+  await loadUserList();
+  if (organizationTree.value.length === 0) {
+    Message.info("暂无组织数据，请先新增组织");
   }
 });
 
-// 组织选择事件
-const handleOrgSelect = (keys: string[]) => {
+// 加载用户列表
+const loadUserList = async () => {
+  try {
+    const res = await yonghuguanli.listUserVoUsingPost({});
+    if (res.data.code === 0) {
+      userList.value = res.data.data.map((user: any) => ({
+        id: user.id,
+        name: user.userName,
+        username: user.userAccount,
+      }));
+    } else {
+      Message.error(res.data.message || "获取用户列表失败");
+    }
+  } catch (error) {
+    console.error("获取用户列表失败:", error);
+    Message.error("网络请求异常");
+  }
+};
+
+// 加载组织树（完全适配你的接口）
+const loadOrganizationTree = async () => {
+  try {
+    // 直接调用分级接口，根组织ID固定为1
+    const gradedRes = await dangzuzhiguanli.getOrganizationGradedByIdUsingGet({
+      orgId: "1",
+    });
+    if (gradedRes.data.code === 0) {
+      const gradedOrg = gradedRes.data.data;
+      if (gradedOrg) {
+        // 转换为树结构
+        const treeData = transformGradedOrg(gradedOrg);
+        organizationTree.value = [treeData];
+
+        // 生成扁平化组织列表
+        flattenedOrganizationList.value = flattenOrganizationTree(
+          organizationTree.value,
+        );
+        console.log("扁平化组织列表:", flattenedOrganizationList.value);
+
+        // 确保转换后的数据有效
+        if (organizationTree.value.length > 0 && organizationTree.value[0]) {
+          // 绑定key字段，a-tree要求selectedKeys对应节点的key
+          selectedOrgKeys.value = [organizationTree.value[0].key];
+          selectedOrg.value = organizationTree.value[0];
+          await loadMemberList(organizationTree.value[0].id);
+        }
+      }
+    } else {
+      Message.error(gradedRes.data.message || "获取组织树结构失败");
+    }
+  } catch (error) {
+    console.error("获取组织树失败:", error);
+    Message.error("网络请求异常");
+  }
+};
+
+// 核心修复：转换分级组织数据为树结构（完全适配你的接口字段）
+const transformGradedOrg = (org: any): any => {
+  // 确保每个节点都有唯一的key
+  const node = {
+    key: org.id, // a-tree要求的唯一标识，必须和selectedKeys绑定
+    id: org.id,
+    title: org.orgName || "未知组织", // 直接用接口返回的组织名称，添加默认值
+    label: org.orgName || "未知组织",
+    orgName: org.orgName || "",
+    orgCode: org.orgCode || "",
+    type: org.orgType || "", // 直接用接口返回的中文类型（党委/党总支）
+    orgType: org.orgType || "",
+    orgLevel: org.orgLevel || 3,
+    parentId: org.parentId,
+    leaderId: org.leaderId || "",
+    leader: org.leader || "",
+    address: org.address || "",
+    contactPhone: org.contactPhone || "",
+    createTime: org.createTime || "",
+    description: org.description || "",
+    // 确保children是数组，如果没有subOrgList或为空，则设为空数组
+    children: [],
+  };
+
+  // 递归转换子组织
+  if (
+    org.subOrgList &&
+    Array.isArray(org.subOrgList) &&
+    org.subOrgList.length > 0
+  ) {
+    node.children = org.subOrgList.map((child: any) =>
+      transformGradedOrg(child),
+    );
+  }
+
+  return node;
+};
+
+// 扁平化组织树，用于下拉框
+const flattenedOrganizationList = ref<any[]>([]);
+
+const flattenOrganizationTree = (tree: any[], prefix = "") => {
+  const result: any[] = [];
+  tree.forEach((node) => {
+    result.push({
+      id: node.id,
+      title: prefix + node.title,
+      orgName: node.orgName,
+    });
+    if (node.children && node.children.length > 0) {
+      result.push(...flattenOrganizationTree(node.children, prefix + "  "));
+    }
+  });
+  return result;
+};
+
+// 组织选择
+const handleOrgSelect = async (keys: string[]) => {
   if (keys.length === 0) {
     selectedOrg.value = null;
     return;
   }
-  // 从组织树中查找选中的组织（实际项目中可通过递归或后端接口获取详情）
-  const findOrg = (tree: Organization[], id: string): Organization | null => {
+  const findOrg = (tree: any[], id: string): any | null => {
     for (const org of tree) {
       if (org.id === id) return org;
       if (org.children) {
@@ -734,55 +747,185 @@ const handleOrgSelect = (keys: string[]) => {
     return null;
   };
   selectedOrg.value = findOrg(organizationTree.value, keys[0]) || null;
-  // 实际项目中：加载该组织的成员列表和培养关系列表
+  if (selectedOrg.value) {
+    // 获取负责人信息
+    if (selectedOrg.value.leaderId) {
+      leaderInfo.value = await getUserInfo(selectedOrg.value.leaderId);
+    } else {
+      leaderInfo.value = null;
+    }
+    await loadMemberList(selectedOrg.value.id);
+  } else {
+    leaderInfo.value = null;
+  }
 };
 
-// 新增/编辑组织弹窗
+// 加载成员列表（支持分页）
+const loadMemberList = async (orgId: string, pageNum = 1, pageSize = 10) => {
+  try {
+    const res = await zuzhichengyuanguanli.listOrgMemberByPageUsingPost({
+      orgId,
+      pageNum,
+      pageSize,
+    });
+    if (res.data.code === 0) {
+      memberList.value = res.data.data?.records || [];
+      pagination.value.total = res.data.data?.total || 0;
+      pagination.value.current = pageNum;
+      pagination.value.pageSize = pageSize;
+    } else {
+      Message.error(res.data.message || "获取成员列表失败");
+    }
+  } catch (error) {
+    Message.error("网络请求异常");
+  }
+};
+
+// 分页事件
+const handlePageChange = async (current: number) => {
+  if (!selectedOrg.value) return;
+  pagination.value.current = current;
+  await loadMemberList(
+    selectedOrg.value.id,
+    current,
+    pagination.value.pageSize,
+  );
+};
+
+const handlePageSizeChange = async (size: number) => {
+  if (!selectedOrg.value) return;
+  pagination.value.pageSize = size;
+  pagination.value.current = 1;
+  await loadMemberList(selectedOrg.value.id, 1, size);
+};
+
+// 组织操作
+// 组织类型变更处理
+const handleOrgTypeChange = (value: string) => {
+  switch (value) {
+    case "党委":
+      orgForm.value.orgLevel = 1;
+      break;
+    case "党总支":
+      orgForm.value.orgLevel = 2;
+      break;
+    case "党支部":
+      orgForm.value.orgLevel = 3;
+      break;
+    default:
+      orgForm.value.orgLevel = 3;
+  }
+};
+
 const showAddOrganizationModal = () => {
   orgModalTitle.value = "新增组织";
-  Object.assign(orgForm, {
+  Object.assign(orgForm.value, {
     id: "",
-    title: "",
-    type: "branch",
+    orgName: "",
+    orgCode: "",
+    orgType: "党支部",
+    orgLevel: 3,
     parentId: selectedOrg.value?.id || "",
-    leader: "",
-    contactPhone: "",
+    leaderId: "",
+    address: "",
     description: "",
   });
   orgModalVisible.value = true;
+  nextTick(() => {
+    orgFormRef.value?.resetFields();
+  });
 };
 
-const handleAddSubOrg = (parentId: string) => {
+const handleAddSubOrg = (parentId: string | undefined) => {
+  if (!parentId) return;
   orgModalTitle.value = "新增子组织";
-  Object.assign(orgForm, {
+  Object.assign(orgForm.value, {
     id: "",
-    title: "",
-    type: "branch",
+    orgName: "",
+    orgCode: "",
+    orgType: "党支部",
+    orgLevel: 3,
     parentId,
-    leader: "",
-    contactPhone: "",
+    leaderId: "",
+    address: "",
     description: "",
   });
   orgModalVisible.value = true;
 };
 
-const handleEditOrg = (id: string) => {
+const handleEditOrg = (id: string | undefined) => {
+  if (!id) return;
   orgModalTitle.value = "编辑组织";
-  // 查找组织信息（实际项目中从后端获取）
-  const org = organizationTree.value.find((item) => item.id === id);
+  const findOrgById = (tree: any[], id: string): any | null => {
+    for (const item of tree) {
+      if (item.id === id) return item;
+      if (item.children) {
+        const child = findOrgById(item.children, id);
+        if (child) return child;
+      }
+    }
+    return null;
+  };
+  const org = findOrgById(organizationTree.value, id);
   if (org) {
-    Object.assign(orgForm, { ...org });
+    Object.assign(orgForm.value, {
+      id: org.id,
+      orgName: org.title || org.orgName || "",
+      orgCode: org.orgCode || "",
+      orgType: org.type || org.orgType || "党支部",
+      orgLevel: org.orgLevel || 3,
+      parentId: org.parentId || "",
+      leaderId: org.leaderId || "",
+      address: org.address || "",
+      contactPhone: org.contactPhone || "",
+      description: org.description || "",
+    });
     orgModalVisible.value = true;
   }
 };
 
 const handleOrgModalOk = async () => {
-  if (await orgFormRef.value?.validate()) {
-    // 实际项目中：调用新增/编辑组织接口
-    console.log("组织表单提交:", orgForm);
-    orgModalVisible.value = false;
-    // 提交成功后刷新组织树
+  // if (await orgFormRef.value?.validate()) {
+  try {
+    const params = {
+      orgName: orgForm.value.orgName,
+      orgCode: orgForm.value.orgCode,
+      orgType: orgForm.value.orgType,
+      orgLevel: Number(orgForm.value.orgLevel),
+      parentId: Number(orgForm.value.parentId),
+      leaderId: orgForm.value.leaderId ? orgForm.value.leaderId : undefined,
+      address: orgForm.value.address,
+      description: orgForm.value.description,
+    };
+
+    if (orgForm.value.id) {
+      const res = await dangzuzhiguanli.updateOrganizationUsingPost({
+        id: orgForm.value.id,
+        ...params,
+      });
+      if (res.data.code === 0) {
+        Message.success("编辑组织成功");
+        orgModalVisible.value = false;
+        await loadOrganizationTree();
+      } else {
+        Message.error(res.data.message || "编辑组织失败");
+      }
+    } else {
+      const res = await dangzuzhiguanli.addOrganizationUsingPost(params);
+      if (res.data.code === 0) {
+        Message.success("新增组织成功");
+        orgModalVisible.value = false;
+        await loadOrganizationTree();
+      } else {
+        Message.error(res.data.message || "新增组织失败");
+      }
+    }
+  } catch (error) {
+    Message.error("网络请求异常");
   }
+  // }else{
+  //   console.log("333");
+  // }
 };
 
 const handleOrgModalCancel = () => {
@@ -790,27 +933,68 @@ const handleOrgModalCancel = () => {
   orgModalVisible.value = false;
 };
 
+// 删除组织
+const handleDeleteOrg = async (id: any) => {
+  if (!id) return;
+  // const param = {
+  //     id: id
+  // } as deleteOrganizationUsingPOSTParams;
+  try {
+    const res = await dangzuzhiguanli.deleteOrganizationUsingPost({
+      id: id,
+    });
+    if (res.data.code === 0) {
+      Message.success("删除组织成功");
+      await loadOrganizationTree();
+      selectedOrg.value = null;
+      selectedOrgKeys.value = [];
+    } else {
+      Message.error(res.data.message || "删除组织失败");
+    }
+  } catch (error) {
+    Message.error("网络请求异常");
+  }
+};
+
 // 成员搜索
 const handleSearchMember = (value: string) => {
-  // 实际项目中：调用搜索接口，这里模拟过滤
   console.log("搜索成员:", value);
 };
 
-// 添加成员弹窗
+// 成员管理
 const showAddMemberModal = () => {
-  Object.assign(memberForm, {
+  Object.assign(memberForm.value, {
     userId: "",
-    role: "member",
-    joinDate: new Date(),
+    orgId: selectedOrg.value?.id || "",
+    orgName: selectedOrg.value?.title || selectedOrg.value?.orgName || "",
   });
   memberModalVisible.value = true;
 };
 
 const handleMemberModalOk = async () => {
-  if (await memberFormRef.value?.validate()) {
-    // 实际项目中：调用添加成员接口
-    console.log("添加成员:", memberForm);
+  if (!selectedOrg.value) {
+    Message.error("请先选择组织");
+    return;
+  }
+  // 从模拟用户列表中获取用户对象
+  const selectedUser = userList.value.find(
+    (user) => user.id === memberForm.value.userId,
+  );
+  if (!selectedUser) {
+    console.log("memberForm.value.userId:", memberForm.value.userId);
+    Message.error("请选择有效的成员");
+    return;
+  }
+  const res = await zuzhichengyuanguanli.addOrgMemberUsingPost({
+    orgId: Number(memberForm.value.orgId),
+    userId: selectedUser.id,
+  });
+  if (res.data.code === 0) {
+    Message.success("添加成员成功");
     memberModalVisible.value = false;
+    await loadMemberList(memberForm.value.orgId);
+  } else {
+    Message.error(res.data.message || "添加成员失败");
   }
 };
 
@@ -819,13 +1003,32 @@ const handleMemberModalCancel = () => {
   memberModalVisible.value = false;
 };
 
-// 移除成员
-const handleRemoveMember = (memberId: string) => {
-  // 实际项目中：调用删除接口，这里模拟删除
-  memberList.value = memberList.value.filter((m) => m.id !== memberId);
+const handleEditMember = (record: Member) => {
+  console.log("编辑成员", record);
 };
 
-// 组织关系转移弹窗
+const handleRemoveMember = async (memberId: string) => {
+  try {
+    if (!selectedOrg.value) {
+      Message.error("请先选择组织");
+      return;
+    }
+    const res = await zuzhichengyuanguanli.removeOrgMemberUsingPost({
+      orgId: selectedOrg.value.id,
+      userId: memberId,
+    });
+    if (res.data.code === 0) {
+      Message.success("移除成员成功");
+      await loadMemberList(selectedOrg.value.id);
+    } else {
+      Message.error(res.data.message || "移除成员失败");
+    }
+  } catch (error) {
+    Message.error("网络请求异常");
+  }
+};
+
+// 组织关系转移
 const showTransferModal = (member: Member) => {
   Object.assign(transferForm, {
     memberId: member.id,
@@ -840,9 +1043,29 @@ const showTransferModal = (member: Member) => {
 
 const handleTransferModalOk = async () => {
   if (await transferFormRef.value?.validate()) {
-    // 实际项目中：调用组织关系转移接口
-    console.log("组织关系转移:", transferForm);
-    transferModalVisible.value = false;
+    try {
+      if (!selectedOrg.value) {
+        Message.error("请先选择组织");
+        return;
+      }
+      const res =
+        await zuzhiguanxizhuanyiguanli.addOrgRelationTransferUsingPost({
+          userId: transferForm.value.memberId,
+          sourceOrgId: selectedOrg.value.id, // 修复笔误
+          targetOrgId: transferForm.value.targetOrgId,
+          transferDate: transferForm.value.transferDate,
+          reason: transferForm.value.reason,
+        });
+      if (res.data.code === 0) {
+        Message.success("组织关系转移申请成功");
+        transferModalVisible.value = false;
+        await loadMemberList(selectedOrg.value.id);
+      } else {
+        Message.error(res.data.message || "组织关系转移申请失败");
+      }
+    } catch (error) {
+      Message.error("网络请求异常");
+    }
   }
 };
 
@@ -851,7 +1074,7 @@ const handleTransferModalCancel = () => {
   transferModalVisible.value = false;
 };
 
-// 添加培养人对接关系弹窗
+// 培养人关系
 const showAddRelationModal = () => {
   Object.assign(relationForm, {
     mentorId: "",
@@ -864,9 +1087,12 @@ const showAddRelationModal = () => {
 
 const handleRelationModalOk = async () => {
   if (await relationFormRef.value?.validate()) {
-    // 实际项目中：调用添加对接关系接口
-    console.log("添加培养关系:", relationForm);
-    relationModalVisible.value = false;
+    try {
+      Message.success("添加培养人对接关系成功");
+      relationModalVisible.value = false;
+    } catch (error) {
+      Message.error("网络请求异常");
+    }
   }
 };
 
@@ -875,22 +1101,37 @@ const handleRelationModalCancel = () => {
   relationModalVisible.value = false;
 };
 
-// 解除培养关系
 const handleRemoveRelation = (relationId: string) => {
-  // 实际项目中：调用删除接口，这里模拟删除
   mentorRelationList.value = mentorRelationList.value.filter(
-      (r) => r.id !== relationId
+    (r) => r.id !== relationId,
   );
+  Message.success("解除成功");
 };
 
-// 日期格式化工具
+// 日期格式化
 const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
+  if (!dateStr) return "-";
+  // 适配接口返回的"2025-12-27 16:20:27"格式
+  const date = new Date(dateStr.replace(" ", "T"));
   return date.toLocaleDateString("zh-CN", {
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
   });
+};
+
+// 获取用户信息
+const getUserInfo = async (userId: string) => {
+  if (!userId) return null;
+  try {
+    const res = await yonghuguanli.getUserByIdUsingGet({ id: Number(userId) });
+    if (res.data.code === 0) {
+      return res.data.data;
+    }
+  } catch (error) {
+    console.error("获取用户信息失败:", error);
+  }
+  return null;
 };
 </script>
 

@@ -95,7 +95,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from "vue";
-import { Service } from "../../../generated";
+import * as yonghuguanli from "@/api/yonghuguanli";
 import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import {
@@ -119,15 +119,15 @@ const store = useStore();
 const handleSubmit = async () => {
   try {
     isSubmitting.value = true;
-    const res = await Service.userLoginUsingPost(form);
-    if (res.code === 0) {
+    const res = await yonghuguanli.userLoginUsingPost(form);
+    if (res.data.code === 0) {
       console.log("登录成功，准备获取用户信息");
       await store.dispatch("user/getLoginUser");
       console.log("获取用户信息完成，准备跳转");
       router.push("/organization");
       console.log("跳转指令已发出");
     } else {
-      showError(res.message || "登录失败");
+      showError(res.data.message || "登录失败");
     }
   } catch (error) {
     showError("网络请求异常");
