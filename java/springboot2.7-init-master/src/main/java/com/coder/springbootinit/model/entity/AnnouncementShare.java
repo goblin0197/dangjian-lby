@@ -10,43 +10,48 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 公告
+ * 公告分享实体
  *
-*/
-@TableName(value = "notice")
+ */
+@TableName(value = "announcement_share")
 @Data
-public class Notice implements Serializable {
+public class AnnouncementShare implements Serializable {
 
     /**
-     * id
+     * 分享 ID
      */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 标题
+     * 公告 ID
      */
-    private String title;
+    private Long announcementId;
 
     /**
-     * 内容
+     * 分享链接
      */
-    private String content;
+    private String shareUrl;
 
     /**
-     * 发布者ID
+     * 分享码
      */
-    private Long publisherId;
+    private String shareCode;
 
     /**
-     * 组织ID
+     * 分享用户 ID
      */
-    private Long orgId;
+    private Long shareUserId;
 
     /**
-     * 发布时间
+     * 分享用户姓名
      */
-    private Date publishTime;
+    private String shareUserName;
+
+    /**
+     * 分享时间
+     */
+    private Date shareTime;
 
     /**
      * 过期时间
@@ -54,14 +59,9 @@ public class Notice implements Serializable {
     private Date expireTime;
 
     /**
-     * 是否置顶：0-否，1-是
+     * 查看次数
      */
-    private Integer isTop;
-
-    /**
-     * 状态：0-草稿，1-已发布
-     */
-    private Integer status;
+    private Integer viewCount;
 
     /**
      * 创建时间
@@ -69,25 +69,10 @@ public class Notice implements Serializable {
     private Date createTime;
 
     /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
      * 是否删除
      */
     @TableLogic
     private Integer isDelete;
-
-    /**
-     * 首次发布时间
-     */
-    private Date firstPublishTime;
-
-    /**
-     * 阅读量
-     */
-    private Integer readCount;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

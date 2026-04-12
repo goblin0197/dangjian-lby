@@ -169,4 +169,106 @@ public class NoticeController {
         boolean result = noticeService.withdrawNotice(id);
         return ResultUtils.success(result);
     }
+
+    /**
+     * 批量删除公告
+     *
+     * @param ids 公告ID列表
+     * @param request HttpServletRequest
+     * @return 是否成功
+     */
+    @PostMapping("/batchDelete")
+    @ApiOperation(value = "批量删除公告")
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    public BaseResponse<Boolean> batchDeleteNotices(@RequestBody List<Long> ids, HttpServletRequest request) {
+        if (ids == null || ids.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告ID列表不能为空");
+        }
+        boolean result = noticeService.batchDeleteNotices(ids);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 下架公告
+     *
+     * @param id 公告ID
+     * @return 是否成功
+     */
+    @PutMapping("/offline")
+    @ApiOperation(value = "下架公告")
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    public BaseResponse<Boolean> offlineNotice(@RequestParam Long id) {
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告ID不能为空");
+        }
+        boolean result = noticeService.offlineNotice(id);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 重新发布公告
+     *
+     * @param id 公告ID
+     * @return 是否成功
+     */
+    @PutMapping("/republish")
+    @ApiOperation(value = "重新发布公告")
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    public BaseResponse<Boolean> republishNotice(@RequestParam Long id) {
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告ID不能为空");
+        }
+        boolean result = noticeService.republishNotice(id);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 设置公告置顶状态
+     *
+     * @param id 公告ID
+     * @param isTop 是否置顶（0-否，1-是）
+     * @return 是否成功
+     */
+    @PutMapping("/top")
+    @ApiOperation(value = "设置公告置顶状态")
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    public BaseResponse<Boolean> topNotice(@RequestParam Long id, @RequestParam Integer isTop) {
+        if (id == null || isTop == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
+        }
+        boolean result = noticeService.topNotice(id, isTop);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 标记公告为已读
+     *
+     * @param announcementId 公告 ID
+     * @param request HttpServletRequest
+     * @return 是否成功
+     */
+    @PostMapping("/markRead")
+    @ApiOperation(value = "标记公告为已读")
+    public BaseResponse<Boolean> markAnnouncementAsRead(@RequestParam Long announcementId, HttpServletRequest request) {
+        if (announcementId == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        boolean result = noticeService.markAsRead(announcementId, loginUser.getId());
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 获取未读公告数量
+     *
+     * @param request HttpServletRequest
+     * @return 未读公告数量
+     */
+    @GetMapping("/unreadCount")
+    @ApiOperation(value = "获取未读公告数量")
+    public BaseResponse<Integer> getUnreadCount(HttpServletRequest request) {
+        User loginUser = userService.getLoginUser(request);
+        Integer count = noticeService.getUnreadCount(loginUser.getId());
+        return ResultUtils.success(count);
+    }
 }

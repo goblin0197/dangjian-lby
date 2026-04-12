@@ -152,6 +152,67 @@ public class FileController {
     }
 
     /**
+     * 上传模板文件
+     *
+     * @param multipartFile 模板文件（Word/PDF）
+     * @param request HTTP请求
+     * @return 文件URL
+     */
+    @PostMapping("/api/upload/template")
+    @ApiOperation("上传模板文件")
+    public BaseResponse<String> uploadTemplateFile(@RequestPart("file") MultipartFile multipartFile,
+            HttpServletRequest request) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "模板文件不能为空");
+        }
+        // 只有管理员可以上传模板
+        if (!userService.isAdmin(request)) {
+            throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "无权限上传模板");
+        }
+        // 校验文件类型
+        String originalFilename = multipartFile.getOriginalFilename();
+        if (originalFilename == null || (!originalFilename.toLowerCase().endsWith(".doc") 
+                && !originalFilename.toLowerCase().endsWith(".docx") 
+                && !originalFilename.toLowerCase().endsWith(".pdf"))) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "只支持Word或PDF格式的模板文件");
+        }
+        // 构建上传请求
+        UploadFileRequest uploadRequest = new UploadFileRequest();
+        uploadRequest.setBiz(FileUploadBizEnum.TEMPLATE.getValue());
+        return uploadFile(multipartFile, uploadRequest, request);
+    }
+
+    /**
+     * 上传材料文件
+     *
+     * @param multipartFile 材料文件（Word/PDF/图片）
+     * @param request HTTP请求
+     * @return 文件URL
+     */
+    @PostMapping("/api/upload/material")
+    @ApiOperation("上传材料文件")
+    public BaseResponse<String> uploadMaterialFile(@RequestPart("file") MultipartFile multipartFile,
+            HttpServletRequest request) {
+        if (multipartFile == null || multipartFile.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "材料文件不能为空");
+        }
+        // 校验文件类型
+        String originalFilename = multipartFile.getOriginalFilename();
+        if (originalFilename == null || (!originalFilename.toLowerCase().endsWith(".doc") 
+                && !originalFilename.toLowerCase().endsWith(".docx") 
+                && !originalFilename.toLowerCase().endsWith(".pdf")
+                && !originalFilename.toLowerCase().endsWith(".jpg")
+                && !originalFilename.toLowerCase().endsWith(".jpeg")
+                && !originalFilename.toLowerCase().endsWith(".png"))) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "只支持Word、PDF或图片格式的材料文件");
+        }
+        // 构建上传请求
+        UploadFileRequest uploadRequest = new UploadFileRequest();
+        uploadRequest.setBiz(FileUploadBizEnum.MATERIAL.getValue());
+        return uploadFile(multipartFile, uploadRequest, request);
+    }
+
+    /**
      * 文件下载
      *
      * @param fileUrl 文件URL:材料:/material/{userId}/{filename}，模板：/template/{filename}

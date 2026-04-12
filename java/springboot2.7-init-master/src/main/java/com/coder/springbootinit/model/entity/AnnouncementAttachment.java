@@ -10,58 +10,43 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 公告
+ * 公告附件实体
  *
-*/
-@TableName(value = "notice")
+ */
+@TableName(value = "announcement_attachment")
 @Data
-public class Notice implements Serializable {
+public class AnnouncementAttachment implements Serializable {
 
     /**
-     * id
+     * 附件 ID
      */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 标题
+     * 公告 ID
      */
-    private String title;
+    private Long announcementId;
 
     /**
-     * 内容
+     * 附件名称
      */
-    private String content;
+    private String name;
 
     /**
-     * 发布者ID
+     * 附件路径
      */
-    private Long publisherId;
+    private String url;
 
     /**
-     * 组织ID
+     * 附件大小
      */
-    private Long orgId;
+    private String size;
 
     /**
-     * 发布时间
+     * 附件类型
      */
-    private Date publishTime;
-
-    /**
-     * 过期时间
-     */
-    private Date expireTime;
-
-    /**
-     * 是否置顶：0-否，1-是
-     */
-    private Integer isTop;
-
-    /**
-     * 状态：0-草稿，1-已发布
-     */
-    private Integer status;
+    private String type;
 
     /**
      * 创建时间
@@ -69,25 +54,10 @@ public class Notice implements Serializable {
     private Date createTime;
 
     /**
-     * 更新时间
-     */
-    private Date updateTime;
-
-    /**
      * 是否删除
      */
     @TableLogic
     private Integer isDelete;
-
-    /**
-     * 首次发布时间
-     */
-    private Date firstPublishTime;
-
-    /**
-     * 阅读量
-     */
-    private Integer readCount;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

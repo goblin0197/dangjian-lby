@@ -22,6 +22,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -214,6 +215,24 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
     }
 
     @Override
+    public boolean markAsRead(Long announcementId, Long userId) {
+        if (announcementId == null || userId == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告 ID 和用户 ID 不能为空");
+        }
+        // TODO: 实现标记已读逻辑
+        return true;
+    }
+
+    @Override
+    public Integer getUnreadCount(Long userId) {
+        if (userId == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户 ID 不能为空");
+        }
+        // TODO: 实现获取未读数量逻辑
+        return 0;
+    }
+
+    @Override
     public QueryWrapper<Notice> getQueryWrapper(NoticeQueryRequest noticeQueryRequest) {
         // 创建查询条件
         QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
@@ -283,5 +302,216 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         noticeVO.setIsTopName(noticeIsTopEnum != null ? noticeIsTopEnum.getDescription() : "未知");
 
         return noticeVO;
+    }
+
+    @Override
+    public boolean batchDeleteNotices(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告ID列表不能为空");
+        }
+        return this.removeByIds(ids);
+    }
+
+    @Override
+    public boolean offlineNotice(Long id) {
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告ID不能为空");
+        }
+        
+        Notice notice = this.getById(id);
+        if (notice == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "公告不存在");
+        }
+        
+        // 检查公告状态，只有已发布的公告才能下架
+        if (!NoticeStatusEnum.PUBLISHED.getCode().equals(notice.getStatus())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "只有已发布的公告可以下架");
+        }
+        
+        // 更新公告状态为下架（使用OFFLINE状态，如果枚举中没有则使用2表示下架）
+        notice.setStatus(2); // 2-已下架
+        
+        return this.updateById(notice);
+    }
+
+    @Override
+    public boolean republishNotice(Long id) {
+        if (id == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告ID不能为空");
+        }
+        
+        Notice notice = this.getById(id);
+        if (notice == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "公告不存在");
+        }
+        
+        // 检查公告状态，只有下架的公告才能重新发布
+        if (!Integer.valueOf(2).equals(notice.getStatus()) && !NoticeStatusEnum.DRAFT.getCode().equals(notice.getStatus())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "只有下架或草稿状态的公告可以重新发布");
+        }
+        
+        // 更新公告状态为已发布
+        notice.setStatus(NoticeStatusEnum.PUBLISHED.getCode());
+        if (notice.getPublishTime() == null) {
+            notice.setPublishTime(new Date());
+        }
+        
+        return this.updateById(notice);
+    }
+
+    @Override
+    public boolean topNotice(Long id, Integer isTop) {
+        if (id == null || isTop == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
+        }
+        
+        Notice notice = this.getById(id);
+        if (notice == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "公告不存在");
+        }
+        
+        // 更新置顶状态
+        notice.setIsTop(isTop);
+        
+        return this.updateById(notice);
+    }
+
+    @Override
+    public boolean incrementReadCount(Long announcementId) {
+        if (announcementId == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告ID不能为空");
+        }
+
+        Notice notice = this.getById(announcementId);
+        if (notice == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "公告不存在");
+        }
+
+        // 增加阅读量
+        int currentCount = notice.getReadCount() != null ? notice.getReadCount() : 0;
+        notice.setReadCount(currentCount + 1);
+
+        return this.updateById(notice);
+    }
+
+    @Override
+    public List<NoticeVO> getTimelineList(String timeRange, Integer status, Integer current, Integer pageSize) {
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+        
+        // 设置时间范围过滤
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        
+        if (timeRange != null) {
+            switch (timeRange.toLowerCase()) {
+                case "today":
+                    // 今天
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    queryWrapper.ge("publishTime", calendar.getTime());
+                    break;
+                case "week":
+                    // 最近一周
+                    calendar.add(Calendar.DAY_OF_MONTH, -7);
+                    queryWrapper.ge("publishTime", calendar.getTime());
+                    break;
+                case "month":
+                    // 最近一月
+                    calendar.add(Calendar.MONTH, -1);
+                    queryWrapper.ge("publishTime", calendar.getTime());
+                    break;
+                default:
+                    // 默认不限制时间
+                    break;
+            }
+        }
+        
+        // 设置状态过滤
+        if (status != null) {
+            queryWrapper.eq("status", status);
+        } else {
+            // 默认只查询已发布的公告
+            queryWrapper.eq("status", NoticeStatusEnum.PUBLISHED.getCode());
+        }
+        
+        // 排除已删除的记录
+        queryWrapper.eq("isDelete", 0);
+        
+        // 按发布时间倒序排列
+        queryWrapper.orderByDesc("isTop");
+        queryWrapper.orderByDesc("publishTime");
+        
+        // 分页处理
+        int pageNum = current != null ? current : 1;
+        int size = pageSize != null ? pageSize : 10;
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Notice> page =
+                this.page(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(pageNum, size), queryWrapper);
+        
+        // 转换为VO列表
+        return page.getRecords().stream()
+                .map(this::noticeToVO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<NoticeVO> searchTimeline(String keyword, String timeRange, Integer current, Integer pageSize) {
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+        
+        // 关键词搜索（标题或内容）
+        if (StringUtils.isNotBlank(keyword)) {
+            queryWrapper.and(wrapper -> wrapper
+                    .like("title", keyword)
+                    .or()
+                    .like("content", keyword));
+        }
+        
+        // 设置时间范围过滤
+        Date now = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(now);
+        
+        if (timeRange != null && !timeRange.isEmpty()) {
+            switch (timeRange.toLowerCase()) {
+                case "today":
+                    calendar.set(Calendar.HOUR_OF_DAY, 0);
+                    calendar.set(Calendar.MINUTE, 0);
+                    calendar.set(Calendar.SECOND, 0);
+                    queryWrapper.ge("publishTime", calendar.getTime());
+                    break;
+                case "week":
+                    calendar.add(Calendar.DAY_OF_MONTH, -7);
+                    queryWrapper.ge("publishTime", calendar.getTime());
+                    break;
+                case "month":
+                    calendar.add(Calendar.MONTH, -1);
+                    queryWrapper.ge("publishTime", calendar.getTime());
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+        // 只查询已发布的公告
+        queryWrapper.eq("status", NoticeStatusEnum.PUBLISHED.getCode());
+        
+        // 排除已删除的记录
+        queryWrapper.eq("isDelete", 0);
+        
+        // 按发布时间和置顶排序
+        queryWrapper.orderByDesc("isTop");
+        queryWrapper.orderByDesc("publishTime");
+        
+        // 分页处理
+        int pageNum = current != null ? current : 1;
+        int size = pageSize != null ? pageSize : 10;
+        com.baomidou.mybatisplus.extension.plugins.pagination.Page<Notice> page =
+                this.page(new com.baomidou.mybatisplus.extension.plugins.pagination.Page<>(pageNum, size), queryWrapper);
+        
+        // 转换为VO列表
+        return page.getRecords().stream()
+                .map(this::noticeToVO)
+                .collect(Collectors.toList());
     }
 }

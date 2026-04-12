@@ -10,58 +10,43 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 公告
+ * 量化指标实体
  *
-*/
-@TableName(value = "notice")
+ */
+@TableName(value = "quantify_indicator")
 @Data
-public class Notice implements Serializable {
+public class QuantifyIndicator implements Serializable {
 
     /**
-     * id
+     * 指标ID
      */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 标题
+     * 指标名称
      */
-    private String title;
+    private String name;
 
     /**
-     * 内容
+     * 统计规则
      */
-    private String content;
+    private String rule;
 
     /**
-     * 发布者ID
+     * 统计维度：organization-组织/personal-个人/both-两者
      */
-    private Long publisherId;
+    private String dimension;
 
     /**
-     * 组织ID
+     * 适用组织层级，JSON格式
      */
-    private Long orgId;
+    private String orgLevel;
 
     /**
-     * 发布时间
+     * 状态：enable-启用/disable-停用
      */
-    private Date publishTime;
-
-    /**
-     * 过期时间
-     */
-    private Date expireTime;
-
-    /**
-     * 是否置顶：0-否，1-是
-     */
-    private Integer isTop;
-
-    /**
-     * 状态：0-草稿，1-已发布
-     */
-    private Integer status;
+    private String status;
 
     /**
      * 创建时间
@@ -78,16 +63,6 @@ public class Notice implements Serializable {
      */
     @TableLogic
     private Integer isDelete;
-
-    /**
-     * 首次发布时间
-     */
-    private Date firstPublishTime;
-
-    /**
-     * 阅读量
-     */
-    private Integer readCount;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

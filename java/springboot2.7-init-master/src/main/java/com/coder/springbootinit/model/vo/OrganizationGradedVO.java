@@ -22,6 +22,11 @@ public class OrganizationGradedVO implements Serializable {
     private Long id;
 
     /**
+     * 组织负责人ID
+     */
+    private Long leaderId;
+
+    /**
      * 组织名称
      */
     private String orgName;

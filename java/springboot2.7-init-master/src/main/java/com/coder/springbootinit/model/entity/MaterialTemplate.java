@@ -10,58 +10,63 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 公告
+ * 材料模板实体
  *
-*/
-@TableName(value = "notice")
+ */
+@TableName(value = "material_template")
 @Data
-public class Notice implements Serializable {
+public class MaterialTemplate implements Serializable {
 
     /**
-     * id
+     * 模板 ID
      */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     /**
-     * 标题
+     * 模板名称
      */
-    private String title;
+    private String name;
 
     /**
-     * 内容
+     * 所属发展阶段
      */
-    private String content;
+    private String stage;
 
     /**
-     * 发布者ID
+     * 材料类型
      */
-    private Long publisherId;
+    private String type;
 
     /**
-     * 组织ID
+     * 模板状态：enable-启用/disable-停用
      */
-    private Long orgId;
+    private String status;
 
     /**
-     * 发布时间
+     * 模板文件路径
      */
-    private Date publishTime;
+    private String fileUrl;
 
     /**
-     * 过期时间
+     * 文件大小（字节）
      */
-    private Date expireTime;
+    private Long fileSize;
 
     /**
-     * 是否置顶：0-否，1-是
+     * 上传用户 ID
      */
-    private Integer isTop;
+    private Long uploadUserId;
 
     /**
-     * 状态：0-草稿，1-已发布
+     * 上传用户姓名
      */
-    private Integer status;
+    private String uploadUserName;
+
+    /**
+     * 模板说明
+     */
+    private String remark;
 
     /**
      * 创建时间
@@ -78,16 +83,6 @@ public class Notice implements Serializable {
      */
     @TableLogic
     private Integer isDelete;
-
-    /**
-     * 首次发布时间
-     */
-    private Date firstPublishTime;
-
-    /**
-     * 阅读量
-     */
-    private Integer readCount;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

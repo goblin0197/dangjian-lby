@@ -141,9 +141,10 @@ public class OrgMemberServiceImpl extends ServiceImpl<UserMapper, User> implemen
         }
 
         user = new User();
+        user.setId(userId);
         user.setOrgId(orgId);
+        boolean result = userService.updateById(user);
         
-        boolean result = this.save(user);
         if (!result) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "添加组织成员失败");
         }
