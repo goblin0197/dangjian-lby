@@ -6,9 +6,10 @@ import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
 import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
-import com.coder.springbootinit.model.dto.material.MaterialSubmissionAuditRequest;
-import com.coder.springbootinit.model.dto.material.MaterialSubmissionQueryRequest;
-import com.coder.springbootinit.model.dto.material.MaterialSubmissionSubmitRequest;
+import com.coder.springbootinit.model.dto.material.submission.MaterialSubmissionAuditRequest;
+import com.coder.springbootinit.model.dto.material.submission.MaterialSubmissionFinalAuditRequest;
+import com.coder.springbootinit.model.dto.material.submission.MaterialSubmissionQueryRequest;
+import com.coder.springbootinit.model.dto.material.submission.MaterialSubmissionSubmitRequest;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.vo.MaterialSubmissionVO;
 import com.coder.springbootinit.model.vo.MaterialTodoCountVO;
@@ -102,7 +103,7 @@ public class MaterialSubmissionController {
     @PutMapping("/finalAudit")
     @ApiOperation(value = "终审材料")
     @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE})
-    public BaseResponse<Boolean> finalAuditMaterial(@RequestBody MaterialSubmissionAuditRequest request, HttpServletRequest httpServletRequest) {
+    public BaseResponse<Boolean> finalAuditMaterial(@RequestBody MaterialSubmissionFinalAuditRequest request, HttpServletRequest httpServletRequest) {
         if (request == null || request.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -144,7 +145,7 @@ public class MaterialSubmissionController {
     @ApiOperation(value = "获取待提交和待审核数量")
     public BaseResponse<MaterialTodoCountVO> getMaterialTodoCount(HttpServletRequest httpServletRequest) {
         User loginUser = userService.getLoginUser(httpServletRequest);
-        MaterialTodoCountVO result = materialSubmissionService.getMaterialTodoCount(loginUser.getId());
+        MaterialTodoCountVO result = materialSubmissionService.getMaterialTodoCount(loginUser.getId(), loginUser.getUserRole(), null);
         return ResultUtils.success(result);
     }
 }

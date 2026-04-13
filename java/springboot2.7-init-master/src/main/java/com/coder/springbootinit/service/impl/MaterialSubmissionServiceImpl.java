@@ -212,30 +212,30 @@ public class MaterialSubmissionServiceImpl extends ServiceImpl<MaterialSubmissio
         MaterialTodoCountVO vo = new MaterialTodoCountVO();
 
         // 待提交数量：用户自己未提交的
-        Integer toSubmitCount = this.count(new QueryWrapper<MaterialSubmission>()
+        Long toSubmitCount = this.count(new QueryWrapper<MaterialSubmission>()
                 .eq("user_id", userId)
                 .eq("submit_status", "unsubmitted"));
-        vo.setToSubmitCount(toSubmitCount);
+        vo.setToSubmitCount(toSubmitCount.intValue());
 
         // 待审核数量：根据角色判断
-        if (UserConstant.TRAINER.equals(userRole)) {
+        if ("trainer".equals(userRole)) {
             // 培养联系人：审核自己对接的学员
             vo.setToAuditCount(0); // TODO: 需要根据 trainer_relation 表关联查询
         } else if (UserConstant.ORG_ADMIN_ROLE.equals(userRole) || UserConstant.SUPER_ADMIN_ROLE.equals(userRole)) {
             // 管理员：所有待审核的
-            Integer toAuditCount = this.count(new QueryWrapper<MaterialSubmission>()
+            Long toAuditCount = this.count(new QueryWrapper<MaterialSubmission>()
                     .eq("audit_status", "pending"));
-            vo.setToAuditCount(toAuditCount);
+            vo.setToAuditCount(toAuditCount.intValue());
         } else {
             vo.setToAuditCount(0);
         }
 
         // 待终审数量：管理员可见
         if (UserConstant.ORG_ADMIN_ROLE.equals(userRole) || UserConstant.SUPER_ADMIN_ROLE.equals(userRole)) {
-            Integer toFinalAuditCount = this.count(new QueryWrapper<MaterialSubmission>()
+            Long toFinalAuditCount = this.count(new QueryWrapper<MaterialSubmission>()
                     .eq("audit_status", "approved")
                     .eq("submit_status", "approved"));
-            vo.setToFinalAuditCount(toFinalAuditCount);
+            vo.setToFinalAuditCount(toFinalAuditCount.intValue());
         } else {
             vo.setToFinalAuditCount(0);
         }

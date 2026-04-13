@@ -7,11 +7,11 @@ import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
 import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
-import com.coder.springbootinit.model.dto.material.MaterialTemplateAddRequest;
-import com.coder.springbootinit.model.dto.material.MaterialTemplateBatchDeleteRequest;
-import com.coder.springbootinit.model.dto.material.MaterialTemplateBatchToggleRequest;
-import com.coder.springbootinit.model.dto.material.MaterialTemplateQueryRequest;
-import com.coder.springbootinit.model.dto.material.MaterialTemplateUpdateRequest;
+import com.coder.springbootinit.model.dto.material.template.MaterialTemplateAddRequest;
+import com.coder.springbootinit.model.dto.material.template.MaterialTemplateBatchRequest;
+import com.coder.springbootinit.model.dto.material.template.MaterialTemplateQueryRequest;
+import com.coder.springbootinit.model.dto.material.template.MaterialTemplateUpdateRequest;
+import com.coder.springbootinit.model.entity.MaterialTemplate;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.vo.MaterialTemplateVO;
 import com.coder.springbootinit.service.MaterialTemplateService;
@@ -65,7 +65,7 @@ public class MaterialTemplateController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         User loginUser = userService.getLoginUser(httpServletRequest);
-        MaterialTemplateVO template = materialTemplateService.addMaterialTemplate(request, loginUser.getId(), loginUser.getUserName());
+        MaterialTemplate template = materialTemplateService.addMaterialTemplate(request, loginUser.getId(), loginUser.getUserName());
         return ResultUtils.success(template.getId());
     }
 
@@ -103,7 +103,7 @@ public class MaterialTemplateController {
     @DeleteMapping("/batchDelete")
     @ApiOperation(value = "批量删除材料模板")
     @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
-    public BaseResponse<Boolean> batchDeleteMaterialTemplate(@RequestBody MaterialTemplateBatchDeleteRequest request) {
+    public BaseResponse<Boolean> batchDeleteMaterialTemplate(@RequestBody MaterialTemplateBatchRequest request) {
         if (request == null || request.getIds() == null || request.getIds().isEmpty()) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -131,11 +131,11 @@ public class MaterialTemplateController {
     @PutMapping("/batchToggleStatus")
     @ApiOperation(value = "批量切换模板状态")
     @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
-    public BaseResponse<Boolean> batchToggleMaterialTemplateStatus(@RequestBody MaterialTemplateBatchToggleRequest request) {
+    public BaseResponse<Boolean> batchToggleMaterialTemplateStatus(@RequestBody MaterialTemplateBatchRequest request) {
         if (request == null || request.getIds() == null || request.getIds().isEmpty()) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean result = materialTemplateService.batchToggleMaterialTemplateStatus(request.getIds(), request.getStatus());
+        boolean result = materialTemplateService.batchToggleMaterialTemplateStatus(request.getIds(), request.getTargetStatus());
         return ResultUtils.success(result);
     }
 

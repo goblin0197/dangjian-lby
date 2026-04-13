@@ -67,4 +67,11 @@ public interface MaterialArchiveService extends IService<MaterialArchive> {
      * @param response HTTP 响应
      */
     void exportSingleArchive(Long id, HttpServletResponse response);
+
+    /**
+     * 批量导出归档材料为压缩包
+     * @param ids 归档 ID 列表
+     * @return 压缩包文件路径
+     */
+    String batchExportMaterialArchive(List<Long> ids);
 }

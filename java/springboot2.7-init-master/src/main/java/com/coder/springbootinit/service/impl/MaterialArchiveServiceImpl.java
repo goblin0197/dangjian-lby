@@ -21,13 +21,16 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -142,7 +145,12 @@ public class MaterialArchiveServiceImpl extends ServiceImpl<MaterialArchiveMappe
         // 本月归档数
         Date now = new Date();
         java.sql.Date startOfMonth = new java.sql.Date(now.getTime() - (now.getDate() - 1) * 24L * 3600 * 1000);
-        QueryWrapper<MaterialArchive> monthQuery = new QueryWrapper<>(baseQuery);
+        QueryWrapper<MaterialArchive> monthQuery = new QueryWrapper<>();
+        // 复制 baseQuery 的条件
+        String sqlSegment = baseQuery.getSqlSegment();
+        if (sqlSegment != null && !sqlSegment.isEmpty()) {
+            monthQuery.and(i -> i.apply(sqlSegment));
+        }
         monthQuery.ge("archive_time", startOfMonth);
         Long monthCount = this.count(monthQuery);
         vo.setMonthCount(monthCount);
@@ -274,10 +282,75 @@ public class MaterialArchiveServiceImpl extends ServiceImpl<MaterialArchiveMappe
             }
             
             response.flushBuffer();
-            log.info("导出单个归档材料成功，archiveId: {}, 文件名: {}", id, file.getName());
+            log.info("导出单个归档材料成功，archiveId: {}, 文件名：{}", id, file.getName());
         } catch (Exception e) {
             log.error("导出单个归档材料失败，archiveId: {}", id, e);
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "导出失败: " + e.getMessage());
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "导出失败：" + e.getMessage());
         }
+    }
+
+    @Override
+    public String batchExportMaterialArchive(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "归档 ID 列表不能为空");
+        }
+
+        // 查询所有归档记录
+        List<MaterialArchive> archives = this.listByIds(ids);
+        if (archives.isEmpty()) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "未找到归档记录");
+        }
+
+        // 创建临时目录
+        String tempDirPath = System.getProperty("java.io.tmpdir") + File.separator + "material_export_" + System.currentTimeMillis();
+        File tempDir = new File(tempDirPath);
+        if (!tempDir.exists()) {
+            tempDir.mkdirs();
+        }
+
+        // 收集要打包的文件
+        List<File> filesToZip = new ArrayList<>();
+        for (MaterialArchive archive : archives) {
+            try {
+                Path staticPath = Paths.get(System.getProperty("user.dir"), "static");
+                String fileUrl = archive.getFileUrl();
+                
+                if (fileUrl.startsWith("/") || fileUrl.startsWith("\\")) {
+                    fileUrl = fileUrl.substring(1);
+                }
+                
+                Path absolutePath = staticPath.resolve(fileUrl.replace("/", File.separator));
+                File file = absolutePath.toFile();
+
+                if (file.exists()) {
+                    filesToZip.add(file);
+                } else {
+                    log.warn("文件不存在，跳过：archiveId: {}, fileUrl: {}", archive.getId(), fileUrl);
+                }
+            } catch (Exception e) {
+                log.error("处理归档文件失败，archiveId: {}", archive.getId(), e);
+            }
+        }
+
+        if (filesToZip.isEmpty()) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "没有找到可导出的文件");
+        }
+
+        // 压缩文件
+        String zipFilePath = tempDirPath + ".zip";
+        try {
+            // 将文件数组转换为 File 数组
+            File[] filesArray = filesToZip.toArray(new File[0]);
+            // 创建目标 zip 文件
+            File zipFile = new File(zipFilePath);
+            // 使用 Hutool 的 ZipUtil 压缩
+            cn.hutool.core.util.ZipUtil.zip(zipFile, false, filesArray);
+        } catch (Exception e) {
+            log.error("压缩文件失败，archiveIds: {}", ids, e);
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR, "压缩文件失败：" + e.getMessage());
+        }
+
+        log.info("批量导出归档材料成功，archiveIds: {}, 压缩包路径：{}", ids, zipFilePath);
+        return zipFilePath;
     }
 }

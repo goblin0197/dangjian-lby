@@ -6,8 +6,9 @@ import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.common.ResultUtils;
 import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
-import com.coder.springbootinit.model.dto.material.MaterialArchiveBatchExportRequest;
-import com.coder.springbootinit.model.dto.material.MaterialArchiveQueryRequest;
+import com.coder.springbootinit.model.dto.material.archive.MaterialArchiveBatchExportRequest;
+import com.coder.springbootinit.model.dto.material.archive.MaterialArchiveQueryRequest;
+import com.coder.springbootinit.model.dto.material.archive.MaterialArchiveRequest;
 import com.coder.springbootinit.model.entity.User;
 import com.coder.springbootinit.model.vo.MaterialArchiveStatVO;
 import com.coder.springbootinit.model.vo.MaterialArchiveVO;
@@ -43,11 +44,12 @@ public class MaterialArchiveController {
      */
     @GetMapping("/list")
     @ApiOperation(value = "获取归档材料列表")
-    public BaseResponse<List<MaterialArchiveVO>> listMaterialArchive(MaterialArchiveQueryRequest request) {
+    public BaseResponse<List<MaterialArchiveVO>> listMaterialArchive(MaterialArchiveQueryRequest request, HttpServletRequest httpServletRequest) {
         if (request == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        List<MaterialArchiveVO> result = materialArchiveService.listMaterialArchiveVO(request);
+        User loginUser = userService.getLoginUser(httpServletRequest);
+        List<MaterialArchiveVO> result = materialArchiveService.listMaterialArchiveVO(request, loginUser.getId(), loginUser.getUserRole(), null);
         return ResultUtils.success(result);
     }
 
@@ -74,8 +76,11 @@ public class MaterialArchiveController {
         if (submissionId == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
+        MaterialArchiveRequest request = new MaterialArchiveRequest();
+        request.setSubmissionId(submissionId);
+        request.setArchiveRemark(archiveRemark);
         User loginUser = userService.getLoginUser(httpServletRequest);
-        var archive = materialArchiveService.archiveMaterial(submissionId, archiveRemark, loginUser.getId(), loginUser.getUserName());
+        var archive = materialArchiveService.archiveMaterial(request, loginUser.getId(), loginUser.getUserName());
         return ResultUtils.success(archive.getId());
     }
 
@@ -97,7 +102,7 @@ public class MaterialArchiveController {
      */
     @GetMapping("/export")
     @ApiOperation(value = "导出单个归档材料")
-    public void exportMaterialArchive(@RequestParam Long id, HttpServletRequest response) {
+    public void exportMaterialArchive(@RequestParam Long id, javax.servlet.http.HttpServletResponse response) {
         if (id == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
@@ -123,8 +128,9 @@ public class MaterialArchiveController {
      */
     @GetMapping("/stat")
     @ApiOperation(value = "获取归档材料统计数据")
-    public BaseResponse<MaterialArchiveStatVO> getMaterialArchiveStat() {
-        MaterialArchiveStatVO result = materialArchiveService.getMaterialArchiveStat();
+    public BaseResponse<MaterialArchiveStatVO> getMaterialArchiveStat(HttpServletRequest httpServletRequest) {
+        User loginUser = userService.getLoginUser(httpServletRequest);
+        MaterialArchiveStatVO result = materialArchiveService.getMaterialArchiveStat(loginUser.getId(), loginUser.getUserRole(), null);
         return ResultUtils.success(result);
     }
 }
