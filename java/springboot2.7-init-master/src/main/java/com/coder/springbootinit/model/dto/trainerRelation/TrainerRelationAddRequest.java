@@ -2,6 +2,7 @@ package com.coder.springbootinit.model.dto.trainerRelation;
 
 import com.baomidou.mybatisplus.annotation.*;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -31,6 +32,7 @@ public class TrainerRelationAddRequest implements Serializable {
      * 开始日期
      */
     @ApiModelProperty(value = "开始日期", required = false)
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     private Date startDate;
 
     private static final long serialVersionUID = 1L;
