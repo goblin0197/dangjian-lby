@@ -1,7 +1,9 @@
 package com.coder.springbootinit.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageAddRequest;
+import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageQueryRequest;
 import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageUpdateRequest;
 import com.coder.springbootinit.model.entity.DevelopmentStage;
 import com.coder.springbootinit.model.vo.DevelopmentStageVO;
@@ -76,4 +78,18 @@ public interface DevelopmentStageService extends IService<DevelopmentStage> {
      * @return 是否审核成功
      */
     boolean auditDevelopmentStage(Long id, Long auditUserId, Integer assessmentResult, String auditRemark, String assessmentContent);
+
+    /**
+     * 获取查询条件的查询包装器
+     * @param queryRequest 查询请求
+     * @return 查询包装器
+     */
+    QueryWrapper<DevelopmentStage> getQueryWrapper(DevelopmentStageQueryRequest queryRequest);
+
+    /**
+     * 获取发展阶段列表
+     * @param queryRequest 查询请求
+     * @return 发展阶段列表
+     */
+    List<DevelopmentStage> getDevelopmentStagesList(DevelopmentStageQueryRequest queryRequest);
 }

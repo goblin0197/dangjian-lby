@@ -9,6 +9,7 @@ import com.coder.springbootinit.common.ResultUtils;
 import com.coder.springbootinit.constant.UserConstant;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageAddRequest;
+import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageQueryRequest;
 import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageUpdateRequest;
 import com.coder.springbootinit.model.entity.DevelopmentStage;
 import com.coder.springbootinit.model.entity.User;
@@ -189,5 +190,12 @@ public class DevelopmentStageController {
         Long auditUserId = loginUser.getId();
         boolean result = developmentStageService.auditDevelopmentStage(id, auditUserId, assessmentResult, auditRemark, assessmentContent);
         return ResultUtils.success(result);
+    }
+
+    @PostMapping("/list")
+    @ApiOperation(value = "获取发展阶段列表")
+    public BaseResponse<List<DevelopmentStage>> getDevelopmentStagesList(@RequestBody DevelopmentStageQueryRequest query) {
+        List<DevelopmentStage> developmentStages = developmentStageService.getDevelopmentStagesList(query);
+        return ResultUtils.success(developmentStages);
     }
 }

@@ -1,10 +1,12 @@
 package com.coder.springbootinit.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.mapper.DevelopmentStageMapper;
 import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageAddRequest;
+import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageQueryRequest;
 import com.coder.springbootinit.model.dto.developmentStage.DevelopmentStageUpdateRequest;
 import com.coder.springbootinit.model.entity.DevelopmentStage;
 import com.coder.springbootinit.model.entity.MyFile;
@@ -272,5 +274,39 @@ public class DevelopmentStageServiceImpl extends ServiceImpl<DevelopmentStageMap
         }
 
         return this.updateById(developmentStage);
+    }
+
+    /**
+     * 获取查询条件的查询包装器
+     * @param queryRequest 查询请求
+     * @return 查询包装器
+     */
+    @Override
+    public QueryWrapper<DevelopmentStage> getQueryWrapper(DevelopmentStageQueryRequest queryRequest) {
+        QueryWrapper<DevelopmentStage> queryWrapper = new QueryWrapper<>();
+        if(queryRequest == null) {
+            return queryWrapper;
+        }
+        queryWrapper.eq(queryRequest.getUserId() != null, "user_id", queryRequest.getUserId());
+        queryWrapper.eq(queryRequest.getTrainerId() != null, "trainer_id", queryRequest.getTrainerId());
+        queryWrapper.like(StringUtils.isNotBlank(queryRequest.getStageName()), "stage_name", queryRequest.getStageName());
+        queryWrapper.ge(queryRequest.getStageStartTime() != null, "stage_start_time", queryRequest.getStageStartTime());
+        queryWrapper.le(queryRequest.getStageEndTime() != null, "stage_end_time", queryRequest.getStageEndTime());
+        queryWrapper.eq(queryRequest.getStageStatus() != null, "stage_status", queryRequest.getStageStatus());
+        queryWrapper.eq(queryRequest.getAssessmentResult() != null, "assessment_result", queryRequest.getAssessmentResult());
+        queryWrapper.eq(queryRequest.getAuditUserId() != null, "audit_user_id", queryRequest.getAuditUserId());
+        queryWrapper.ge(queryRequest.getAuditTime() != null, "audit_time", queryRequest.getAuditTime());
+        return queryWrapper;
+    }
+
+    /**
+     * 获取发展阶段列表
+     * @param queryRequest 查询请求
+     * @return 发展阶段列表
+     */
+    @Override
+    public List<DevelopmentStage> getDevelopmentStagesList(DevelopmentStageQueryRequest queryRequest) {
+        QueryWrapper<DevelopmentStage> queryWrapper = getQueryWrapper(queryRequest);
+        return this.list(queryWrapper);
     }
 }
