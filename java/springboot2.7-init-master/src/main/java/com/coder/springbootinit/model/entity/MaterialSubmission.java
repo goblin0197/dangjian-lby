@@ -20,7 +20,7 @@ public class MaterialSubmission implements Serializable {
     /**
      * 提交 ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

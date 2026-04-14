@@ -20,7 +20,7 @@ public class MaterialArchive implements Serializable {
     /**
      * 归档 ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

@@ -20,7 +20,7 @@ public class QuantifyIndicator implements Serializable {
     /**
      * 指标ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

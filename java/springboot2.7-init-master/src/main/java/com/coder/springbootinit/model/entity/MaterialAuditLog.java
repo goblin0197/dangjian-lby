@@ -19,7 +19,7 @@ public class MaterialAuditLog implements Serializable {
     /**
      * 日志 ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

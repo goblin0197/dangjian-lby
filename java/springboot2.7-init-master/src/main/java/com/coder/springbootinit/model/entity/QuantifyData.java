@@ -20,7 +20,7 @@ public class QuantifyData implements Serializable {
     /**
      * 数据ID
      */
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
