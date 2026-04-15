@@ -2,10 +2,10 @@
   <div id="basicLayout">
     <a-layout style="min-height: 100vh">
       <a-layout-header class="header">
-        <GlobalHeader />
+        <GlobalHeader/>
       </a-layout-header>
       <a-layout-content class="content">
-        <router-view />
+        <router-view/>
       </a-layout-content>
     </a-layout>
   </div>
@@ -38,6 +38,6 @@
   text-align: center;
 }
 </style>
-<script setup lang="ts">
+<script lang="ts" setup>
 import GlobalHeader from "@/components/GlobalHeader.vue";
 </script>

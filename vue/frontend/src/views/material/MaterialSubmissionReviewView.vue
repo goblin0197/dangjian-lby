@@ -5,26 +5,26 @@
     <a-card style="margin-bottom: 16px">
       <a-space size="large">
         <a-button
-          :status="activeView === 'template' ? 'primary' : 'normal'"
-          @click="switchView('template')"
-          :disabled="userRole !== 'admin'"
+            :disabled="userRole !== 'admin'"
+            :status="activeView === 'template' ? 'primary' : 'normal'"
+            @click="switchView('template')"
         >
-          <icon-file-text />
+          <icon-file-text/>
           材料模板管理
         </a-button>
         <a-button
-          type="primary"
-          :status="activeView === 'submit' ? 'primary' : 'normal'"
-          @click="switchView('submit')"
+            :status="activeView === 'submit' ? 'primary' : 'normal'"
+            type="primary"
+            @click="switchView('submit')"
         >
-          <icon-upload />
+          <icon-upload/>
           材料提交审核
         </a-button>
         <a-button
-          :status="activeView === 'archive' ? 'primary' : 'normal'"
-          @click="switchView('archive')"
+            :status="activeView === 'archive' ? 'primary' : 'normal'"
+            @click="switchView('archive')"
         >
-          <icon-folder />
+          <icon-folder/>
           材料归档查询
         </a-button>
       </a-space>
@@ -34,8 +34,8 @@
     <a-card>
       <!-- 高级筛选区 -->
       <div
-        class="filter-bar"
-        style="
+          class="filter-bar"
+          style="
           margin-bottom: 16px;
           padding-bottom: 16px;
           border-bottom: 1px solid #eee;
@@ -45,9 +45,9 @@
           <a-col :span="6">
             <a-form-item label="时间范围" label-col-flex="80px">
               <a-select
-                v-model="filterParams.timeRange"
-                style="width: 100%"
-                @change="refreshData"
+                  v-model="filterParams.timeRange"
+                  style="width: 100%"
+                  @change="refreshData"
               >
                 <a-option value="3month">近3个月</a-option>
                 <a-option value="6month">近6个月</a-option>
@@ -60,9 +60,9 @@
           <a-col :span="6">
             <a-form-item label="组织层级" label-col-flex="80px">
               <a-select
-                v-model="filterParams.orgLevel"
-                style="width: 100%"
-                @change="refreshData"
+                  v-model="filterParams.orgLevel"
+                  style="width: 100%"
+                  @change="refreshData"
               >
                 <a-option value="all">全部</a-option>
                 <a-option value="branch1">教师一支部</a-option>
@@ -76,9 +76,9 @@
           <a-col :span="6">
             <a-form-item label="发展阶段" label-col-flex="80px">
               <a-select
-                v-model="filterParams.stage"
-                style="width: 100%"
-                @change="refreshData"
+                  v-model="filterParams.stage"
+                  style="width: 100%"
+                  @change="refreshData"
               >
                 <a-option value="all">全部</a-option>
                 <a-option value="activist">积极分子</a-option>
@@ -91,9 +91,9 @@
           <a-col :span="6">
             <a-form-item label="提交状态" label-col-flex="80px">
               <a-select
-                v-model="filterParams.submitStatus"
-                style="width: 100%"
-                @change="refreshData"
+                  v-model="filterParams.submitStatus"
+                  style="width: 100%"
+                  @change="refreshData"
               >
                 <a-option value="all">全部</a-option>
                 <a-option value="unsubmit">未提交</a-option>
@@ -107,18 +107,18 @@
 
         <!-- 自定义时间范围（按需显示） -->
         <a-row
-          v-if="filterParams.timeRange === 'custom'"
-          style="margin-top: 16px"
+            v-if="filterParams.timeRange === 'custom'"
+            style="margin-top: 16px"
         >
           <a-col :span="12">
             <a-range-picker
-              v-model="filterParams.customTime"
-              style="width: 100%"
+                v-model="filterParams.customTime"
+                style="width: 100%"
             />
           </a-col>
           <a-col :span="12" style="text-align: right">
             <a-button type="outline" @click="refreshData">
-              <icon-search />
+              <icon-search/>
               确认筛选
             </a-button>
           </a-col>
@@ -128,7 +128,7 @@
         <a-row style="margin-top: 8px">
           <a-col :span="24" style="text-align: right">
             <a-button type="outline" @click="refreshData">
-              <icon-refresh />
+              <icon-refresh/>
               刷新数据
             </a-button>
           </a-col>
@@ -140,16 +140,16 @@
         <a-row :gutter="16">
           <a-col v-if="todoCount.unsubmit > 0" :span="12">
             <a-card
-              class="todo-card unsubmit-card"
-              hoverable
-              @click="filterUnsubmit"
+                class="todo-card unsubmit-card"
+                hoverable
+                @click="filterUnsubmit"
             >
               <div class="todo-icon">🚨</div>
               <div class="todo-text">
                 待我提交：<span class="todo-count">{{
                   todoCount.unsubmit
                 }}</span
-                >份材料
+              >份材料
               </div>
             </a-card>
           </a-col>
@@ -158,7 +158,7 @@
               <div class="todo-icon">🚨</div>
               <div class="todo-text">
                 待我审核：<span class="todo-count">{{ todoCount.audit }}</span
-                >份材料
+              >份材料
               </div>
             </a-card>
           </a-col>
@@ -167,28 +167,28 @@
 
       <!-- 材料提交/审核列表 -->
       <a-table
-        :columns="tableColumns"
-        :data="materialList"
-        :pagination="{
+          :columns="tableColumns"
+          :data="materialList"
+          :pagination="{
           showTotal: true,
           pageSize: 10,
           current: 1,
           total: materialList.length,
         }"
-        row-key="id"
-        :row-class-name="getRowClassName"
+          :row-class-name="getRowClassName"
+          row-key="id"
       >
         <!-- 所属支部列自定义渲染 -->
         <template #orgName="{ record }">
           <span>
             {{
               record.orgLevel === "branch1"
-                ? "教师一支部"
-                : record.orgLevel === "branch2"
-                ? "教师二支部"
-                : record.orgLevel === "branch3"
-                ? "学生一支部"
-                : "学生二支部"
+                  ? "教师一支部"
+                  : record.orgLevel === "branch2"
+                      ? "教师二支部"
+                      : record.orgLevel === "branch3"
+                          ? "学生一支部"
+                          : "学生二支部"
             }}
           </span>
         </template>
@@ -198,10 +198,10 @@
           <span>
             {{
               record.stage === "activist"
-                ? "积极分子"
-                : record.stage === "developmentObject"
-                ? "发展对象"
-                : "预备党员"
+                  ? "积极分子"
+                  : record.stage === "developmentObject"
+                      ? "发展对象"
+                      : "预备党员"
             }}
           </span>
         </template>
@@ -211,12 +211,12 @@
           <a-tag :color="getSubmitStatusColor(record.submitStatus)">
             {{
               record.submitStatus === "unsubmit"
-                ? "未提交"
-                : record.submitStatus === "submitted"
-                ? "已提交"
-                : record.submitStatus === "approved"
-                ? "审核通过"
-                : "退回"
+                  ? "未提交"
+                  : record.submitStatus === "submitted"
+                      ? "已提交"
+                      : record.submitStatus === "approved"
+                          ? "审核通过"
+                          : "退回"
             }}
           </a-tag>
         </template>
@@ -226,14 +226,14 @@
           <a-tag :color="getAuditStatusColor(record.auditStatus)">
             {{
               record.auditStatus === "none"
-                ? "-"
-                : record.auditStatus === "pending"
-                ? "待审核"
-                : record.auditStatus === "approved"
-                ? "审核通过"
-                : record.auditStatus === "finalApproved"
-                ? "终审通过"
-                : "退回"
+                  ? "-"
+                  : record.auditStatus === "pending"
+                      ? "待审核"
+                      : record.auditStatus === "approved"
+                          ? "审核通过"
+                          : record.auditStatus === "finalApproved"
+                              ? "终审通过"
+                              : "退回"
             }}
           </a-tag>
         </template>
@@ -243,77 +243,77 @@
           <a-space wrap>
             <!-- 公共操作：查看/预览模板 -->
             <a-button
-              v-if="record.submitStatus !== 'unsubmit'"
-              type="text"
-              @click="viewMaterial(record)"
-              >查看
+                v-if="record.submitStatus !== 'unsubmit'"
+                type="text"
+                @click="viewMaterial(record)"
+            >查看
             </a-button>
             <a-button
-              v-if="record.submitStatus === 'unsubmit'"
-              type="text"
-              @click="previewTemplate(record)"
-              >预览模板
+                v-if="record.submitStatus === 'unsubmit'"
+                type="text"
+                @click="previewTemplate(record)"
+            >预览模板
             </a-button>
             <a-button
-              v-if="record.submitStatus !== 'unsubmit'"
-              type="text"
-              @click="downloadMaterial(record)"
-              >下载
+                v-if="record.submitStatus !== 'unsubmit'"
+                type="text"
+                @click="downloadMaterial(record)"
+            >下载
             </a-button>
 
             <!-- 普通党员操作：上传 -->
             <a-button
-              v-if="
+                v-if="
                 userRole === 'student' && record.submitStatus === 'unsubmit'
               "
-              type="text"
-              status="primary"
-              @click="openUploadModal(record)"
+                status="primary"
+                type="text"
+                @click="openUploadModal(record)"
             >
               上传
             </a-button>
 
             <!-- 培养联系人操作：审核/退回 -->
             <a-button
-              v-if="userRole === 'teacher' && record.auditStatus === 'pending'"
-              type="text"
-              status="primary"
-              @click="openAuditModal(record, 'approve')"
+                v-if="userRole === 'teacher' && record.auditStatus === 'pending'"
+                status="primary"
+                type="text"
+                @click="openAuditModal(record, 'approve')"
             >
               审核
             </a-button>
             <a-button
-              v-if="userRole === 'teacher' && record.auditStatus === 'pending'"
-              type="text"
-              status="danger"
-              @click="openAuditModal(record, 'reject')"
+                v-if="userRole === 'teacher' && record.auditStatus === 'pending'"
+                status="danger"
+                type="text"
+                @click="openAuditModal(record, 'reject')"
             >
               退回
             </a-button>
 
             <!-- 管理员操作：终审/退回/归档 -->
             <a-button
-              v-if="userRole === 'admin' && record.auditStatus === 'approved'"
-              type="text"
-              status="primary"
-              @click="finalAudit(record, 'approve')"
+                v-if="userRole === 'admin' && record.auditStatus === 'approved'"
+                status="primary"
+                type="text"
+                @click="finalAudit(record, 'approve')"
             >
               终审
             </a-button>
             <a-button
-              v-if="userRole === 'admin' && record.auditStatus === 'approved'"
-              type="text"
-              status="danger"
-              @click="finalAudit(record, 'reject')"
+                v-if="userRole === 'admin' && record.auditStatus === 'approved'"
+                status="danger"
+                type="text"
+                @click="finalAudit(record, 'reject')"
             >
               退回
             </a-button>
             <a-button
-              v-if="
+                v-if="
                 userRole === 'admin' && record.auditStatus === 'finalApproved'
               "
-              type="text"
-              @click="archiveMaterial(record)"
+                type="text"
+                @click="archiveMaterial(record)"
             >
               归档
             </a-button>
@@ -324,11 +324,11 @@
 
     <!-- 材料上传弹窗 -->
     <a-modal
-      v-model:visible="uploadModalVisible"
-      title="上传材料"
-      width="600px"
-      @ok="handleUploadOk"
-      @cancel="handleUploadCancel"
+        v-model:visible="uploadModalVisible"
+        title="上传材料"
+        width="600px"
+        @cancel="handleUploadCancel"
+        @ok="handleUploadOk"
     >
       <div v-if="currentMaterial" style="margin-bottom: 16px">
         <p><strong>待上传材料：</strong>{{ currentMaterial.materialName }}</p>
@@ -336,26 +336,26 @@
           <strong>所属阶段：</strong
           >{{
             currentMaterial.stage === "activist"
-              ? "积极分子"
-              : currentMaterial.stage === "developmentObject"
-              ? "发展对象"
-              : "预备党员"
+                ? "积极分子"
+                : currentMaterial.stage === "developmentObject"
+                    ? "发展对象"
+                    : "预备党员"
           }}
         </p>
       </div>
       <a-form :model="uploadForm" label-col-flex="80px" wrapper-col-flex="auto">
         <a-form-item label="材料文件">
           <a-upload
-            v-model="uploadForm.fileList"
-            action="/api/upload/material"
-            :show-file-list="true"
-            :multiple="false"
-            accept=".docx,.doc,.pdf,.jpg,.png"
-            :file-list-max="1"
-            @change="handleFileUploadChange"
+              v-model="uploadForm.fileList"
+              :file-list-max="1"
+              :multiple="false"
+              :show-file-list="true"
+              accept=".docx,.doc,.pdf,.jpg,.png"
+              action="/api/upload/material"
+              @change="handleFileUploadChange"
           >
             <a-button type="dashed">
-              <icon-upload />
+              <icon-upload/>
               点击上传（支持Word/PDF/图片）
             </a-button>
           </a-upload>
@@ -365,9 +365,9 @@
         </a-form-item>
         <a-form-item label="备注说明">
           <a-textarea
-            v-model="uploadForm.remark"
-            placeholder="请输入材料填写说明、补充信息等（可选）"
-            :rows="3"
+              v-model="uploadForm.remark"
+              :rows="3"
+              placeholder="请输入材料填写说明、补充信息等（可选）"
           />
         </a-form-item>
       </a-form>
@@ -375,32 +375,32 @@
 
     <!-- 审核/退回弹窗 -->
     <a-modal
-      v-model:visible="auditModalVisible"
-      :title="auditType === 'approve' ? '审核材料' : '退回材料'"
-      width="600px"
-      @ok="handleAuditOk"
-      @cancel="auditModalVisible = false"
+        v-model:visible="auditModalVisible"
+        :title="auditType === 'approve' ? '审核材料' : '退回材料'"
+        width="600px"
+        @cancel="auditModalVisible = false"
+        @ok="handleAuditOk"
     >
       <div v-if="currentMaterial" style="margin-bottom: 16px">
         <p><strong>审核材料：</strong>{{ currentMaterial.materialName }}</p>
         <p><strong>提交人：</strong>{{ currentMaterial.userName }}</p>
       </div>
       <a-form :model="auditForm" label-col-flex="80px" wrapper-col-flex="auto">
-        <a-form-item label="审核意见" :required="auditType === 'reject'">
+        <a-form-item :required="auditType === 'reject'" label="审核意见">
           <a-textarea
-            v-model="auditForm.opinion"
-            :placeholder="
+              v-model="auditForm.opinion"
+              :placeholder="
               auditType === 'approve'
                 ? '请输入审核意见（可选）'
                 : '请输入退回原因（必填）'
             "
-            :rows="4"
+              :rows="4"
           />
         </a-form-item>
         <a-form-item v-if="userRole === 'admin'" label="终审备注">
           <a-input
-            v-model="auditForm.remark"
-            placeholder="请输入终审备注（可选）"
+              v-model="auditForm.remark"
+              placeholder="请输入终审备注（可选）"
           />
         </a-form-item>
       </a-form>
@@ -408,35 +408,35 @@
 
     <!-- 模板预览弹窗 -->
     <a-modal
-      v-model:visible="previewModalVisible"
-      title="模板预览"
-      width="700px"
-      @cancel="previewModalVisible = false"
-      :footer="null"
+        v-model:visible="previewModalVisible"
+        :footer="null"
+        title="模板预览"
+        width="700px"
+        @cancel="previewModalVisible = false"
     >
       <div v-if="currentMaterial" style="padding: 16px">
         <div style="font-size: 16px; font-weight: 600; margin-bottom: 16px">
           {{ currentMaterial.materialName }}模板
         </div>
         <div
-          style="
+            style="
             border: 1px solid #eee;
             padding: 24px;
             min-height: 300px;
             text-align: center;
           "
         >
-          <icon-file-text style="font-size: 64px; color: #ccc" />
+          <icon-file-text style="font-size: 64px; color: #ccc"/>
           <div style="margin-top: 16px; color: #86909c">
             模板文件在线预览效果（实际项目中对接PDF/Word预览组件）
           </div>
         </div>
         <div style="margin-top: 20px; text-align: right">
           <a-button
-            type="primary"
-            @click="downloadTemplateFile(currentMaterial)"
+              type="primary"
+              @click="downloadTemplateFile(currentMaterial)"
           >
-            <icon-download />
+            <icon-download/>
             下载模板文件
           </a-button>
         </div>
@@ -446,7 +446,7 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, watchEffect } from "vue";
+import {reactive, ref, watchEffect} from "vue";
 import message from "@arco-design/web-vue/es/message";
 // 导入Arco图标
 import {
@@ -457,7 +457,10 @@ import {
   IconSearch,
   IconUpload,
 } from "@arco-design/web-vue/es/icon";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
+// 导入API
+import * as cailiaotijiaoshenhe from "@/api/cailiaotijiaoshenhe";
+import * as cailiaoguidangchaxun from "@/api/cailiaoguidangchaxun";
 
 const router = useRouter();
 
@@ -633,64 +636,52 @@ const auditForm = reactive({
 
 // 7. 核心方法
 // 刷新数据（按角色过滤）
-const refreshData = () => {
-  // 基础筛选
-  let filteredList = rawMaterialList.value.filter((item) => {
-    const orgMatch =
-      filterParams.orgLevel === "all" ||
-      item.orgLevel === filterParams.orgLevel;
-    const stageMatch =
-      filterParams.stage === "all" || item.stage === filterParams.stage;
-    const statusMatch =
-      filterParams.submitStatus === "all" ||
-      item.submitStatus === filterParams.submitStatus;
-    return orgMatch && stageMatch && statusMatch;
-  });
-
-  // 按角色过滤
-  if (userRole.value === "student") {
-    // 普通党员：仅显示本人材料
-    filteredList = filteredList.filter(
-      (item) => item.userName === "王五（学生党员）"
-    );
-  } else if (userRole.value === "teacher") {
-    // 培养联系人：仅显示教师支部材料+待审核
-    filteredList = filteredList.filter(
-      (item) =>
-        (item.orgLevel === "branch1" || item.orgLevel === "branch2") &&
-        (item.auditStatus === "pending" ||
-          item.auditStatus === "approved" ||
-          item.auditStatus === "rejected")
-    );
+const refreshData = async () => {
+  try {
+    const res = await cailiaotijiaoshenhe.listMaterialSubmissionUsingGet({
+      timeRange: filterParams.timeRange,
+      orgLevel: filterParams.orgLevel === "all" ? undefined : filterParams.orgLevel,
+      stage: filterParams.stage === "all" ? undefined : filterParams.stage,
+      submitStatus: filterParams.submitStatus === "all" ? undefined : filterParams.submitStatus,
+      page: 1,
+      pageSize: 100,
+    });
+    if (res.code === 0) {
+      materialList.value = res.data?.records || [];
+      // 计算待办数量
+      await calculateTodoCount();
+    } else {
+      message.error(res.message || "获取材料列表失败");
+    }
+  } catch (error) {
+    console.error("获取材料列表失败:", error);
+    message.error("网络请求异常");
   }
-  // 管理员：显示全量数据
-
-  materialList.value = filteredList;
-
-  // 计算待办数量
-  calculateTodoCount();
 };
 
 // 计算待办数量
-const calculateTodoCount = () => {
-  if (userRole.value === "student") {
-    // 普通党员：待提交数量
-    todoCount.unsubmit = materialList.value.filter(
-      (item) => item.submitStatus === "unsubmit"
-    ).length;
-    todoCount.audit = 0;
-  } else if (userRole.value === "teacher") {
-    // 培养联系人：待审核数量
-    todoCount.unsubmit = 0;
-    todoCount.audit = materialList.value.filter(
-      (item) => item.auditStatus === "pending"
-    ).length;
-  } else if (userRole.value === "admin") {
-    // 管理员：待终审数量
-    todoCount.unsubmit = 0;
-    todoCount.audit = materialList.value.filter(
-      (item) => item.auditStatus === "approved"
-    ).length;
+const calculateTodoCount = async () => {
+  try {
+    const res = await cailiaotijiaoshenhe.getMaterialTodoCountUsingGet();
+    if (res.code === 0) {
+      todoCount.unsubmit = res.data?.unsubmit || 0;
+      todoCount.audit = res.data?.audit || 0;
+    } else {
+      message.error(res.message || "获取待办数量失败");
+    }
+  } catch (error) {
+    console.error("获取待办数量失败:", error);
+    // 失败时使用本地计算作为 fallback
+    if (userRole.value === "student") {
+      todoCount.unsubmit = materialList.value.filter(item => item.submitStatus === "unsubmit").length;
+      todoCount.audit = 0;
+    } else if (userRole.value === "teacher") {
+      todoCount.unsubmit = 0;
+      todoCount.audit = materialList.value.filter(item => item.auditStatus === "pending").length;
+    } else if (userRole.value === "admin") {
+      todoCount.unsubmit = 0;
+      todoCount.audit = materialList.value.filter(item => item.auditStatus === "approved").length;
+    }
   }
 };
 
@@ -759,33 +750,34 @@ const openUploadModal = (record: any) => {
 };
 
 // 处理上传确认
-const handleUploadOk = () => {
+const handleUploadOk = async () => {
   if (
-    uploadForm.fileList.length === 0 ||
-    uploadForm.fileList[0].status !== "done"
+      uploadForm.fileList.length === 0 ||
+      uploadForm.fileList[0].status !== "done"
   ) {
     message.error("请先上传材料文件");
     return;
   }
 
-  // 模拟上传成功，更新状态
-  const index = materialList.value.findIndex(
-    (item) => item.id === currentMaterial.value.id
-  );
-  if (index > -1) {
-    materialList.value[index].submitStatus = "submitted";
-    materialList.value[index].auditStatus = "pending";
-    materialList.value[index].uploadTime = new Date()
-      .toLocaleDateString()
-      .replace(/\//g, "-");
-    materialList.value[
-      index
-    ].fileUrl = `/materials/${currentMaterial.value.userName}-${currentMaterial.value.materialName}.pdf`;
+  try {
+    const res = await cailiaotijiaoshenhe.submitMaterialUsingPost({
+      userId: currentMaterial.value.userId || currentMaterial.value.id,
+      stage: currentMaterial.value.stage,
+      materialName: currentMaterial.value.materialName,
+      fileUrl: uploadForm.fileList[0].response?.data || uploadForm.fileList[0].url,
+      remark: uploadForm.remark,
+    });
+    if (res.code === 0) {
+      uploadModalVisible.value = false;
+      message.success("材料上传成功，等待审核");
+      await refreshData();
+    } else {
+      message.error(res.message || "材料上传失败");
+    }
+  } catch (error) {
+    console.error("材料上传失败:", error);
+    message.error("网络请求异常");
   }
-
-  uploadModalVisible.value = false;
-  message.success("材料上传成功，等待审核");
-  refreshData();
 };
 
 // 处理上传取消
@@ -809,41 +801,49 @@ const openAuditModal = (record: any, type: string) => {
 };
 
 // 处理审核确认
-const handleAuditOk = () => {
+const handleAuditOk = async () => {
   if (auditType.value === "reject" && !auditForm.opinion) {
     message.error("请填写退回原因");
     return;
   }
 
-  // 模拟审核/退回成功
-  const index = materialList.value.findIndex(
-    (item) => item.id === currentMaterial.value.id
-  );
-  if (index > -1) {
+  try {
     if (auditType.value === "approve") {
       // 审核通过
-      materialList.value[index].auditStatus =
-        userRole.value === "admin" ? "finalApproved" : "approved";
-      materialList.value[index].auditor =
-        userRole.value === "teacher" ? "赵六（培养联系人）" : "管理员-系统";
-      materialList.value[index].auditTime = new Date()
-        .toLocaleDateString()
-        .replace(/\//g, "-");
-      message.success("审核通过");
+      const res = await cailiaotijiaoshenhe.auditMaterialUsingPut({
+        id: currentMaterial.value.id,
+        auditResult: "approved",
+        auditOpinion: auditForm.opinion,
+      });
+      if (res.code === 0) {
+        message.success("审核通过");
+        auditModalVisible.value = false;
+        await refreshData();
+      } else {
+        message.error(res.message || "审核失败");
+      }
     } else {
       // 退回
-      materialList.value[index].auditStatus = "rejected";
-      materialList.value[index].submitStatus = "rejected";
-      message.success("材料已退回");
+      const res = await cailiaotijiaoshenhe.rejectMaterialUsingPut({
+        id: currentMaterial.value.id,
+        auditOpinion: auditForm.opinion,
+      });
+      if (res.code === 0) {
+        message.success("材料已退回");
+        auditModalVisible.value = false;
+        await refreshData();
+      } else {
+        message.error(res.message || "退回失败");
+      }
     }
+  } catch (error) {
+    console.error("审核操作失败:", error);
+    message.error("网络请求异常");
   }
-
-  auditModalVisible.value = false;
-  refreshData();
 };
 
 // 管理员终审
-const finalAudit = (record: any, type: string) => {
+const finalAudit = async (record: any, type: string) => {
   currentMaterial.value = record;
   auditType.value = type;
   auditForm.opinion = type === "approve" ? "终审通过" : "";
@@ -851,12 +851,22 @@ const finalAudit = (record: any, type: string) => {
 
   if (type === "approve") {
     // 直接终审通过
-    const index = materialList.value.findIndex((item) => item.id === record.id);
-    if (index > -1) {
-      materialList.value[index].auditStatus = "finalApproved";
-      message.success("终审通过，材料可归档");
+    try {
+      const res = await cailiaotijiaoshenhe.finalAuditMaterialUsingPut({
+        id: record.id,
+        auditResult: "finalApproved",
+        auditOpinion: auditForm.opinion,
+      });
+      if (res.code === 0) {
+        message.success("终审通过，材料可归档");
+        await refreshData();
+      } else {
+        message.error(res.message || "终审失败");
+      }
+    } catch (error) {
+      console.error("终审失败:", error);
+      message.error("网络请求异常");
     }
-    refreshData();
   } else {
     // 退回需填写原因
     auditModalVisible.value = true;
@@ -868,10 +878,22 @@ const archiveMaterial = (record: any) => {
   message.confirm({
     title: "材料归档",
     content: `确定要归档【${record.userName}-${record.materialName}】吗？归档后将进入归档库`,
-    onOk: () => {
-      message.success("材料归档成功");
-      // 实际项目中移至归档表，此处仅提示
-      refreshData();
+    onOk: async () => {
+      try {
+        const res = await cailiaoguidangchaxun.archiveMaterialUsingPost({
+          submissionId: record.id,
+          archiveRemark: "",
+        });
+        if (res.code === 0) {
+          message.success("材料归档成功");
+          await refreshData();
+        } else {
+          message.error(res.message || "归档失败");
+        }
+      } catch (error) {
+        console.error("归档失败:", error);
+        message.error("网络请求异常");
+      }
     },
   });
 };
@@ -888,22 +910,42 @@ const downloadTemplateFile = (record: any) => {
 };
 
 // 查看材料
-const viewMaterial = (record: any) => {
-  message.info(
-    `查看【${record.userName}-${record.materialName}】材料（实际项目中对接在线预览）`
-  );
+const viewMaterial = async (record: any) => {
+  try {
+    const res = await cailiaotijiaoshenhe.viewMaterialUsingGet({ id: record.id });
+    if (res.code === 0) {
+      // 实际项目中对接在线预览
+      message.info(`查看【${record.userName}-${record.materialName}】材料`);
+    } else {
+      message.error(res.message || "查看材料失败");
+    }
+  } catch (error) {
+    console.error("查看材料失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 下载材料
-const downloadMaterial = (record: any) => {
-  message.success(
-    `已开始下载【${record.userName}-${record.materialName}】材料文件`
-  );
+const downloadMaterial = async (record: any) => {
+  try {
+    const res = await cailiaotijiaoshenhe.downloadMaterialUsingGet({ id: record.id });
+    if (res.code === 0) {
+      // 实际项目中处理下载
+      message.success(`已开始下载【${record.userName}-${record.materialName}】材料文件`);
+    } else {
+      message.error(res.message || "下载材料失败");
+    }
+  } catch (error) {
+    console.error("下载材料失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 初始加载
 watchEffect(() => {
-  refreshData();
+  (async () => {
+    await refreshData();
+  })();
 });
 
 const toShowMaterialArchivingQueryView = () => {

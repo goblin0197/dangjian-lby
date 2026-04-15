@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { OrderItem } from './OrderItem';
-import type { OrgRelationTransfer } from './OrgRelationTransfer';
+import type {OrderItem} from './OrderItem';
+import type {OrgRelationTransfer} from './OrgRelationTransfer';
+
 export type Page_OrgRelationTransfer_ = {
     countId?: string;
     current?: number;

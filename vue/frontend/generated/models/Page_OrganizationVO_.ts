@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { OrderItem } from './OrderItem';
-import type { OrganizationVO } from './OrganizationVO';
+import type {OrderItem} from './OrderItem';
+import type {OrganizationVO} from './OrganizationVO';
+
 export type Page_OrganizationVO_ = {
     countId?: string;
     current?: number;

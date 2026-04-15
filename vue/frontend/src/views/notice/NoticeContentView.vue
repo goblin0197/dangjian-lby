@@ -31,10 +31,10 @@
     <a-layout-content>
       <a-timeline>
         <a-timeline-item
-          v-for="item in dataList"
-          :key="item.id"
-          :label="moment(item.createTime).format('YYYY-MM-DD')"
-          :dot-color="statusColorMap[item.status]"
+            v-for="item in dataList"
+            :key="item.id"
+            :dot-color="statusColorMap[item.status]"
+            :label="moment(item.createTime).format('YYYY-MM-DD')"
         >
           <div class="timeline-card">
             <div class="card-header">
@@ -43,45 +43,41 @@
               </a-tag>
               <span class="title">{{ item.title }}</span>
               <span class="publisher">{{
-                item.publisherId || "系统管理员"
-              }}</span>
+                  item.publisherId || "系统管理员"
+                }}</span>
             </div>
             <div class="content">{{ item.content }}</div>
           </div>
         </a-timeline-item>
 
         <!-- 空状态提示 -->
-        <a-empty v-if="dataList?.length === 0" description="暂无公告" />
+        <a-empty v-if="dataList?.length === 0" description="暂无公告"/>
       </a-timeline>
 
       <!-- 分页组件 -->
       <div class="pagination-wrapper">
         <a-pagination
-          :total="total"
-          :current="searchParams.current"
-          :page-size="searchParams.pageSize"
-          show-total
-          @change="handlePageChange"
-          @page-size-change="handlePageSizeChange"
+            :current="searchParams.current"
+            :page-size="searchParams.pageSize"
+            :total="total"
+            show-total
+            @change="handlePageChange"
+            @page-size-change="handlePageSizeChange"
         />
       </div>
     </a-layout-content>
   </a-layout>
 </template>
 
-<script setup lang="ts">
-import dayjs from "dayjs";
-import { onMounted, reactive, ref, computed, watchEffect } from "vue";
-import { IconSearch, IconRight } from "@arco-design/web-vue/es/icon";
+<script lang="ts" setup>
+import {onMounted, ref, watchEffect} from "vue";
 import message from "@arco-design/web-vue/es/message";
 import moment from "moment";
-import { Service, NoticeVO } from "../../../generated";
-import { useStore } from "vuex";
-import { IconExclamationCircleFill } from "@arco-design/web-vue/es/icon";
+import {NoticeVO, Service} from "../../../generated";
 
 // 状态映射
-const statusMap = { 0: "草稿", 1: "已发布" };
-const statusColorMap = { 0: "#165DFF", 1: "#FF7D00" };
+const statusMap = {0: "草稿", 1: "已发布"};
+const statusColorMap = {0: "#165DFF", 1: "#FF7D00"};
 
 // 响应式数据
 const searchText = ref("");

@@ -2,7 +2,7 @@
   <div id="userLayout">
     <a-layout style="min-height: 100vh">
       <a-layout-content class="content">
-        <router-view />
+        <router-view/>
       </a-layout-content>
       <a-layout-footer class="footer" style="color: #efefef">
         <p>
@@ -54,4 +54,4 @@
   text-align: center;
 }
 </style>
-<script setup lang="ts"></script>
+<script lang="ts" setup></script>

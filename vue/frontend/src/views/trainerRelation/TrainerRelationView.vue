@@ -12,7 +12,7 @@
     </div>
 
     <!-- 统计卡片区域 -->
-    <div class="stats-container" v-if="!loading">
+    <div v-if="!loading" class="stats-container">
       <div class="stat-card">
         <div class="stat-number">{{ stats.total }}</div>
         <div class="stat-label">总记录数</div>
@@ -37,12 +37,12 @@
 
     <!-- 搜索区域 -->
     <a-card class="search-card">
-      <a-form layout="inline" :model="searchParams" class="search-form">
+      <a-form :model="searchParams" class="search-form" layout="inline">
         <a-form-item label="组织层级">
           <a-dropdown :popup-max-height="false" @select="cropTypeSelect">
             <a-button>
               {{ cropTypeDefaultValue }}
-              <icon-down />
+              <icon-down/>
             </a-button>
             <template #content>
               <a-doption value="partyCommittees">党委</a-doption>
@@ -54,7 +54,7 @@
           <a-dropdown :popup-max-height="false" @select="developStageSelect">
             <a-button>
               {{ developStageDefaultValue }}
-              <icon-down />
+              <icon-down/>
             </a-button>
             <template #content>
               <a-doption value="all">全部</a-doption>
@@ -69,7 +69,7 @@
           <a-dropdown :popup-max-height="false" @select="partyMemberTypeSelect">
             <a-button>
               {{ partyMemberTypeDefaultValue }}
-              <icon-down />
+              <icon-down/>
             </a-button>
             <template #content>
               <a-doption value="teacher">教师</a-doption>
@@ -79,10 +79,10 @@
         </a-form-item>
         <a-form-item label="搜索">
           <a-input
-            v-model="searchParams.cropName"
-            placeholder="请输入姓名/学号/工号..."
-            style="width: 200px"
-            allow-clear
+              v-model="searchParams.cropName"
+              allow-clear
+              placeholder="请输入姓名/学号/工号..."
+              style="width: 200px"
           />
         </a-form-item>
         <a-form-item>
@@ -96,15 +96,15 @@
     <div class="action-bar">
       <a-space size="large">
         <a-button type="primary" @click="AddData">
-          <icon-plus />
+          <icon-plus/>
           新增发展记录
         </a-button>
         <a-button type="primary" @click="delData">
-          <icon-download />
+          <icon-download/>
           批量导出
         </a-button>
         <a-button type="primary" @click="modifyData(1)">
-          <icon-check-circle />
+          <icon-check-circle/>
           批量审核
         </a-button>
       </a-space>
@@ -114,16 +114,13 @@
     <a-card class="list-card">
       <template #loading>
         <div style="display: flex; justify-content: center; padding: 40px">
-          <a-spin size="large" tip="加载中..." />
+          <a-spin size="large" tip="加载中..."/>
         </div>
       </template>
       <a-table
-        :data="dataList"
-        :loading="loading"
-        border
-        row-key="id"
-        pagination-position="bottom"
-        :pagination="{
+          :data="dataList"
+          :loading="loading"
+          :pagination="{
           showTotal: true,
           pageSize: searchParams.pageSize,
           current: searchParams.current,
@@ -132,34 +129,37 @@
           onChange: onPageChange,
           onShowSizeChange: onSizeChange,
         }"
-        :row-selection="rowSelection"
-        :selectedRowKeys="selectedRowKeys"
-        @selection-change="handleSelectionChange"
+          :row-selection="rowSelection"
+          :selectedRowKeys="selectedRowKeys"
+          border
+          pagination-position="bottom"
+          row-key="id"
+          @selection-change="handleSelectionChange"
       >
         <template #columns>
-          <a-table-column title="姓名" data-index="userName" width="120">
+          <a-table-column data-index="userName" title="姓名" width="120">
             <template #cell="{ record }">
               <a-tag color="blue">{{ record.userName }}</a-tag>
             </template>
           </a-table-column>
-          <a-table-column title="用户类型" data-index="userType" width="100">
+          <a-table-column data-index="userType" title="用户类型" width="100">
             <template #cell="{ record }">
               <a-tag
-                :color="record.userType === 'teacher' ? 'green' : 'orange'"
+                  :color="record.userType === 'teacher' ? 'green' : 'orange'"
               >
                 {{ record.userType === "teacher" ? "教师" : "学生" }}
               </a-tag>
             </template>
           </a-table-column>
-          <a-table-column title="所属支部" data-index="orgName" width="150">
+          <a-table-column data-index="orgName" title="所属支部" width="150">
             <template #cell="{ record }">
               <span>{{ record.orgName || "未知支部" }}</span>
             </template>
           </a-table-column>
           <a-table-column
-            title="政治面貌"
-            data-index="politicalStatus"
-            width="120"
+              data-index="politicalStatus"
+              title="政治面貌"
+              width="120"
           >
             <template #cell="{ record }">
               <a-tag :color="getStatusColor(record.politicalStatus)">
@@ -170,7 +170,7 @@
           <a-table-column title="发展阶段" width="150">
             <template #cell="{ record }">
               <a-tag
-                :color="getStatusColor(record.stageName || record.stageType)"
+                  :color="getStatusColor(record.stageName || record.stageType)"
               >
                 {{ record.stageName || record.stageType || "未知" }}
               </a-tag>
@@ -183,34 +183,34 @@
               </a-tag>
             </template>
           </a-table-column>
-          <a-table-column title="培养人" data-index="trainerName" width="120" />
+          <a-table-column data-index="trainerName" title="培养人" width="120"/>
           <a-table-column
-            title="阶段开始时间"
-            data-index="stageStartTime"
-            width="180"
+              data-index="stageStartTime"
+              title="阶段开始时间"
+              width="180"
           />
           <a-table-column
-            title="阶段结束时间"
-            data-index="stageEndTime"
-            width="180"
+              data-index="stageEndTime"
+              title="阶段结束时间"
+              width="180"
           />
           <a-table-column
-            title="申请入党日期"
-            data-index="joinDate"
-            width="150"
+              data-index="joinDate"
+              title="申请入党日期"
+              width="150"
           />
           <a-table-column
-            title="转正日期"
-            data-index="positiveDate"
-            width="150"
+              data-index="positiveDate"
+              title="转正日期"
+              width="150"
           />
           <a-table-column title="操作" width="120">
             <template #cell="{ record }">
               <a-space wrap>
                 <a-button
-                  type="primary"
-                  size="small"
-                  @click="toShowInfo(record)"
+                    size="small"
+                    type="primary"
+                    @click="toShowInfo(record)"
                 >
                   详情
                 </a-button>
@@ -223,11 +223,11 @@
 
     <!-- 详情/编辑模态框 - 完整布局 -->
     <a-modal
-      width="1400px"
-      v-model:visible="infoVisible"
-      :title="`${isEdit ? '编辑' : '查看'}发展记录`"
-      @cancel="handleInfoCancel"
-      :footer="null"
+        v-model:visible="infoVisible"
+        :footer="null"
+        :title="`${isEdit ? '编辑' : '查看'}发展记录`"
+        width="1400px"
+        @cancel="handleInfoCancel"
     >
       <!-- 党员基础信息卡片 -->
       <a-card style="margin-bottom: 20px">
@@ -258,15 +258,15 @@
         </div>
         <div class="info-actions">
           <a-button type="text" @click="goBackList">
-            <icon-left />
+            <icon-left/>
             返回列表
           </a-button>
           <a-button type="text" @click="toggleEdit">
-            <icon-edit />
+            <icon-edit/>
             {{ isEdit ? "退出编辑" : "编辑" }}
           </a-button>
           <a-button type="text" @click="printInfo">
-            <icon-printer />
+            <icon-printer/>
             打印
           </a-button>
         </div>
@@ -283,16 +283,16 @@
             <div class="timeline-container">
               <a-timeline>
                 <a-timeline-item
-                  color="green"
-                  :dot="h('icon-check', { style: { color: '#00b42a' } })"
+                    :dot="h('icon-check', { style: { color: '#00b42a' } })"
+                    color="green"
                 >
                   <div class="timeline-title">积极分子</div>
                   <div class="timeline-status">已完成</div>
                   <div class="timeline-time">完成时间：2025-01-10</div>
                 </a-timeline-item>
                 <a-timeline-item
-                  color="blue"
-                  :dot="h('icon-circle-fill', { style: { color: '#165dff' } })"
+                    :dot="h('icon-circle-fill', { style: { color: '#165dff' } })"
+                    color="blue"
                 >
                   <div class="timeline-title">发展对象</div>
                   <div class="timeline-status">进行中</div>
@@ -300,15 +300,15 @@
                   <div class="timeline-time">预计完成：2025-06-30</div>
                 </a-timeline-item>
                 <a-timeline-item
-                  color="gray"
-                  :dot="h('icon-circle', { style: { color: '#86909c' } })"
+                    :dot="h('icon-circle', { style: { color: '#86909c' } })"
+                    color="gray"
                 >
                   <div class="timeline-title">预备党员</div>
                   <div class="timeline-status">未开始</div>
                 </a-timeline-item>
                 <a-timeline-item
-                  color="gray"
-                  :dot="h('icon-circle', { style: { color: '#86909c' } })"
+                    :dot="h('icon-circle', { style: { color: '#86909c' } })"
+                    color="gray"
                 >
                   <div class="timeline-title">正式党员</div>
                   <div class="timeline-status">未开始</div>
@@ -330,21 +330,21 @@
                 <template #title>
                   <span>📌 阶段信息</span>
                 </template>
-                <a-form :model="stageForm" :disabled="!isEdit">
+                <a-form :disabled="!isEdit" :model="stageForm">
                   <a-row :gutter="12">
                     <a-col :span="12">
                       <a-form-item label="进入时间">
                         <a-date-picker
-                          v-model="stageForm.enterTime"
-                          style="width: 100%"
+                            v-model="stageForm.enterTime"
+                            style="width: 100%"
                         />
                       </a-form-item>
                     </a-col>
                     <a-col :span="12">
                       <a-form-item label="预计完成时间">
                         <a-date-picker
-                          v-model="stageForm.expectTime"
-                          style="width: 100%"
+                            v-model="stageForm.expectTime"
+                            style="width: 100%"
                         />
                       </a-form-item>
                     </a-col>
@@ -358,11 +358,11 @@
                   <span>📝 考察记录</span>
                 </template>
                 <a-textarea
-                  v-model="stageForm.inspectRecord"
-                  placeholder="请输入思想表现、学习情况、谈话记录等..."
-                  :rows="6"
-                  style="width: 100%"
-                  :disabled="!isEdit"
+                    v-model="stageForm.inspectRecord"
+                    :disabled="!isEdit"
+                    :rows="6"
+                    placeholder="请输入思想表现、学习情况、谈话记录等..."
+                    style="width: 100%"
                 />
               </a-card>
 
@@ -373,25 +373,25 @@
                 </template>
                 <a-space direction="vertical" style="width: 100%">
                   <a-space>
-                    <icon-file-text style="color: #165dff" />
+                    <icon-file-text style="color: #165dff"/>
                     <span>政审材料</span>
-                    <a-button type="text" size="small" @click="previewFile"
-                      >预览
+                    <a-button size="small" type="text" @click="previewFile"
+                    >预览
                     </a-button>
-                    <a-button type="text" size="small" @click="downloadFile"
-                      >下载
+                    <a-button size="small" type="text" @click="downloadFile"
+                    >下载
                     </a-button>
                   </a-space>
                   <a-space>
-                    <icon-file-text style="color: #165dff" />
+                    <icon-file-text style="color: #165dff"/>
                     <span>思想汇报</span>
                     <a-upload
-                      v-if="isEdit"
-                      action="/api/upload"
-                      :show-file-list="false"
-                      @change="handleUpload"
+                        v-if="isEdit"
+                        :show-file-list="false"
+                        action="/api/upload"
+                        @change="handleUpload"
                     >
-                      <a-button type="text" size="small">上传</a-button>
+                      <a-button size="small" type="text">上传</a-button>
                     </a-upload>
                     <span v-else>未上传</span>
                   </a-space>
@@ -425,19 +425,19 @@
 
     <!-- 新增发展记录模态框 -->
     <a-modal
-      v-model:visible="addDevelopmentVisible"
-      title="新增发展记录"
-      width="600px"
-      @ok="handleAddDevelopmentOk"
-      @cancel="handleAddDevelopmentCancel"
+        v-model:visible="addDevelopmentVisible"
+        title="新增发展记录"
+        width="600px"
+        @cancel="handleAddDevelopmentCancel"
+        @ok="handleAddDevelopmentOk"
     >
       <a-form :model="developmentForm" layout="vertical">
         <a-form-item label="发展人姓名" required>
           <a-select v-model="developmentForm.userId" placeholder="请选择">
             <a-option
-              v-for="user in nonFormalPartyMembers"
-              :key="user.id"
-              :value="user.id"
+                v-for="user in nonFormalPartyMembers"
+                :key="user.id"
+                :value="user.id"
             >
               {{ user.userName }} ({{ user.userAccount }})
             </a-option>
@@ -445,8 +445,8 @@
         </a-form-item>
         <a-form-item label="阶段名称" required>
           <a-select
-            v-model="developmentForm.stageName"
-            placeholder="请选择阶段名称"
+              v-model="developmentForm.stageName"
+              placeholder="请选择阶段名称"
           >
             <a-option value="积极分子">积极分子</a-option>
             <a-option value="发展对象">发展对象</a-option>
@@ -456,19 +456,19 @@
         </a-form-item>
         <a-form-item label="阶段开始时间" required>
           <a-date-picker
-            v-model="developmentForm.stageStartTime"
-            style="width: 100%"
+              v-model="developmentForm.stageStartTime"
+              style="width: 100%"
           />
         </a-form-item>
         <a-form-item label="培养人" required>
           <a-select
-            v-model="developmentForm.trainerId"
-            placeholder="请选择培养人"
+              v-model="developmentForm.trainerId"
+              placeholder="请选择培养人"
           >
             <a-option
-              v-for="user in formalPartyMembers"
-              :key="user.id"
-              :value="user.id"
+                v-for="user in formalPartyMembers"
+                :key="user.id"
+                :value="user.id"
             >
               {{ user.userName }} ({{ user.userAccount }})
             </a-option>
@@ -476,9 +476,9 @@
         </a-form-item>
         <a-form-item label="考察内容">
           <a-textarea
-            v-model="developmentForm.assessmentContent"
-            :rows="4"
-            placeholder="请输入考察内容"
+              v-model="developmentForm.assessmentContent"
+              :rows="4"
+              placeholder="请输入考察内容"
           />
         </a-form-item>
       </a-form>
@@ -487,7 +487,7 @@
 </template>
 
 <script lang="ts" setup>
-import { h, reactive, ref, watchEffect, onMounted, computed } from "vue";
+import {computed, h, onMounted, reactive, ref, watchEffect} from "vue";
 import message from "@arco-design/web-vue/es/message";
 // 导入组织管理API
 import * as OrganizationApi from "@/api/dangzuzhiguanli";
@@ -564,7 +564,7 @@ const stageForm = reactive({
   enterTime: "2025-01-10",
   expectTime: "2025-06-30",
   inspectRecord:
-    "思想表现良好，积极参与支部学习活动，谈话过程中对党的理论认知清晰，符合发展对象标准。",
+      "思想表现良好，积极参与支部学习活动，谈话过程中对党的理论认知清晰，符合发展对象标准。",
 });
 
 // 模态框事件
@@ -579,7 +579,7 @@ const toShowInfo = (record: any) => {
   // 模拟赋值（实际项目中从接口获取）
   addFormData.name = record.userName || "张三";
   addFormData.identity =
-    record.userType === "teacher" ? "教师党员" : "学生党员";
+      record.userType === "teacher" ? "教师党员" : "学生党员";
   addFormData.branch = record.orgId || "教师一支部";
   addFormData.currentStage = record.politicalStatus || "发展对象";
   infoVisible.value = true;
@@ -650,93 +650,93 @@ const loadData = async () => {
     console.log("开始加载数据");
     // 获取发展阶段列表
     const stageRes =
-      await DevelopmentStageApi.getDevelopmentStagesByOrgIdUsingGet({
-        orgId: 4,
-      });
+        await DevelopmentStageApi.getDevelopmentStagesByOrgIdUsingGet({
+          orgId: 4,
+        });
 
     console.log("接口返回结果:", stageRes);
 
     if (stageRes && stageRes.data.code === 0) {
       const stages = Array.isArray(stageRes.data.data)
-        ? stageRes.data.data
-        : [];
+          ? stageRes.data.data
+          : [];
       total.value = stages.length;
       console.log("000");
       console.log("发展阶段数据:", stages);
 
       // 为每个发展阶段获取用户信息和培养人信息
       const stagesWithDetails = await Promise.all(
-        stages.map(async (stage: any) => {
-          try {
-            // 获取用户信息
-            const userRes = await UserApi.getUserByIdUsingGet({
-              id: stage.userId,
-            });
-            console.log("用户信息:", userRes);
-            const user = userRes.data.code === 0 ? userRes.data.data : null;
-            console.log("222 - 用户:", user);
-
-            // 获取组织信息
-            let orgName = "未知支部";
-            if (user && user.orgId) {
-              try {
-                const orgRes =
-                  await OrganizationApi.getOrganizationByIdUsingGet({
-                    id: Number(user.orgId),
-                  });
-                console.log("orgRes:", orgRes);
-                if (orgRes.data.code === 0 && orgRes.data.data) {
-                  orgName = orgRes.data.data.orgName || "未知支部";
-                }
-              } catch (err) {
-                console.error("获取组织信息出错:", err);
-              }
-            }
-
-            // 获取培养人信息
-            let trainerName = "";
-            if (stage.trainerId) {
-              const trainerUserRes = await UserApi.getUserByIdUsingGet({
-                id: stage.trainerId,
+          stages.map(async (stage: any) => {
+            try {
+              // 获取用户信息
+              const userRes = await UserApi.getUserByIdUsingGet({
+                id: stage.userId,
               });
-              trainerName =
-                trainerUserRes.data.code === 0 && trainerUserRes.data.data
-                  ? trainerUserRes.data.data.userName
-                  : "";
-              console.log("培养人信息:", trainerUserRes);
-            }
+              console.log("用户信息:", userRes);
+              const user = userRes.data.code === 0 ? userRes.data.data : null;
+              console.log("222 - 用户:", user);
 
-            return {
-              ...stage,
-              user,
-              userName: user?.userName || "未知",
-              userType: user?.userType || "未知",
-              orgId: user?.orgId || "未知",
-              orgName: orgName,
-              politicalStatus: user?.politicalStatus || "未知",
-              joinDate: user?.joinDate || "",
-              positiveDate: user?.positiveDate || "",
-              trainerName,
-              stageType: stage.stageName, // 映射stageName到stageType以保持兼容
-              status: stage.stageStatus === 0 ? "进行中" : "已完成", // 映射stageStatus到status
-            };
-          } catch (err) {
-            console.error("处理阶段出错:", err);
-            return {
-              ...stage,
-              user: null,
-              userName: "未知",
-              userType: "未知",
-              orgId: "未知",
-              politicalStatus: "未知",
-              joinDate: "",
-              positiveDate: "",
-              trainerName: "",
-              stageType: stage.stageName || "未知",
-              status: stage.stageStatus === 0 ? "进行中" : "已完成",
-            };
-          }
-        }),
+              // 获取组织信息
+              let orgName = "未知支部";
+              if (user && user.orgId) {
+                try {
+                  const orgRes =
+                      await OrganizationApi.getOrganizationByIdUsingGet({
+                        id: Number(user.orgId),
+                      });
+                  console.log("orgRes:", orgRes);
+                  if (orgRes.data.code === 0 && orgRes.data.data) {
+                    orgName = orgRes.data.data.orgName || "未知支部";
+                  }
+                } catch (err) {
+                  console.error("获取组织信息出错:", err);
+                }
+              }
+
+              // 获取培养人信息
+              let trainerName = "";
+              if (stage.trainerId) {
+                const trainerUserRes = await UserApi.getUserByIdUsingGet({
+                  id: stage.trainerId,
+                });
+                trainerName =
+                    trainerUserRes.data.code === 0 && trainerUserRes.data.data
+                        ? trainerUserRes.data.data.userName
+                        : "";
+                console.log("培养人信息:", trainerUserRes);
+              }
+
+              return {
+                ...stage,
+                user,
+                userName: user?.userName || "未知",
+                userType: user?.userType || "未知",
+                orgId: user?.orgId || "未知",
+                orgName: orgName,
+                politicalStatus: user?.politicalStatus || "未知",
+                joinDate: user?.joinDate || "",
+                positiveDate: user?.positiveDate || "",
+                trainerName,
+                stageType: stage.stageName, // 映射stageName到stageType以保持兼容
+                status: stage.stageStatus === 0 ? "进行中" : "已完成", // 映射stageStatus到status
+              };
+            } catch (err) {
+              console.error("处理阶段出错:", err);
+              return {
+                ...stage,
+                user: null,
+                userName: "未知",
+                userType: "未知",
+                orgId: "未知",
+                politicalStatus: "未知",
+                joinDate: "",
+                positiveDate: "",
+                trainerName: "",
+                stageType: stage.stageName || "未知",
+                status: stage.stageStatus === 0 ? "进行中" : "已完成",
+              };
+            }
+          }),
       );
 
       console.log("处理后的数据:", stagesWithDetails);
@@ -747,8 +747,8 @@ const loadData = async () => {
       // 按发展阶段过滤
       if (searchParams.value.politicalStatus) {
         filteredData = filteredData.filter(
-          (stage: any) =>
-            stage.stageType === searchParams.value.politicalStatus,
+            (stage: any) =>
+                stage.stageType === searchParams.value.politicalStatus,
         );
         console.log("按发展阶段过滤后:", filteredData);
       }
@@ -756,7 +756,7 @@ const loadData = async () => {
       // 按用户类型过滤
       if (searchParams.value.userType) {
         filteredData = filteredData.filter(
-          (stage: any) => stage.userType === searchParams.value.userType,
+            (stage: any) => stage.userType === searchParams.value.userType,
         );
         console.log("按用户类型过滤后:", filteredData);
       }
@@ -765,12 +765,12 @@ const loadData = async () => {
       if (searchParams.value.cropName) {
         const searchTerm = searchParams.value.cropName.toLowerCase();
         filteredData = filteredData.filter(
-          (stage: any) =>
-            stage.userName.toLowerCase().includes(searchTerm) ||
-            (stage.user &&
-              (stage.user.userAccount || "")
-                .toLowerCase()
-                .includes(searchTerm)),
+            (stage: any) =>
+                stage.userName.toLowerCase().includes(searchTerm) ||
+                (stage.user &&
+                    (stage.user.userAccount || "")
+                        .toLowerCase()
+                        .includes(searchTerm)),
         );
         console.log("按姓名搜索后:", filteredData);
       }
@@ -780,7 +780,7 @@ const loadData = async () => {
 
       // 分页处理
       const start =
-        (searchParams.value.current - 1) * searchParams.value.pageSize;
+          (searchParams.value.current - 1) * searchParams.value.pageSize;
       const end = start + searchParams.value.pageSize;
       dataList.value = filteredData.slice(start, end);
       console.log("分页后的数据:", dataList.value);
@@ -950,7 +950,7 @@ const handleAddDevelopmentOk = async () => {
 
     // 调用API
     const res = await DevelopmentStageApi.addDevelopmentStageUsingPost(
-      addRequest,
+        addRequest,
     );
 
     if (res.code === 0) {
@@ -981,25 +981,25 @@ onMounted(() => {
 const nonFormalPartyMembers = computed(() => {
   // 获取所有进行中阶段的用户ID
   const inProgressUserIds = new Set(
-    allFilteredData.value
-      .filter((item) => item.stageStatus === 0)
-      .map((item) => item.userId),
+      allFilteredData.value
+          .filter((item) => item.stageStatus === 0)
+          .map((item) => item.userId),
   );
 
   return userList.value.filter(
-    (user) =>
-      user.politicalStatus !== "正式党员" &&
-      user.politicalStatus !== "formalPartyMember" &&
-      !inProgressUserIds.has(user.id),
+      (user) =>
+          user.politicalStatus !== "正式党员" &&
+          user.politicalStatus !== "formalPartyMember" &&
+          !inProgressUserIds.has(user.id),
   );
 });
 
 // 计算属性：正式党员列表
 const formalPartyMembers = computed(() => {
   return userList.value.filter(
-    (user) =>
-      user.politicalStatus === "正式党员" ||
-      user.politicalStatus === "formalPartyMember",
+      (user) =>
+          user.politicalStatus === "正式党员" ||
+          user.politicalStatus === "formalPartyMember",
   );
 });
 const delData = () => {

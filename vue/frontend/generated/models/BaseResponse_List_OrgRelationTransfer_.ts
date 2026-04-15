@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { OrgRelationTransfer } from './OrgRelationTransfer';
+import type {OrgRelationTransfer} from './OrgRelationTransfer';
+
 export type BaseResponse_List_OrgRelationTransfer_ = {
     code?: number;
     data?: Array<OrgRelationTransfer>;

@@ -1,17 +1,17 @@
 /* generated using openapi-typescript-codegen -- do not edit */
+import type {AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse} from 'axios';
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
 import axios from 'axios';
-import type { AxiosError, AxiosRequestConfig, AxiosResponse, AxiosInstance } from 'axios';
 import FormData from 'form-data';
 
-import { ApiError } from './ApiError';
-import type { ApiRequestOptions } from './ApiRequestOptions';
-import type { ApiResult } from './ApiResult';
-import { CancelablePromise } from './CancelablePromise';
-import type { OnCancel } from './CancelablePromise';
-import type { OpenAPIConfig } from './OpenAPI';
+import {ApiError} from './ApiError';
+import type {ApiRequestOptions} from './ApiRequestOptions';
+import type {ApiResult} from './ApiResult';
+import type {OnCancel} from './CancelablePromise';
+import {CancelablePromise} from './CancelablePromise';
+import type {OpenAPIConfig} from './OpenAPI';
 
 export const isDefined = <T>(value: T | null | undefined): value is Exclude<T, null | undefined> => {
     return value !== undefined && value !== null;
@@ -160,11 +160,11 @@ export const getHeaders = async (config: OpenAPIConfig, options: ApiRequestOptio
         ...options.headers,
         ...formHeaders,
     })
-    .filter(([_, value]) => isDefined(value))
-    .reduce((headers, [key, value]) => ({
-        ...headers,
-        [key]: String(value),
-    }), {} as Record<string, string>);
+        .filter(([_, value]) => isDefined(value))
+        .reduce((headers, [key, value]) => ({
+            ...headers,
+            [key]: String(value),
+        }), {} as Record<string, string>);
 
     if (isStringWithValue(token)) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -205,7 +205,7 @@ export const sendRequest = async <T>(
     formData: FormData | undefined,
     headers: Record<string, string>,
     onCancel: OnCancel,
-    axiosClient: AxiosInstance
+    axiosClient: AxiosInstance,
 ): Promise<AxiosResponse<T>> => {
     const source = axios.CancelToken.source();
 
@@ -278,7 +278,7 @@ export const catchErrorCodes = (options: ApiRequestOptions, result: ApiResult): 
         })();
 
         throw new ApiError(options, result,
-            `Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`
+            `Generic Error: status: ${errorStatus}; status text: ${errorStatusText}; body: ${errorBody}`,
         );
     }
 };

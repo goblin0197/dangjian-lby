@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Page_Activity_ } from './Page_Activity_';
+import type {Page_Activity_} from './Page_Activity_';
+
 export type BaseResponse_Page_Activity_ = {
     code?: number;
     data?: Page_Activity_;

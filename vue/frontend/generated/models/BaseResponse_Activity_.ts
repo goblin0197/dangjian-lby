@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Activity } from './Activity';
+import type {Activity} from './Activity';
+
 export type BaseResponse_Activity_ = {
     code?: number;
     data?: Activity;

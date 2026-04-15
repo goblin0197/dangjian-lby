@@ -1,40 +1,40 @@
 <template>
   <div id="globalHeader">
     <a-row
-      id="globalHeader"
-      :wrap="false"
-      align="center"
-      style="margin-bottom: 6px"
+        id="globalHeader"
+        :wrap="false"
+        align="center"
+        style="margin-bottom: 6px"
     >
       <a-col flex="auto">
         <a-menu
-          :selected-keys="selectedKey"
-          mode="horizontal"
-          @menu-item-click="doMenuClick"
+            :selected-keys="selectedKey"
+            mode="horizontal"
+            @menu-item-click="doMenuClick"
         >
           <a-menu-item
-            key="0"
-            :style="{ padding: 0, marginRight: '38px' }"
-            disabled
+              key="0"
+              :style="{ padding: 0, marginRight: '38px' }"
+              disabled
           >
             <div class="title-bar">
               <img
-                id="systemLogo"
-                alt="logo"
-                class="logo"
-                src="../assets/dang.png"
+                  id="systemLogo"
+                  alt="logo"
+                  class="logo"
+                  src="../assets/dang.png"
               />
               <img
-                id="collegeLogo"
-                alt="logo"
-                class="logo"
-                src="../assets/dangjiansystem.png"
+                  id="collegeLogo"
+                  alt="logo"
+                  class="logo"
+                  src="../assets/dangjiansystem.png"
               />
               <img
-                id="imageLogo"
-                alt="logo"
-                class="logo"
-                src="../assets/dangjiansysystemmanager.png"
+                  id="imageLogo"
+                  alt="logo"
+                  class="logo"
+                  src="../assets/dangjiansysystemmanager.png"
               />
               <div class="title">&nbsp;智慧党建综合管理系统</div>
             </div>
@@ -52,50 +52,50 @@
           <a-space>
             <a-dropdown position="bl">
               <a-button
-                style="min-width: 100px; margin-right: 50px; border-radius: 8px"
-                >{{ store.state.user?.loginUser?.userName ?? "未登录" }}
+                  style="min-width: 100px; margin-right: 50px; border-radius: 8px"
+              >{{ store.state.user?.loginUser?.userName ?? "未登录" }}
               </a-button>
               <template #content>
                 <a-doption
-                  v-if="store.state.user.loginUser.userName == '未登录'"
-                  @click="toUserCenter"
+                    v-if="store.state.user.loginUser.userName == '未登录'"
+                    @click="toUserCenter"
                 >
                   <template #icon>
-                    <icon-user />
+                    <icon-user/>
                   </template>
                   登录
                 </a-doption>
-<!--                <a-doption v-else @click="toUserCenter">-->
-<!--                  <template #icon>-->
-<!--                    <IconHome></IconHome>-->
-<!--                  </template>-->
-<!--                  量化统计-->
-<!--                </a-doption>-->
-<!--                <a-doption-->
-<!--                  v-if="-->
-<!--                    checkAccess(store.state.user.loginUser, ACCESS_ENUM.ADMIN)-->
-<!--                  "-->
-<!--                  @click="toManageAccountPage"-->
-<!--                >-->
-<!--                  <template #icon>-->
-<!--                    <icon-user-group />-->
-<!--                  </template>-->
-<!--                  材料管理-->
-<!--                </a-doption>-->
-<!--                <a-doption-->
-<!--                  v-if="-->
-<!--                    checkAccess(store.state.user.loginUser, ACCESS_ENUM.ADMIN)-->
-<!--                  "-->
-<!--                  @click="toManageCommunityPage"-->
-<!--                >-->
-<!--                  <template #icon>-->
-<!--                    <icon-user-group />-->
-<!--                  </template>-->
-<!--                  公告管理-->
-<!--                </a-doption>-->
+                <!--                <a-doption v-else @click="toUserCenter">-->
+                <!--                  <template #icon>-->
+                <!--                    <IconHome></IconHome>-->
+                <!--                  </template>-->
+                <!--                  量化统计-->
+                <!--                </a-doption>-->
+                <!--                <a-doption-->
+                <!--                  v-if="-->
+                <!--                    checkAccess(store.state.user.loginUser, ACCESS_ENUM.ADMIN)-->
+                <!--                  "-->
+                <!--                  @click="toManageAccountPage"-->
+                <!--                >-->
+                <!--                  <template #icon>-->
+                <!--                    <icon-user-group />-->
+                <!--                  </template>-->
+                <!--                  材料管理-->
+                <!--                </a-doption>-->
+                <!--                <a-doption-->
+                <!--                  v-if="-->
+                <!--                    checkAccess(store.state.user.loginUser, ACCESS_ENUM.ADMIN)-->
+                <!--                  "-->
+                <!--                  @click="toManageCommunityPage"-->
+                <!--                >-->
+                <!--                  <template #icon>-->
+                <!--                    <icon-user-group />-->
+                <!--                  </template>-->
+                <!--                  公告管理-->
+                <!--                </a-doption>-->
                 <a-doption
-                  v-if="store.state.user.loginUser.userName != '未登录'"
-                  @click="userLogOut"
+                    v-if="store.state.user.loginUser.userName != '未登录'"
+                    @click="userLogOut"
                 >
                   <template #icon>
                     <IconFullscreenExit></IconFullscreenExit>
@@ -112,20 +112,15 @@
 </template>
 
 <script lang="ts" setup>
-import { routes } from "@/router/routes";
-import { useRouter } from "vue-router";
-import { computed, reactive, ref } from "vue";
-import { useStore } from "vuex";
+import {routes} from "@/router/routes";
+import {useRouter} from "vue-router";
+import {computed, reactive, ref} from "vue";
+import {useStore} from "vuex";
 import checkAccess from "@/access/checkAccess";
 import ACCESS_ENUM from "@/access/accessEnum";
 
-import { Service, UserLoginRequest } from "../../generated";
-import {
-  IconFullscreenExit,
-  IconHome,
-  IconUser,
-  IconUserGroup,
-} from "@arco-design/web-vue/es/icon";
+import {Service, UserLoginRequest} from "../../generated";
+import {IconFullscreenExit, IconUser} from "@arco-design/web-vue/es/icon";
 import message from "@arco-design/web-vue/es/message";
 
 /**
@@ -159,8 +154,8 @@ const visibleRoutes = computed(() => {
     if (item.meta?.hideInMenu) return false;
     // 根据权限过滤菜单
     if (
-      // 这里的第一个参数千万不要用获取的常量传入，否则监听到的数据不会变
-      !checkAccess(store.state.user?.loginUser, item?.meta?.access as string)
+        // 这里的第一个参数千万不要用获取的常量传入，否则监听到的数据不会变
+        !checkAccess(store.state.user?.loginUser, item?.meta?.access as string)
     ) {
       return false;
     }

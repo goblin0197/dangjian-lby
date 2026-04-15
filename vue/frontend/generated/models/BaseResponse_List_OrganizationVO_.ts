@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { OrganizationVO } from './OrganizationVO';
+import type {OrganizationVO} from './OrganizationVO';
+
 export type BaseResponse_List_OrganizationVO_ = {
     code?: number;
     data?: Array<OrganizationVO>;

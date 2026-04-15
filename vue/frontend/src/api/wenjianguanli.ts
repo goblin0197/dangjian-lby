@@ -1,5 +1,81 @@
 import request from "@/request";
 
+/** 上传材料文件 POST /api/file/api/upload/material */
+export async function uploadMaterialFileUsingPost(
+    body: {},
+    file?: File,
+    options?: { [key: string]: any },
+) {
+    const formData = new FormData();
+
+    if (file) {
+        formData.append("file", file);
+    }
+
+    Object.keys(body).forEach((ele) => {
+        const item = (body as any)[ele];
+
+        if (item !== undefined && item !== null) {
+            if (typeof item === "object" && !(item instanceof File)) {
+                if (item instanceof Array) {
+                    item.forEach((f) => formData.append(ele, f || ""));
+                } else {
+                    formData.append(
+                        ele,
+                        new Blob([JSON.stringify(item)], {type: "application/json"}),
+                    );
+                }
+            } else {
+                formData.append(ele, item);
+            }
+        }
+    });
+
+    return request<API.BaseResponseString_>("/api/file/api/upload/material", {
+        method: "POST",
+        data: formData,
+        ...(options || {}),
+    });
+}
+
+/** 上传模板文件 POST /api/file/api/upload/template */
+export async function uploadTemplateFileUsingPost(
+    body: {},
+    file?: File,
+    options?: { [key: string]: any },
+) {
+    const formData = new FormData();
+
+    if (file) {
+        formData.append("file", file);
+    }
+
+    Object.keys(body).forEach((ele) => {
+        const item = (body as any)[ele];
+
+        if (item !== undefined && item !== null) {
+            if (typeof item === "object" && !(item instanceof File)) {
+                if (item instanceof Array) {
+                    item.forEach((f) => formData.append(ele, f || ""));
+                } else {
+                    formData.append(
+                        ele,
+                        new Blob([JSON.stringify(item)], {type: "application/json"}),
+                    );
+                }
+            } else {
+                formData.append(ele, item);
+            }
+        }
+    });
+
+    return request<API.BaseResponseString_>("/api/file/api/upload/template", {
+        method: "POST",
+        data: formData,
+        ...(options || {}),
+    });
+}
+
 /** 文件删除 POST /api/file/delete */
 export async function deleteFileUsingPost(
     body: API.DeleteRequest,
@@ -99,9 +175,6 @@ export async function uploadFileUsingPost(
             ...params,
         },
         data: formData,
-        headers: {
-            "Content-Type": "multipart/form-data"  // 这里替换
-        },
         ...(options || {}),
     });
 }

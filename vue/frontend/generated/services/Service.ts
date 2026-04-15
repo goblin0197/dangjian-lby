@@ -2,58 +2,59 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ActivityAddRequest } from '../models/ActivityAddRequest';
-import type { ActivityEnrollAddRequest } from '../models/ActivityEnrollAddRequest';
-import type { ActivityEnrollCancelRequest } from '../models/ActivityEnrollCancelRequest';
-import type { ActivityEnrollSignInRequest } from '../models/ActivityEnrollSignInRequest';
-import type { ActivityQueryRequest } from '../models/ActivityQueryRequest';
-import type { ActivityUpdateRequest } from '../models/ActivityUpdateRequest';
-import type { BaseResponse_Activity_ } from '../models/BaseResponse_Activity_';
-import type { BaseResponse_ActivityVO_ } from '../models/BaseResponse_ActivityVO_';
-import type { BaseResponse_boolean_ } from '../models/BaseResponse_boolean_';
-import type { BaseResponse_List_ActivityVO_ } from '../models/BaseResponse_List_ActivityVO_';
-import type { BaseResponse_List_MyFile_ } from '../models/BaseResponse_List_MyFile_';
-import type { BaseResponse_List_NoticeVO_ } from '../models/BaseResponse_List_NoticeVO_';
-import type { BaseResponse_List_OrganizationVO_ } from '../models/BaseResponse_List_OrganizationVO_';
-import type { BaseResponse_List_OrgRelationTransfer_ } from '../models/BaseResponse_List_OrgRelationTransfer_';
-import type { BaseResponse_List_TrainerRelation_ } from '../models/BaseResponse_List_TrainerRelation_';
-import type { BaseResponse_LoginUserVO_ } from '../models/BaseResponse_LoginUserVO_';
-import type { BaseResponse_long_ } from '../models/BaseResponse_long_';
-import type { BaseResponse_Map_string_string_ } from '../models/BaseResponse_Map_string_string_';
-import type { BaseResponse_NoticeVO_ } from '../models/BaseResponse_NoticeVO_';
-import type { BaseResponse_OrganizationVO_ } from '../models/BaseResponse_OrganizationVO_';
-import type { BaseResponse_OrgQuantify_ } from '../models/BaseResponse_OrgQuantify_';
-import type { BaseResponse_OrgRelationTransfer_ } from '../models/BaseResponse_OrgRelationTransfer_';
-import type { BaseResponse_Page_Activity_ } from '../models/BaseResponse_Page_Activity_';
-import type { BaseResponse_Page_OrganizationVO_ } from '../models/BaseResponse_Page_OrganizationVO_';
-import type { BaseResponse_Page_OrgRelationTransfer_ } from '../models/BaseResponse_Page_OrgRelationTransfer_';
-import type { BaseResponse_Page_User_ } from '../models/BaseResponse_Page_User_';
-import type { BaseResponse_Page_UserVO_ } from '../models/BaseResponse_Page_UserVO_';
-import type { BaseResponse_string_ } from '../models/BaseResponse_string_';
-import type { BaseResponse_TrainerRelation_ } from '../models/BaseResponse_TrainerRelation_';
-import type { BaseResponse_User_ } from '../models/BaseResponse_User_';
-import type { BaseResponse_UserQuantify_ } from '../models/BaseResponse_UserQuantify_';
-import type { BaseResponse_UserVO_ } from '../models/BaseResponse_UserVO_';
-import type { DeleteRequest } from '../models/DeleteRequest';
-import type { NoticeAddRequest } from '../models/NoticeAddRequest';
-import type { NoticeUpdateRequest } from '../models/NoticeUpdateRequest';
-import type { OrganizationAddRequest } from '../models/OrganizationAddRequest';
-import type { OrganizationBindRequest } from '../models/OrganizationBindRequest';
-import type { OrganizationQueryRequest } from '../models/OrganizationQueryRequest';
-import type { OrganizationUpdateRequest } from '../models/OrganizationUpdateRequest';
-import type { OrgRelationTransferAddRequest } from '../models/OrgRelationTransferAddRequest';
-import type { OrgRelationTransferApproveRequest } from '../models/OrgRelationTransferApproveRequest';
-import type { OrgRelationTransferUpdateRequest } from '../models/OrgRelationTransferUpdateRequest';
-import type { TrainerRelationAddRequest } from '../models/TrainerRelationAddRequest';
-import type { UserAddRequest } from '../models/UserAddRequest';
-import type { UserLoginRequest } from '../models/UserLoginRequest';
-import type { UserQueryRequest } from '../models/UserQueryRequest';
-import type { UserRegisterRequest } from '../models/UserRegisterRequest';
-import type { UserUpdateMyRequest } from '../models/UserUpdateMyRequest';
-import type { UserUpdateRequest } from '../models/UserUpdateRequest';
-import type { CancelablePromise } from '../core/CancelablePromise';
-import { OpenAPI } from '../core/OpenAPI';
-import { request as __request } from '../core/request';
+import type {ActivityAddRequest} from '../models/ActivityAddRequest';
+import type {ActivityEnrollAddRequest} from '../models/ActivityEnrollAddRequest';
+import type {ActivityEnrollCancelRequest} from '../models/ActivityEnrollCancelRequest';
+import type {ActivityEnrollSignInRequest} from '../models/ActivityEnrollSignInRequest';
+import type {ActivityQueryRequest} from '../models/ActivityQueryRequest';
+import type {ActivityUpdateRequest} from '../models/ActivityUpdateRequest';
+import type {BaseResponse_Activity_} from '../models/BaseResponse_Activity_';
+import type {BaseResponse_ActivityVO_} from '../models/BaseResponse_ActivityVO_';
+import type {BaseResponse_boolean_} from '../models/BaseResponse_boolean_';
+import type {BaseResponse_List_ActivityVO_} from '../models/BaseResponse_List_ActivityVO_';
+import type {BaseResponse_List_MyFile_} from '../models/BaseResponse_List_MyFile_';
+import type {BaseResponse_List_NoticeVO_} from '../models/BaseResponse_List_NoticeVO_';
+import type {BaseResponse_List_OrganizationVO_} from '../models/BaseResponse_List_OrganizationVO_';
+import type {BaseResponse_List_OrgRelationTransfer_} from '../models/BaseResponse_List_OrgRelationTransfer_';
+import type {BaseResponse_List_TrainerRelation_} from '../models/BaseResponse_List_TrainerRelation_';
+import type {BaseResponse_LoginUserVO_} from '../models/BaseResponse_LoginUserVO_';
+import type {BaseResponse_long_} from '../models/BaseResponse_long_';
+import type {BaseResponse_Map_string_string_} from '../models/BaseResponse_Map_string_string_';
+import type {BaseResponse_NoticeVO_} from '../models/BaseResponse_NoticeVO_';
+import type {BaseResponse_OrganizationVO_} from '../models/BaseResponse_OrganizationVO_';
+import type {BaseResponse_OrgQuantify_} from '../models/BaseResponse_OrgQuantify_';
+import type {BaseResponse_OrgRelationTransfer_} from '../models/BaseResponse_OrgRelationTransfer_';
+import type {BaseResponse_Page_Activity_} from '../models/BaseResponse_Page_Activity_';
+import type {BaseResponse_Page_OrganizationVO_} from '../models/BaseResponse_Page_OrganizationVO_';
+import type {BaseResponse_Page_OrgRelationTransfer_} from '../models/BaseResponse_Page_OrgRelationTransfer_';
+import type {BaseResponse_Page_User_} from '../models/BaseResponse_Page_User_';
+import type {BaseResponse_Page_UserVO_} from '../models/BaseResponse_Page_UserVO_';
+import type {BaseResponse_string_} from '../models/BaseResponse_string_';
+import type {BaseResponse_TrainerRelation_} from '../models/BaseResponse_TrainerRelation_';
+import type {BaseResponse_User_} from '../models/BaseResponse_User_';
+import type {BaseResponse_UserQuantify_} from '../models/BaseResponse_UserQuantify_';
+import type {BaseResponse_UserVO_} from '../models/BaseResponse_UserVO_';
+import type {DeleteRequest} from '../models/DeleteRequest';
+import type {NoticeAddRequest} from '../models/NoticeAddRequest';
+import type {NoticeUpdateRequest} from '../models/NoticeUpdateRequest';
+import type {OrganizationAddRequest} from '../models/OrganizationAddRequest';
+import type {OrganizationBindRequest} from '../models/OrganizationBindRequest';
+import type {OrganizationQueryRequest} from '../models/OrganizationQueryRequest';
+import type {OrganizationUpdateRequest} from '../models/OrganizationUpdateRequest';
+import type {OrgRelationTransferAddRequest} from '../models/OrgRelationTransferAddRequest';
+import type {OrgRelationTransferApproveRequest} from '../models/OrgRelationTransferApproveRequest';
+import type {OrgRelationTransferUpdateRequest} from '../models/OrgRelationTransferUpdateRequest';
+import type {TrainerRelationAddRequest} from '../models/TrainerRelationAddRequest';
+import type {UserAddRequest} from '../models/UserAddRequest';
+import type {UserLoginRequest} from '../models/UserLoginRequest';
+import type {UserQueryRequest} from '../models/UserQueryRequest';
+import type {UserRegisterRequest} from '../models/UserRegisterRequest';
+import type {UserUpdateMyRequest} from '../models/UserUpdateMyRequest';
+import type {UserUpdateRequest} from '../models/UserUpdateRequest';
+import type {CancelablePromise} from '../core/CancelablePromise';
+import {OpenAPI} from '../core/OpenAPI';
+import {request as __request} from '../core/request';
+
 export class Service {
     /**
      * 添加活动（仅管理员）
@@ -76,6 +77,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 删除活动（仅管理员）
      * @param deleteRequest deleteRequest
@@ -97,6 +99,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 结束活动（仅管理员）
      * @param id id
@@ -120,6 +123,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 报名活动
      * @param activityEnrollAddRequest activityEnrollAddRequest
@@ -141,6 +145,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 取消报名
      * @param activityEnrollCancelRequest activityEnrollCancelRequest
@@ -162,6 +167,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 检查是否已报名
      * @param activityId activityId
@@ -187,6 +193,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 签到
      * @param activityEnrollSignInRequest activityEnrollSignInRequest
@@ -208,6 +215,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 获取活动详情
      * @param id id
@@ -230,6 +238,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 分页获取活动列表
      * @param activityQueryRequest activityQueryRequest
@@ -251,6 +260,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 分页获取活动VO列表
      * @param activityQueryRequest activityQueryRequest
@@ -272,6 +282,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 发布活动（仅管理员）
      * @param id id
@@ -295,6 +306,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新指定活动的参与和签到情况统计（仅管理员）
      * @param id id
@@ -318,6 +330,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新所有活动的参与和签到情况统计（仅管理员）
      * @returns BaseResponse_boolean_ OK
@@ -335,6 +348,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新活动（仅管理员）
      * @param activityUpdateRequest activityUpdateRequest
@@ -356,6 +370,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 文件删除
      * @param deleteRequest deleteRequest
@@ -377,6 +392,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 文件下载
      * @param fileUrl 文件URL:材料:/material/{userId}/{filename}，模板：/template/{filename}
@@ -399,6 +415,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 材料文件列表(没有校验权限)
      * @param userId userId
@@ -421,6 +438,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 模板文件列表(没有校验权限)
      * @param orgId orgId
@@ -443,6 +461,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 文件上传
      * @param biz 业务:material-材料,template-模板
@@ -474,6 +493,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 添加公告
      * @param noticeAddRequest noticeAddRequest
@@ -495,6 +515,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 删除公告
      * @param deleteRequest deleteRequest
@@ -516,6 +537,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 获取公告详情
      * @param id id
@@ -538,6 +560,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 分页获取公告列表
      * @param expireTimeEnd 过期时间结束
@@ -599,6 +622,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 发布公告
      * @param id id
@@ -622,6 +646,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新公告
      * @param noticeUpdateRequest noticeUpdateRequest
@@ -643,6 +668,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 撤回公告
      * @param id id
@@ -666,6 +692,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 创建组织关系转移申请
      * @param orgRelationTransferAddRequest orgRelationTransferAddRequest
@@ -687,6 +714,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 审批组织关系转移申请
      * @param orgRelationTransferApproveRequest orgRelationTransferApproveRequest
@@ -708,6 +736,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据党组织ID查询组织关系转移记录
      * @param orgId orgId
@@ -730,6 +759,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据党员ID查询组织关系转移记录
      * @param userId userId
@@ -752,6 +782,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 删除组织关系转移记录
      * @param deleteRequest deleteRequest
@@ -773,6 +804,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据ID查询组织关系转移记录详情
      * @param id id
@@ -795,6 +827,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 查询所有组织关系转移记录
      * @returns BaseResponse_List_OrgRelationTransfer_ OK
@@ -811,6 +844,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 分页查询组织关系转移记录
      * @param pageNum pageNum
@@ -836,6 +870,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新组织关系转移信息
      * @param orgRelationTransferUpdateRequest orgRelationTransferUpdateRequest
@@ -857,6 +892,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 创建党组织
      * @param organizationAddRequest organizationAddRequest
@@ -878,6 +914,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 党组织绑定负责人
      * @param organizationBindRequest organizationBindRequest
@@ -899,6 +936,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 删除党组织
      * @param deleteRequest deleteRequest
@@ -922,6 +960,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据ID查询党组织
      * @param id id
@@ -944,6 +983,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 查询所有党组织
      * @returns BaseResponse_List_OrganizationVO_ OK
@@ -960,6 +1000,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据条件分页查询党组织
      * @param organizationQueryRequest organizationQueryRequest
@@ -981,6 +1022,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新党组织信息
      * @param organizationUpdateRequest organizationUpdateRequest
@@ -1002,6 +1044,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 生成所有量化统计数据（仅管理员）
      * @returns BaseResponse_boolean_ OK
@@ -1019,6 +1062,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 生成所有组织的量化统计数据（仅管理员）
      * @returns BaseResponse_boolean_ OK
@@ -1036,6 +1080,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 生成指定组织的量化统计数据（仅管理员）
      * @param orgId orgId
@@ -1059,6 +1104,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 获取指定组织的量化统计数据（仅管理员）
      * @param orgId orgId
@@ -1081,6 +1127,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 生成所有用户的量化统计数据（仅管理员）
      * @returns BaseResponse_boolean_ OK
@@ -1098,6 +1145,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 生成指定用户的量化统计数据（仅管理员）
      * @param userId userId
@@ -1121,6 +1169,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 获取指定用户的量化统计数据（仅管理员）
      * @param userId userId
@@ -1143,6 +1192,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 添加培养人关联
      * @param trainerRelationAddRequest trainerRelationAddRequest
@@ -1164,6 +1214,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据培养人ID查询被培养人关联
      * @param trainerId trainerId
@@ -1186,6 +1237,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据用户ID查询被培养情况
      * @param userId userId
@@ -1208,6 +1260,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 创建用户（仅管理员）
      * @param userAddRequest userAddRequest
@@ -1229,6 +1282,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 删除用户（仅管理员）
      * @param deleteRequest deleteRequest
@@ -1250,6 +1304,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据 id 获取用户（仅管理员）
      * @param id id
@@ -1272,6 +1327,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 获取当前登录用户
      * @returns BaseResponse_LoginUserVO_ OK
@@ -1288,6 +1344,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 根据 id 获取用户包装类）
      * @param id id
@@ -1310,6 +1367,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 分页获取用户列表（仅管理员）
      * @param userQueryRequest userQueryRequest
@@ -1331,6 +1389,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 分页获取用户封装列表
      * @param userQueryRequest userQueryRequest
@@ -1352,6 +1411,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 获取所有角色
      * @returns BaseResponse_Map_string_string_ OK
@@ -1368,6 +1428,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 用户登录
      * @param userLoginRequest userLoginRequest
@@ -1389,6 +1450,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 用户注销
      * @returns BaseResponse_boolean_ OK
@@ -1406,6 +1468,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 用户注册
      * @param userRegisterRequest userRegisterRequest
@@ -1427,6 +1490,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新用户（仅管理员）
      * @param userUpdateRequest userUpdateRequest
@@ -1448,6 +1512,7 @@ export class Service {
             },
         });
     }
+
     /**
      * 更新个人信息
      * @param userUpdateMyRequest userUpdateMyRequest

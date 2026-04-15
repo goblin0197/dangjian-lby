@@ -1,3 +1,5 @@
+// @ts-ignore
+/* eslint-disable */
 import request from "@/request";
 
 /** 创建用户（仅管理员） POST /api/user/add */

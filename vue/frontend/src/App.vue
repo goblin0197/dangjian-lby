@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <template v-if="route.path.startsWith('/user')">
-      <router-view />
+      <router-view/>
     </template>
     <template v-else>
       <!--      <HomeView />-->
-      <BasicLayout />
+      <BasicLayout/>
     </template>
   </div>
 </template>
@@ -14,12 +14,11 @@
 #app {
 }
 </style>
-<script setup lang="ts">
+<script lang="ts" setup>
 // import { anchorInjectionKey } from "@arco-design/web-vue/es/anchor/context";
-import { onMounted } from "vue";
+import {onMounted} from "vue";
 import "@/access";
-import { useRoute } from "vue-router";
-import UserLoginView from "@/views/user/UserLoginView.vue";
+import {useRoute} from "vue-router";
 import BasicLayout from "@/layouts/BasicLayout.vue";
 
 const route = useRoute();

@@ -5,26 +5,26 @@
     <a-card style="margin-bottom: 16px">
       <a-space size="large">
         <a-button
-          :status="activeView === 'template' ? 'primary' : 'normal'"
-          @click="switchView('template')"
-          :disabled="userRole !== 'admin'"
+            :disabled="userRole !== 'admin'"
+            :status="activeView === 'template' ? 'primary' : 'normal'"
+            @click="switchView('template')"
         >
-          <icon-file-text />
+          <icon-file-text/>
           材料模板管理
         </a-button>
         <a-button
-          :status="activeView === 'submit' ? 'primary' : 'normal'"
-          @click="switchView('submit')"
+            :status="activeView === 'submit' ? 'primary' : 'normal'"
+            @click="switchView('submit')"
         >
-          <icon-upload />
+          <icon-upload/>
           材料提交审核
         </a-button>
         <a-button
-          type="primary"
-          :status="activeView === 'archive' ? 'primary' : 'normal'"
-          @click="switchView('archive')"
+            :status="activeView === 'archive' ? 'primary' : 'normal'"
+            type="primary"
+            @click="switchView('archive')"
         >
-          <icon-folder />
+          <icon-folder/>
           材料归档查询
         </a-button>
       </a-space>
@@ -34,8 +34,8 @@
     <a-card>
       <!-- 精准筛选区 -->
       <div
-        class="filter-bar"
-        style="
+          class="filter-bar"
+          style="
           margin-bottom: 20px;
           padding-bottom: 16px;
           border-bottom: 1px solid #eee;
@@ -45,13 +45,13 @@
           <a-col :span="6">
             <a-form-item label="姓名" label-col-flex="60px">
               <a-input
-                v-model="filterParams.userName"
-                placeholder="请输入党员姓名（模糊查询）"
-                @change="refreshData"
-                allow-clear
+                  v-model="filterParams.userName"
+                  allow-clear
+                  placeholder="请输入党员姓名（模糊查询）"
+                  @change="refreshData"
               >
                 <template #prefix>
-                  <icon-search />
+                  <icon-search/>
                 </template>
               </a-input>
             </a-form-item>
@@ -60,10 +60,10 @@
           <a-col :span="6">
             <a-form-item label="材料名称" label-col-flex="80px">
               <a-select
-                v-model="filterParams.materialName"
-                style="width: 100%"
-                @change="refreshData"
-                allow-clear
+                  v-model="filterParams.materialName"
+                  allow-clear
+                  style="width: 100%"
+                  @change="refreshData"
               >
                 <a-option value="all">全部</a-option>
                 <a-option value="思想汇报">思想汇报</a-option>
@@ -77,10 +77,10 @@
           <a-col :span="6">
             <a-form-item label="所属阶段" label-col-flex="80px">
               <a-select
-                v-model="filterParams.stage"
-                style="width: 100%"
-                @change="refreshData"
-                allow-clear
+                  v-model="filterParams.stage"
+                  allow-clear
+                  style="width: 100%"
+                  @change="refreshData"
               >
                 <a-option value="all">全部</a-option>
                 <a-option value="activist">积极分子</a-option>
@@ -93,9 +93,9 @@
           <a-col :span="6">
             <a-form-item label="归档时间" label-col-flex="80px">
               <a-range-picker
-                v-model="filterParams.archiveTime"
-                style="width: 100%"
-                @change="refreshData"
+                  v-model="filterParams.archiveTime"
+                  style="width: 100%"
+                  @change="refreshData"
               />
             </a-form-item>
           </a-col>
@@ -106,15 +106,15 @@
           <a-col :span="24" style="text-align: right">
             <a-space size="middle">
               <a-button type="outline" @click="resetFilter">
-                <icon-refresh />
+                <icon-refresh/>
                 重置筛选
               </a-button>
               <a-button
-                type="primary"
-                @click="batchExport"
-                :disabled="archiveList.length === 0"
+                  :disabled="archiveList.length === 0"
+                  type="primary"
+                  @click="batchExport"
               >
-                <icon-download />
+                <icon-download/>
                 批量导出
               </a-button>
             </a-space>
@@ -133,7 +133,7 @@
               <div class="stat-desc">
                 较上月
                 <span class="stat-trend up"
-                  >↑{{ archiveStat.monthGrowth }}%</span
+                >↑{{ archiveStat.monthGrowth }}%</span
                 >
               </div>
             </a-card>
@@ -151,28 +151,28 @@
 
       <!-- 归档材料列表 -->
       <a-table
-        :columns="tableColumns"
-        :data="archiveList"
-        :pagination="{
+          :columns="tableColumns"
+          :data="archiveList"
+          :loading="loading"
+          :pagination="{
           showTotal: true,
           pageSize: 10,
           current: 1,
           total: archiveList.length,
         }"
-        row-key="id"
-        :loading="loading"
+          row-key="id"
       >
         <!-- 所属支部列自定义渲染 -->
         <template #orgName="{ record }">
           <span>
             {{
               record.orgLevel === "branch1"
-                ? "教师一支部"
-                : record.orgLevel === "branch2"
-                ? "教师二支部"
-                : record.orgLevel === "branch3"
-                ? "学生一支部"
-                : "学生二支部"
+                  ? "教师一支部"
+                  : record.orgLevel === "branch2"
+                      ? "教师二支部"
+                      : record.orgLevel === "branch3"
+                          ? "学生一支部"
+                          : "学生二支部"
             }}
           </span>
         </template>
@@ -182,10 +182,10 @@
           <span>
             {{
               record.stage === "activist"
-                ? "积极分子"
-                : record.stage === "developmentObject"
-                ? "发展对象"
-                : "预备党员"
+                  ? "积极分子"
+                  : record.stage === "developmentObject"
+                      ? "发展对象"
+                      : "预备党员"
             }}
           </span>
         </template>
@@ -195,13 +195,13 @@
           <a-space wrap>
             <a-button type="text" @click="viewArchive(record)">查看</a-button>
             <a-button type="text" @click="downloadArchive(record)"
-              >下载
+            >下载
             </a-button>
             <a-button
-              v-if="userRole === 'admin'"
-              type="text"
-              status="primary"
-              @click="exportSingle(record)"
+                v-if="userRole === 'admin'"
+                status="primary"
+                type="text"
+                @click="exportSingle(record)"
             >
               导出
             </a-button>
@@ -212,38 +212,38 @@
 
     <!-- 归档详情弹窗 -->
     <a-modal
-      v-model:visible="detailModalVisible"
-      title="归档材料详情"
-      width="700px"
-      @cancel="detailModalVisible = false"
-      :footer="null"
+        v-model:visible="detailModalVisible"
+        :footer="null"
+        title="归档材料详情"
+        width="700px"
+        @cancel="detailModalVisible = false"
     >
       <div v-if="currentArchive" class="archive-detail">
         <a-descriptions :column="2" bordered>
-          <a-descriptions-item label="姓名" :span="2">
+          <a-descriptions-item :span="2" label="姓名">
             {{ currentArchive.userName }}
           </a-descriptions-item>
           <a-descriptions-item label="所属支部">
             {{
               currentArchive.orgLevel === "branch1"
-                ? "教师一支部"
-                : currentArchive.orgLevel === "branch2"
-                ? "教师二支部"
-                : currentArchive.orgLevel === "branch3"
-                ? "学生一支部"
-                : "学生二支部"
+                  ? "教师一支部"
+                  : currentArchive.orgLevel === "branch2"
+                      ? "教师二支部"
+                      : currentArchive.orgLevel === "branch3"
+                          ? "学生一支部"
+                          : "学生二支部"
             }}
           </a-descriptions-item>
           <a-descriptions-item label="发展阶段">
             {{
               currentArchive.stage === "activist"
-                ? "积极分子"
-                : currentArchive.stage === "developmentObject"
-                ? "发展对象"
-                : "预备党员"
+                  ? "积极分子"
+                  : currentArchive.stage === "developmentObject"
+                      ? "发展对象"
+                      : "预备党员"
             }}
           </a-descriptions-item>
-          <a-descriptions-item label="材料名称" :span="2">
+          <a-descriptions-item :span="2" label="材料名称">
             {{ currentArchive.materialName }}
           </a-descriptions-item>
           <a-descriptions-item label="提交时间">
@@ -258,17 +258,17 @@
           <a-descriptions-item label="归档人">
             {{ currentArchive.archiveUser }}
           </a-descriptions-item>
-          <a-descriptions-item label="归档时间" :span="2">
+          <a-descriptions-item :span="2" label="归档时间">
             {{ currentArchive.archiveTime }}
           </a-descriptions-item>
-          <a-descriptions-item label="归档备注" :span="2">
+          <a-descriptions-item :span="2" label="归档备注">
             {{ currentArchive.archiveRemark || "无" }}
           </a-descriptions-item>
         </a-descriptions>
 
         <div style="margin-top: 20px; text-align: center">
           <a-button type="primary" @click="downloadArchive(currentArchive)">
-            <icon-download />
+            <icon-download/>
             下载材料文件
           </a-button>
         </div>
@@ -278,7 +278,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, reactive, ref, watchEffect } from "vue";
+import {onMounted, onUnmounted, reactive, ref, watchEffect} from "vue";
 import * as echarts from "echarts";
 import message from "@arco-design/web-vue/es/message";
 // 导入Arco图标
@@ -290,7 +290,9 @@ import {
   IconSearch,
   IconUpload,
 } from "@arco-design/web-vue/es/icon";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
+// 导入API
+import * as cailiaoguidangchaxun from "@/api/cailiaoguidangchaxun";
 
 const router = useRouter();
 
@@ -471,7 +473,7 @@ const updateChart = () => {
   if (!chartInstance) return;
 
   const option = {
-    tooltip: { trigger: "item" },
+    tooltip: {trigger: "item"},
     legend: {
       orient: "horizontal",
       bottom: 0,
@@ -492,17 +494,17 @@ const updateChart = () => {
           {
             value: archiveStat.stageData.activist,
             name: "积极分子",
-            itemStyle: { color: "#165dff" },
+            itemStyle: {color: "#165dff"},
           },
           {
             value: archiveStat.stageData.developmentObject,
             name: "发展对象",
-            itemStyle: { color: "#00b42a" },
+            itemStyle: {color: "#00b42a"},
           },
           {
             value: archiveStat.stageData.probationaryPartyMember,
             name: "预备党员",
-            itemStyle: { color: "#ff7d00" },
+            itemStyle: {color: "#ff7d00"},
           },
         ],
       },
@@ -513,107 +515,117 @@ const updateChart = () => {
 };
 
 // 刷新数据（按角色+筛选条件过滤）
-const refreshData = () => {
+const refreshData = async () => {
   loading.value = true;
-
-  // 模拟接口延迟
-  setTimeout(() => {
-    // 基础筛选
-    let filteredList = rawArchiveList.value.filter((item) => {
-      // 姓名模糊匹配
-      const nameMatch =
-        !filterParams.userName || item.userName.includes(filterParams.userName);
-      // 材料名称匹配
-      const materialMatch =
-        filterParams.materialName === "all" ||
-        item.materialName === filterParams.materialName;
-      // 发展阶段匹配
-      const stageMatch =
-        filterParams.stage === "all" || item.stage === filterParams.stage;
-      // 归档时间匹配
-      let timeMatch = true;
-      if (filterParams.archiveTime.length === 2) {
-        const startTime = new Date(filterParams.archiveTime[0]).getTime();
-        const endTime = new Date(filterParams.archiveTime[1]).getTime();
-        const archiveTime = new Date(item.archiveTime).getTime();
-        timeMatch = archiveTime >= startTime && archiveTime <= endTime;
-      }
-
-      return nameMatch && materialMatch && stageMatch && timeMatch;
+  try {
+    const res = await cailiaoguidangchaxun.listMaterialArchiveUsingGet({
+      userName: filterParams.userName,
+      materialName: filterParams.materialName === "all" ? undefined : filterParams.materialName,
+      stage: filterParams.stage === "all" ? undefined : filterParams.stage,
+      archiveTime: filterParams.archiveTime.length === 2 ? `${filterParams.archiveTime[0]}~${filterParams.archiveTime[1]}` : undefined,
+      page: 1,
+      pageSize: 100,
     });
-
-    // 按角色过滤
-    if (userRole.value === "student") {
-      // 普通党员：仅显示本人归档材料
-      filteredList = filteredList.filter(
-        (item) => item.userName === "王五（学生党员）"
-      );
-    } else if (userRole.value === "teacher") {
-      // 培养联系人：仅显示教师支部归档材料
-      filteredList = filteredList.filter(
-        (item) => item.orgLevel === "branch1" || item.orgLevel === "branch2"
-      );
+    if (res.code === 0) {
+      archiveList.value = res.data?.records || [];
+      // 更新统计数据
+      await calculateStat();
+      // 更新图表
+      updateChart();
+    } else {
+      message.error(res.message || "获取归档材料列表失败");
     }
-    // 管理员：显示全量数据
-
-    archiveList.value = filteredList;
-
-    // 更新统计数据
-    calculateStat();
-    // 更新图表
-    updateChart();
-
+  } catch (error) {
+    console.error("获取归档材料列表失败:", error);
+    message.error("网络请求异常");
+  } finally {
     loading.value = false;
-  }, 500);
+  }
 };
 
 // 计算归档统计数据
-const calculateStat = () => {
-  // 总数
-  archiveStat.totalCount = archiveList.value.length;
-
-  // 各阶段数量
-  archiveStat.stageData.activist = archiveList.value.filter(
-    (item) => item.stage === "activist"
-  ).length;
-  archiveStat.stageData.developmentObject = archiveList.value.filter(
-    (item) => item.stage === "developmentObject"
-  ).length;
-  archiveStat.stageData.probationaryPartyMember = archiveList.value.filter(
-    (item) => item.stage === "probationaryPartyMember"
-  ).length;
+const calculateStat = async () => {
+  try {
+    const res = await cailiaoguidangchaxun.getMaterialArchiveStatUsingGet();
+    if (res.code === 0) {
+      archiveStat.totalCount = res.data?.totalCount || 0;
+      archiveStat.monthGrowth = res.data?.monthGrowth || 0;
+      archiveStat.stageData.activist = res.data?.stageData?.activist || 0;
+      archiveStat.stageData.developmentObject = res.data?.stageData?.developmentObject || 0;
+      archiveStat.stageData.probationaryPartyMember = res.data?.stageData?.probationaryPartyMember || 0;
+    } else {
+      message.error(res.message || "获取归档统计数据失败");
+      // 失败时使用本地计算作为 fallback
+      archiveStat.totalCount = archiveList.value.length;
+      archiveStat.stageData.activist = archiveList.value.filter(item => item.stage === "activist").length;
+      archiveStat.stageData.developmentObject = archiveList.value.filter(item => item.stage === "developmentObject").length;
+      archiveStat.stageData.probationaryPartyMember = archiveList.value.filter(item => item.stage === "probationaryPartyMember").length;
+    }
+  } catch (error) {
+    console.error("获取归档统计数据失败:", error);
+    // 失败时使用本地计算作为 fallback
+    archiveStat.totalCount = archiveList.value.length;
+    archiveStat.stageData.activist = archiveList.value.filter(item => item.stage === "activist").length;
+    archiveStat.stageData.developmentObject = archiveList.value.filter(item => item.stage === "developmentObject").length;
+    archiveStat.stageData.probationaryPartyMember = archiveList.value.filter(item => item.stage === "probationaryPartyMember").length;
+  }
 };
 
 // 重置筛选条件
-const resetFilter = () => {
+const resetFilter = async () => {
   filterParams.userName = "";
   filterParams.materialName = "all";
   filterParams.stage = "all";
   filterParams.archiveTime = [];
-  refreshData();
+  await refreshData();
   message.success("筛选条件已重置");
 };
 
 // 查看归档详情
-const viewArchive = (record: any) => {
-  currentArchive.value = record;
-  detailModalVisible.value = true;
+const viewArchive = async (record: any) => {
+  try {
+    const res = await cailiaoguidangchaxun.viewMaterialArchiveDetailUsingGet({ id: record.id });
+    if (res.code === 0) {
+      currentArchive.value = res.data;
+      detailModalVisible.value = true;
+    } else {
+      message.error(res.message || "查看归档详情失败");
+    }
+  } catch (error) {
+    console.error("查看归档详情失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 下载单个归档材料
-const downloadArchive = (record: any) => {
-  message.success(
-    `已开始下载【${record.userName}-${record.materialName}】归档文件`
-  );
-  // 实际项目中调用文件下载接口
-  // window.open(record.fileUrl, '_blank');
+const downloadArchive = async (record: any) => {
+  try {
+    const res = await cailiaoguidangchaxun.downloadMaterialArchiveUsingGet({ id: record.id });
+    if (res.code === 0) {
+      // 实际项目中处理下载
+      message.success(`已开始下载【${record.userName}-${record.materialName}】归档文件`);
+    } else {
+      message.error(res.message || "下载归档材料失败");
+    }
+  } catch (error) {
+    console.error("下载归档材料失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 导出单个归档材料
-const exportSingle = (record: any) => {
-  message.success(
-    `已导出【${record.userName}-${record.materialName}】归档材料（PDF格式）`
-  );
+const exportSingle = async (record: any) => {
+  try {
+    const res = await cailiaoguidangchaxun.exportMaterialArchiveUsingGet({ id: record.id });
+    if (res.code === 0) {
+      message.success(`已导出【${record.userName}-${record.materialName}】归档材料（PDF格式）`);
+    } else {
+      message.error(res.message || "导出归档材料失败");
+    }
+  } catch (error) {
+    console.error("导出归档材料失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 批量导出归档材料
@@ -626,18 +638,28 @@ const batchExport = () => {
   message.confirm({
     title: "批量导出",
     content: `确定要导出选中的${archiveList.value.length}份归档材料吗？导出后将生成压缩包下载`,
-    onOk: () => {
-      message.success(
-        `已开始批量导出${archiveList.value.length}份归档材料，压缩包生成后将自动下载`
-      );
+    onOk: async () => {
+      try {
+        const res = await cailiaoguidangchaxun.batchExportMaterialArchiveUsingPost({
+          ids: archiveList.value.map(item => item.id),
+        });
+        if (res.code === 0) {
+          message.success(`已开始批量导出${archiveList.value.length}份归档材料，压缩包生成后将自动下载`);
+        } else {
+          message.error(res.message || "批量导出失败");
+        }
+      } catch (error) {
+        console.error("批量导出失败:", error);
+        message.error("网络请求异常");
+      }
     },
   });
 };
 
 // 生命周期
-onMounted(() => {
+onMounted(async () => {
   initChart();
-  refreshData();
+  await refreshData();
   // 自适应窗口大小
   window.addEventListener("resize", () => chartInstance?.resize());
 });

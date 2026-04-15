@@ -5,30 +5,30 @@
     <a-card style="margin-bottom: 16px">
       <a-space size="large">
         <a-button
-          type="primary"
-          :status="activeView === 'template' ? 'primary' : 'normal'"
-          @click="switchView('template')"
+            :status="activeView === 'template' ? 'primary' : 'normal'"
+            type="primary"
+            @click="switchView('template')"
         >
-          <icon-file-text />
+          <icon-file-text/>
           材料模板管理
         </a-button>
         <a-button
-          :status="activeView === 'submit' ? 'primary' : 'normal'"
-          @click="switchView('submit')"
+            :status="activeView === 'submit' ? 'primary' : 'normal'"
+            @click="switchView('submit')"
         >
-          <icon-upload />
+          <icon-upload/>
           材料提交审核
         </a-button>
         <a-button
-          :status="activeView === 'archive' ? 'primary' : 'normal'"
-          @click="switchView('archive')"
+            :status="activeView === 'archive' ? 'primary' : 'normal'"
+            @click="switchView('archive')"
         >
-          <icon-folder />
+          <icon-folder/>
           材料归档查询
         </a-button>
         <!-- 权限提示：仅管理员可见模板管理 -->
         <a-tag v-if="userRole !== 'admin'" color="orange" disabled>
-          <icon-warning />
+          <icon-warning/>
           仅管理员可配置材料模板
         </a-tag>
       </a-space>
@@ -38,8 +38,8 @@
     <a-card v-if="activeView === 'template' && userRole === 'admin'">
       <!-- 筛选+操作区 -->
       <div
-        class="filter-operation-bar"
-        style="
+          class="filter-operation-bar"
+          style="
           margin-bottom: 16px;
           padding-bottom: 8px;
           border-bottom: 1px solid #eee;
@@ -51,9 +51,9 @@
             <a-space size="middle">
               <a-form-item label="发展阶段" label-col-flex="80px">
                 <a-select
-                  v-model="searchParams.stage"
-                  placeholder="全部"
-                  style="width: 150px"
+                    v-model="searchParams.stage"
+                    placeholder="全部"
+                    style="width: 150px"
                 >
                   <a-option value="all">全部</a-option>
                   <a-option value="activist">积极分子</a-option>
@@ -65,9 +65,9 @@
 
               <a-form-item label="材料类型" label-col-flex="80px">
                 <a-select
-                  v-model="searchParams.type"
-                  placeholder="全部"
-                  style="width: 150px"
+                    v-model="searchParams.type"
+                    placeholder="全部"
+                    style="width: 150px"
                 >
                   <a-option value="all">全部</a-option>
                   <a-option value="audit">审核类</a-option>
@@ -77,9 +77,9 @@
 
               <a-form-item label="模板状态" label-col-flex="80px">
                 <a-select
-                  v-model="searchParams.status"
-                  placeholder="全部"
-                  style="width: 150px"
+                    v-model="searchParams.status"
+                    placeholder="全部"
+                    style="width: 150px"
                 >
                   <a-option value="all">全部</a-option>
                   <a-option value="enable">启用</a-option>
@@ -88,11 +88,11 @@
               </a-form-item>
 
               <a-button type="outline" @click="handleSearch">
-                <icon-search />
+                <icon-search/>
                 筛选
               </a-button>
               <a-button type="outline" @click="resetSearch">
-                <icon-refresh />
+                <icon-refresh/>
                 重置
               </a-button>
             </a-space>
@@ -102,22 +102,22 @@
           <a-col :span="6" style="text-align: right">
             <a-space size="middle">
               <a-button type="primary" @click="openAddModal">
-                <icon-plus />
+                <icon-plus/>
                 新增模板
               </a-button>
               <a-button
-                type="primary"
-                status="danger"
-                @click="batchDelete"
-                :disabled="selectedRowKeys.length === 0"
+                  :disabled="selectedRowKeys.length === 0"
+                  status="danger"
+                  type="primary"
+                  @click="batchDelete"
               >
-                <icon-delete />
+                <icon-delete/>
                 批量删除
               </a-button>
               <a-dropdown @select="batchToggleStatus">
                 <a-button type="dashed">
                   {{ batchStatusText }}
-                  <icon-down />
+                  <icon-down/>
                 </a-button>
                 <template #content>
                   <a-doption value="enable">批量启用</a-doption>
@@ -131,31 +131,31 @@
 
       <!-- 材料模板列表 -->
       <a-table
-        :columns="columns"
-        :data="templateList"
-        :pagination="{
+          :columns="columns"
+          :data="templateList"
+          :pagination="{
           showTotal: true,
           pageSize: searchParams.pageSize,
           current: searchParams.current,
           total: total,
         }"
-        :row-selection="rowSelection"
-        :selectedRowKeys="selectedRowKeys"
-        row-key="id"
-        @page-change="onPageChange"
-        @selection-change="handleSelectionChange"
+          :row-selection="rowSelection"
+          :selectedRowKeys="selectedRowKeys"
+          row-key="id"
+          @page-change="onPageChange"
+          @selection-change="handleSelectionChange"
       >
         <!-- 所属阶段列自定义渲染 -->
         <template #stage="{ record }">
           <span>
             {{
               record.stage === "activist"
-                ? "积极分子"
-                : record.stage === "developmentObject"
-                ? "发展对象"
-                : record.stage === "probationaryPartyMember"
-                ? "预备党员"
-                : "正式党员"
+                  ? "积极分子"
+                  : record.stage === "developmentObject"
+                      ? "发展对象"
+                      : record.stage === "probationaryPartyMember"
+                          ? "预备党员"
+                          : "正式党员"
             }}
           </span>
         </template>
@@ -179,12 +179,12 @@
           <a-space wrap>
             <a-button type="text" @click="openEditModal(record)">编辑</a-button>
             <a-button type="text" @click="previewTemplate(record)"
-              >预览
+            >预览
             </a-button>
             <a-button type="text" @click="downloadTemplate(record)"
-              >下载
+            >下载
             </a-button>
-            <a-button type="text" status="danger" @click="toggleStatus(record)">
+            <a-button status="danger" type="text" @click="toggleStatus(record)">
               {{ record.status === "enable" ? "停用" : "启用" }}
             </a-button>
           </a-space>
@@ -195,7 +195,7 @@
     <!-- 非管理员提示 -->
     <a-card v-else-if="activeView === 'template' && userRole !== 'admin'">
       <div style="text-align: center; padding: 60px 0">
-        <icon-warning-circle style="font-size: 48px; color: #faad14" />
+        <icon-warning-circle style="font-size: 48px; color: #faad14"/>
         <div style="margin-top: 16px; font-size: 16px">
           暂无权限访问此页面，请切换为管理员账号登录
         </div>
@@ -204,23 +204,23 @@
 
     <!-- 新增/编辑模板模态框 -->
     <a-modal
-      v-model:visible="modalVisible"
-      :title="isEdit ? '编辑材料模板' : '新增材料模板'"
-      @ok="handleModalOk"
-      @cancel="handleModalCancel"
-      width="700px"
+        v-model:visible="modalVisible"
+        :title="isEdit ? '编辑材料模板' : '新增材料模板'"
+        width="700px"
+        @cancel="handleModalCancel"
+        @ok="handleModalOk"
     >
       <a-form
-        :model="formData"
-        :rules="formRules"
-        ref="formRef"
-        label-col-flex="100px"
-        wrapper-col-flex="auto"
+          ref="formRef"
+          :model="formData"
+          :rules="formRules"
+          label-col-flex="100px"
+          wrapper-col-flex="auto"
       >
         <a-form-item field="name" label="模板名称">
           <a-input
-            v-model="formData.name"
-            placeholder="请输入模板名称（如：政审表、思想汇报）"
+              v-model="formData.name"
+              placeholder="请输入模板名称（如：政审表、思想汇报）"
           />
         </a-form-item>
 
@@ -240,18 +240,18 @@
           </a-radio-group>
         </a-form-item>
 
-        <a-form-item field="file" label="模板文件" :required="!isEdit">
+        <a-form-item :required="!isEdit" field="file" label="模板文件">
           <a-upload
-            v-model="formData.fileList"
-            action="/api/upload/template"
-            :show-file-list="true"
-            :multiple="false"
-            accept=".docx,.doc,.pdf"
-            :file-list-max="1"
-            @change="handleFileChange"
+              v-model="formData.fileList"
+              :file-list-max="1"
+              :multiple="false"
+              :show-file-list="true"
+              accept=".docx,.doc,.pdf"
+              action="/api/upload/template"
+              @change="handleFileChange"
           >
             <a-button type="dashed">
-              <icon-upload />
+              <icon-upload/>
               点击上传模板文件（Word/PDF）
             </a-button>
           </a-upload>
@@ -261,7 +261,7 @@
           <!-- 编辑时显示已上传文件 -->
           <div v-if="isEdit && formData.fileUrl" style="margin-top: 8px">
             <a-link @click="downloadTemplate(formData)"
-              >{{ formData.name }}.pdf
+            >{{ formData.name }}.pdf
             </a-link>
           </div>
         </a-form-item>
@@ -275,9 +275,9 @@
 
         <a-form-item field="remark" label="模板说明">
           <a-textarea
-            v-model="formData.remark"
-            placeholder="请输入模板填写说明、注意事项等（可选）"
-            :rows="3"
+              v-model="formData.remark"
+              :rows="3"
+              placeholder="请输入模板填写说明、注意事项等（可选）"
           />
         </a-form-item>
       </a-form>
@@ -285,18 +285,18 @@
 
     <!-- 模板预览弹窗 -->
     <a-modal
-      v-model:visible="previewVisible"
-      title="模板预览"
-      width="800px"
-      @cancel="previewVisible = false"
-      :footer="null"
+        v-model:visible="previewVisible"
+        :footer="null"
+        title="模板预览"
+        width="800px"
+        @cancel="previewVisible = false"
     >
       <div v-if="previewTemplateData" style="padding: 16px; text-align: center">
         <div style="margin-bottom: 16px; font-size: 16px; font-weight: 600">
           {{ previewTemplateData.name }}
         </div>
         <div style="border: 1px solid #eee; padding: 24px; min-height: 400px">
-          <icon-file-text style="font-size: 64px; color: #ccc" />
+          <icon-file-text style="font-size: 64px; color: #ccc"/>
           <div style="margin-top: 16px; color: #86909c">
             模板文件在线预览效果（实际项目中对接PDF/Word预览组件）
           </div>
@@ -305,11 +305,11 @@
           </div>
         </div>
         <a-button
-          type="primary"
-          style="margin-top: 16px"
-          @click="downloadTemplate(previewTemplateData)"
+            style="margin-top: 16px"
+            type="primary"
+            @click="downloadTemplate(previewTemplateData)"
         >
-          <icon-download />
+          <icon-download/>
           下载原文件
         </a-button>
       </div>
@@ -318,9 +318,9 @@
 </template>
 
 <script lang="ts" setup>
-import { reactive, ref, watchEffect } from "vue";
+import {reactive, ref, watchEffect} from "vue";
 import message from "@arco-design/web-vue/es/message";
-import type { FormInstance } from "@arco-design/web-vue/es/form";
+import type {FormInstance} from "@arco-design/web-vue/es/form";
 // 导入Arco图标
 import {
   IconDelete,
@@ -334,7 +334,9 @@ import {
   IconWarning,
   IconWarningCircle,
 } from "@arco-design/web-vue/es/icon";
-import { useRouter } from "vue-router";
+import {useRouter} from "vue-router";
+// 导入API
+import * as cailiaomobanguanli from "@/api/cailiaomobanguanli";
 
 const router = useRouter();
 
@@ -381,18 +383,18 @@ const handleSelectionChange = (keys: string[]) => {
     batchStatusText.value = "批量操作";
   } else {
     const firstStatus = templateList.value.find(
-      (item) => item.id === keys[0]
+        (item) => item.id === keys[0],
     )?.status;
     const allSameStatus = keys.every(
-      (key) =>
-        templateList.value.find((item) => item.id === key)?.status ===
-        firstStatus
+        (key) =>
+            templateList.value.find((item) => item.id === key)?.status ===
+            firstStatus,
     );
     batchStatusText.value = allSameStatus
-      ? firstStatus === "enable"
-        ? "批量停用"
-        : "批量启用"
-      : "批量操作";
+        ? firstStatus === "enable"
+            ? "批量停用"
+            : "批量启用"
+        : "批量操作";
   }
 };
 
@@ -417,7 +419,7 @@ const templateList = ref([
     fileUrl: "/templates/思想汇报.docx",
     uploadTime: "2025-01-10",
     remark:
-      "思想汇报每月提交1份，需结合当月学习内容、思想动态撰写，字数不少于800字",
+        "思想汇报每月提交1份，需结合当月学习内容、思想动态撰写，字数不少于800字",
   },
   {
     id: "3",
@@ -428,7 +430,7 @@ const templateList = ref([
     fileUrl: "/templates/转正申请书.pdf",
     uploadTime: "2025-01-10",
     remark:
-      "转正申请书需在预备期满前1个月提交，需总结预备期表现、不足及改进方向",
+        "转正申请书需在预备期满前1个月提交，需总结预备期表现、不足及改进方向",
   },
   {
     id: "4",
@@ -481,39 +483,45 @@ const columns = [
 ];
 
 // 5. 分页事件
-const onPageChange = (page: number) => {
+const onPageChange = async (page: number) => {
   searchParams.current = page;
-  loadTemplateList();
+  await loadTemplateList();
 };
 
-// 6. 加载模板列表（模拟接口调用）
-const loadTemplateList = () => {
-  // 此处可根据searchParams筛选数据，模拟接口逻辑
-  const filteredList = templateList.value.filter((item) => {
-    const stageMatch =
-      searchParams.stage === "all" || item.stage === searchParams.stage;
-    const typeMatch =
-      searchParams.type === "all" || item.type === searchParams.type;
-    const statusMatch =
-      searchParams.status === "all" || item.status === searchParams.status;
-    return stageMatch && typeMatch && statusMatch;
-  });
-  templateList.value = filteredList;
-  total.value = filteredList.length;
+// 6. 加载模板列表（调用真实接口）
+const loadTemplateList = async () => {
+  try {
+    const res = await cailiaomobanguanli.listMaterialTemplateUsingGet({
+      stage: searchParams.stage === "all" ? undefined : searchParams.stage,
+      type: searchParams.type === "all" ? undefined : searchParams.type,
+      status: searchParams.status === "all" ? undefined : searchParams.status,
+      page: searchParams.current,
+      pageSize: searchParams.pageSize,
+    });
+    if (res.code === 0) {
+      templateList.value = res.data?.records || [];
+      total.value = res.data?.total || 0;
+    } else {
+      message.error(res.message || "获取模板列表失败");
+    }
+  } catch (error) {
+    console.error("获取模板列表失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 7. 筛选/重置
-const handleSearch = () => {
+const handleSearch = async () => {
   searchParams.current = 1;
-  loadTemplateList();
+  await loadTemplateList();
   message.success("筛选成功");
 };
-const resetSearch = () => {
+const resetSearch = async () => {
   searchParams.stage = "all";
   searchParams.type = "all";
   searchParams.status = "all";
   searchParams.current = 1;
-  loadTemplateList();
+  await loadTemplateList();
 };
 
 // 8. 新增/编辑模态框
@@ -532,9 +540,9 @@ const formData = reactive({
 });
 // 表单校验规则
 const formRules = reactive({
-  name: [{ required: true, message: "请输入模板名称" }],
-  stage: [{ required: true, message: "请选择所属发展阶段" }],
-  type: [{ required: true, message: "请选择材料类型" }],
+  name: [{required: true, message: "请输入模板名称"}],
+  stage: [{required: true, message: "请选择所属发展阶段"}],
+  type: [{required: true, message: "请选择材料类型"}],
   file: [
     {
       required: (): boolean => !isEdit.value,
@@ -587,44 +595,46 @@ const handleModalOk = async () => {
   if (!formRef.value) return;
   try {
     await formRef.value.validate();
-    // 模拟接口调用
+    
     if (isEdit.value) {
       // 编辑逻辑
-      const index = templateList.value.findIndex(
-        (item) => item.id === formData.id
-      );
-      if (index > -1) {
-        templateList.value[index] = {
-          ...templateList.value[index],
-          name: formData.name,
-          stage: formData.stage,
-          type: formData.type,
-          status: formData.status,
-          remark: formData.remark,
-          fileUrl: formData.fileUrl || templateList.value[index].fileUrl,
-        };
+      const res = await cailiaomobanguanli.updateMaterialTemplateUsingPut({
+        id: formData.id,
+        name: formData.name,
+        stage: formData.stage,
+        type: formData.type,
+        status: formData.status,
+        fileUrl: formData.fileUrl || templateList.value.find(item => item.id === formData.id)?.fileUrl,
+        remark: formData.remark,
+      });
+      if (res.code === 0) {
         message.success("编辑模板成功");
+        modalVisible.value = false;
+        await loadTemplateList();
+      } else {
+        message.error(res.message || "编辑模板失败");
       }
     } else {
       // 新增逻辑
-      const newId = (Number(templateList.value.at(-1)?.id) + 1).toString();
-      templateList.value.push({
-        id: newId,
+      const res = await cailiaomobanguanli.addMaterialTemplateUsingPost({
         name: formData.name,
         stage: formData.stage,
         type: formData.type,
         status: formData.status,
         fileUrl: formData.fileUrl,
-        uploadTime: new Date().toLocaleDateString().replace(/\//g, "-"),
         remark: formData.remark,
       });
-      total.value = templateList.value.length;
-      message.success("新增模板成功");
+      if (res.code === 0) {
+        message.success("新增模板成功");
+        modalVisible.value = false;
+        await loadTemplateList();
+      } else {
+        message.error(res.message || "新增模板失败");
+      }
     }
-    modalVisible.value = false;
-    loadTemplateList();
   } catch (error) {
-    message.error("表单校验失败，请检查必填项");
+    console.error("操作模板失败:", error);
+    message.error("网络请求异常");
   }
 };
 
@@ -652,39 +662,63 @@ const downloadTemplate = (record: any) => {
 };
 
 // 10. 状态切换（启用/停用）
-const toggleStatus = (record: any) => {
+const toggleStatus = async (record: any) => {
   const newStatus = record.status === "enable" ? "disable" : "enable";
-  // 模拟接口调用
-  const index = templateList.value.findIndex((item) => item.id === record.id);
-  if (index > -1) {
-    templateList.value[index].status = newStatus;
-    message.success(
-      `已${newStatus === "enable" ? "启用" : "停用"}【${record.name}】模板`
-    );
-    // 更新批量操作按钮文本
-    handleSelectionChange(selectedRowKeys.value);
+  try {
+    const res = await cailiaomobanguanli.toggleMaterialTemplateStatusUsingPut({
+      id: record.id,
+      status: newStatus,
+    });
+    if (res.code === 0) {
+      const index = templateList.value.findIndex((item) => item.id === record.id);
+      if (index > -1) {
+        templateList.value[index].status = newStatus;
+        message.success(
+            `已${newStatus === "enable" ? "启用" : "停用"}【${record.name}】模板`,
+        );
+        // 更新批量操作按钮文本
+        handleSelectionChange(selectedRowKeys.value);
+      }
+    } else {
+      message.error(res.message || "切换模板状态失败");
+    }
+  } catch (error) {
+    console.error("切换模板状态失败:", error);
+    message.error("网络请求异常");
   }
 };
 
 // 批量切换状态
-const batchToggleStatus = (value: string) => {
+const batchToggleStatus = async (value: string) => {
   if (selectedRowKeys.value.length === 0) {
     message.warning("请先选择要操作的模板");
     return;
   }
-  // 模拟批量操作
-  templateList.value = templateList.value.map((item) => {
-    if (selectedRowKeys.value.includes(item.id)) {
-      return { ...item, status: value };
+  try {
+    const res = await cailiaomobanguanli.batchToggleMaterialTemplateStatusUsingPut({
+      ids: selectedRowKeys.value,
+      status: value,
+    });
+    if (res.code === 0) {
+      templateList.value = templateList.value.map((item) => {
+        if (selectedRowKeys.value.includes(item.id)) {
+          return {...item, status: value};
+        }
+        return item;
+      });
+      message.success(
+          `已${value === "enable" ? "批量启用" : "批量停用"}选中的模板`,
+      );
+      selectedRowKeys.value = [];
+      batchStatusText.value = "批量操作";
+      await loadTemplateList();
+    } else {
+      message.error(res.message || "批量切换模板状态失败");
     }
-    return item;
-  });
-  message.success(
-    `已${value === "enable" ? "批量启用" : "批量停用"}选中的模板`
-  );
-  selectedRowKeys.value = [];
-  batchStatusText.value = "批量操作";
-  loadTemplateList();
+  } catch (error) {
+    console.error("批量切换模板状态失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 11. 批量删除
@@ -693,22 +727,36 @@ const batchDelete = () => {
   message.confirm({
     title: "批量删除",
     content: `确定要删除选中的${selectedRowKeys.value.length}个材料模板吗？删除后不可恢复！`,
-    onOk: () => {
-      // 模拟删除逻辑
-      templateList.value = templateList.value.filter(
-        (item) => !selectedRowKeys.value.includes(item.id)
-      );
-      total.value = templateList.value.length;
-      selectedRowKeys.value = [];
-      batchStatusText.value = "批量操作";
-      message.success("批量删除成功");
+    onOk: async () => {
+      try {
+        const res = await cailiaomobanguanli.batchDeleteMaterialTemplateUsingDelete({
+          ids: selectedRowKeys.value,
+        });
+        if (res.code === 0) {
+          templateList.value = templateList.value.filter(
+              (item) => !selectedRowKeys.value.includes(item.id),
+          );
+          total.value = templateList.value.length;
+          selectedRowKeys.value = [];
+          batchStatusText.value = "批量操作";
+          message.success("批量删除成功");
+          await loadTemplateList();
+        } else {
+          message.error(res.message || "批量删除失败");
+        }
+      } catch (error) {
+        console.error("批量删除失败:", error);
+        message.error("网络请求异常");
+      }
     },
   });
 };
 
 // 初始加载数据
 watchEffect(() => {
-  loadTemplateList();
+  (async () => {
+    await loadTemplateList();
+  })();
 });
 
 const toShowMaterialSubmissionReviewView = () => {

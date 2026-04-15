@@ -1,4 +1,9 @@
 declare namespace API {
+  type accessShareUsingGETParams = {
+    /** shareCode */
+    shareCode: string;
+  };
+
   type Activity = {
     activityContent?: string;
     activityName?: string;
@@ -131,6 +136,46 @@ declare namespace API {
     userName?: string;
   };
 
+  type AnnouncementAttachment = {
+    announcementId?: number;
+    createTime?: string;
+    id?: number;
+    isDelete?: number;
+    name?: string;
+    size?: string;
+    type?: string;
+    url?: string;
+  };
+
+  type AnnouncementReadRecord = {
+    announcementId?: number;
+    createTime?: string;
+    id?: number;
+    readTime?: string;
+    userId?: number;
+  };
+
+  type AnnouncementShare = {
+    announcementId?: number;
+    createTime?: string;
+    expireTime?: string;
+    id?: number;
+    isDelete?: number;
+    shareCode?: string;
+    shareTime?: string;
+    shareUrl?: string;
+    shareUserId?: number;
+    shareUserName?: string;
+    viewCount?: number;
+  };
+
+  type archiveMaterialUsingPOSTParams = {
+    /** archiveRemark */
+    archiveRemark?: string;
+    /** submissionId */
+    submissionId: number;
+  };
+
   type auditDevelopmentStageUsingPOSTParams = {
     /** 考察内容 */
     assessmentContent?: string;
@@ -154,6 +199,12 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseAnnouncementShare_ = {
+    code?: number;
+    data?: AnnouncementShare;
+    message?: string;
+  };
+
   type BaseResponseBoolean_ = {
     code?: number;
     data?: boolean;
@@ -166,9 +217,33 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseInt_ = {
+    code?: number;
+    data?: number;
+    message?: string;
+  };
+
   type BaseResponseListActivityVO_ = {
     code?: number;
     data?: ActivityVO[];
+    message?: string;
+  };
+
+  type BaseResponseListAnnouncementAttachment_ = {
+    code?: number;
+    data?: AnnouncementAttachment[];
+    message?: string;
+  };
+
+  type BaseResponseListAnnouncementReadRecord_ = {
+    code?: number;
+    data?: AnnouncementReadRecord[];
+    message?: string;
+  };
+
+  type BaseResponseListAnnouncementShare_ = {
+    code?: number;
+    data?: AnnouncementShare[];
     message?: string;
   };
 
@@ -187,6 +262,24 @@ declare namespace API {
   type BaseResponseListDevelopmentStageVO_ = {
     code?: number;
     data?: DevelopmentStageVO[];
+    message?: string;
+  };
+
+  type BaseResponseListMaterialArchiveVO_ = {
+    code?: number;
+    data?: MaterialArchiveVO[];
+    message?: string;
+  };
+
+  type BaseResponseListMaterialSubmissionVO_ = {
+    code?: number;
+    data?: MaterialSubmissionVO[];
+    message?: string;
+  };
+
+  type BaseResponseListMaterialTemplateVO_ = {
+    code?: number;
+    data?: MaterialTemplateVO[];
     message?: string;
   };
 
@@ -211,6 +304,24 @@ declare namespace API {
   type BaseResponseListOrgRelationTransfer_ = {
     code?: number;
     data?: OrgRelationTransfer[];
+    message?: string;
+  };
+
+  type BaseResponseListQuantifyData_ = {
+    code?: number;
+    data?: QuantifyData[];
+    message?: string;
+  };
+
+  type BaseResponseListQuantifyIndicator_ = {
+    code?: number;
+    data?: QuantifyIndicator[];
+    message?: string;
+  };
+
+  type BaseResponseListQuantifyStatisticsVO_ = {
+    code?: number;
+    data?: QuantifyStatisticsVO[];
     message?: string;
   };
 
@@ -247,6 +358,30 @@ declare namespace API {
   type BaseResponseMapStringString_ = {
     code?: number;
     data?: Record<string, any>;
+    message?: string;
+  };
+
+  type BaseResponseMaterialArchiveStatVO_ = {
+    code?: number;
+    data?: MaterialArchiveStatVO;
+    message?: string;
+  };
+
+  type BaseResponseMaterialArchiveVO_ = {
+    code?: number;
+    data?: MaterialArchiveVO;
+    message?: string;
+  };
+
+  type BaseResponseMaterialSubmissionVO_ = {
+    code?: number;
+    data?: MaterialSubmissionVO;
+    message?: string;
+  };
+
+  type BaseResponseMaterialTodoCountVO_ = {
+    code?: number;
+    data?: MaterialTodoCountVO;
     message?: string;
   };
 
@@ -310,6 +445,18 @@ declare namespace API {
     message?: string;
   };
 
+  type BaseResponseQuantifyCoreIndicatorVO_ = {
+    code?: number;
+    data?: QuantifyCoreIndicatorVO;
+    message?: string;
+  };
+
+  type BaseResponseQuantifyData_ = {
+    code?: number;
+    data?: QuantifyData;
+    message?: string;
+  };
+
   type BaseResponseString_ = {
     code?: number;
     data?: string;
@@ -347,9 +494,14 @@ declare namespace API {
     userId?: number;
   };
 
-  type deleteOrganizationUsingPOSTParams = {
-    /** deleteRequest */
-    deleteRequest: string;
+  type deleteAttachmentUsingDELETEParams = {
+    /** id */
+    id: number;
+  };
+
+  type deleteIndicatorUsingDELETEParams = {
+    /** id */
+    id: number;
   };
 
   type DeleteRequest = {
@@ -400,6 +552,24 @@ declare namespace API {
     userId?: number;
   };
 
+  type DevelopmentStageQueryRequest = {
+    assessmentResult?: number;
+    auditTime?: string;
+    auditUserId?: number;
+    createTime?: string;
+    current?: number;
+    pageSize?: number;
+    sortField?: string;
+    sortOrder?: string;
+    stageEndTime?: string;
+    stageName?: string;
+    stageStartTime?: string;
+    stageStatus?: number;
+    trainerId?: number;
+    updateTime?: string;
+    userId?: number;
+  };
+
   type DevelopmentStageUpdateRequest = {
     /** 考察内容 */
     assessmentContent?: string;
@@ -432,9 +602,29 @@ declare namespace API {
     userId?: number;
   };
 
+  type downloadAnnouncementAttachmentUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
   type downloadFileUsingGETParams = {
     /** 文件URL:材料:/material/{userId}/{filename}，模板：/template/{filename} */
     fileUrl: string;
+  };
+
+  type downloadMaterialArchiveUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type downloadMaterialTemplateUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type downloadMaterialUsingGETParams = {
+    /** id */
+    id: number;
   };
 
   type endActivityUsingPOSTParams = {
@@ -442,9 +632,32 @@ declare namespace API {
     id?: number;
   };
 
+  type exportMaterialArchiveUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type exportQuantifyReportUsingGETParams = {
+    /** dimension */
+    dimension?: string;
+    /** indicator */
+    indicator?: string;
+    /** orgLevel */
+    orgLevel?: string;
+    /** timeRange */
+    timeRange?: string;
+  };
+
   type generateOrgQuantifyDataUsingPOSTParams = {
     /** orgId */
     orgId: number;
+  };
+
+  type generateShareUsingPOSTParams = {
+    /** announcementId */
+    announcementId: number;
+    /** expireTime */
+    expireTime?: string;
   };
 
   type generateUserQuantifyDataUsingPOSTParams = {
@@ -455,6 +668,40 @@ declare namespace API {
   type getActivityByIdUsingGETParams = {
     /** id */
     id?: number;
+  };
+
+  type getAnnouncementShareListUsingGETParams = {
+    /** announcementId */
+    announcementId: number;
+  };
+
+  type getAnnouncementTimelineUsingGETParams = {
+    /** current */
+    current?: number;
+    /** pageSize */
+    pageSize?: number;
+    /** status */
+    status?: number;
+    /** timeRange */
+    timeRange?: string;
+  };
+
+  type getByTargetUsingGETParams = {
+    /** period */
+    period: string;
+    /** targetId */
+    targetId: number;
+    /** targetType */
+    targetType: string;
+  };
+
+  type getCoreIndicatorsUsingGETParams = {
+    /** dimension */
+    dimension?: string;
+    /** orgLevel */
+    orgLevel?: string;
+    /** timeRange */
+    timeRange?: string;
   };
 
   type getDevelopmentStageByIdUsingGETParams = {
@@ -502,6 +749,15 @@ declare namespace API {
     orgId: number;
   };
 
+  type getOrganizationStatisticsUsingGETParams = {
+    /** indicator */
+    indicator?: string;
+    /** orgLevel */
+    orgLevel?: string;
+    /** timeRange */
+    timeRange?: string;
+  };
+
   type getOrgQuantifyDataUsingGETParams = {
     /** orgId */
     orgId: number;
@@ -520,6 +776,22 @@ declare namespace API {
   type getOrgRelationTransfersByUserIdUsingGETParams = {
     /** userId */
     userId: number;
+  };
+
+  type getPersonalStatisticsUsingGETParams = {
+    /** indicator */
+    indicator?: string;
+    /** orgLevel */
+    orgLevel?: string;
+    /** timeRange */
+    timeRange?: string;
+  };
+
+  type getQuantifyDataDetailUsingGETParams = {
+    /** dimension */
+    dimension?: string;
+    /** id */
+    id: number;
   };
 
   type getTemplateListUsingGETParams = {
@@ -557,11 +829,86 @@ declare namespace API {
     id?: number;
   };
 
+  type incrementReadCountUsingPUTParams = {
+    /** announcementId */
+    announcementId: number;
+  };
+
+  type listAttachmentUsingGETParams = {
+    /** announcementId */
+    announcementId: number;
+  };
+
   type listAvailableTrainersUsingGETParams = {
     /** 组织ID */
     orgId?: number;
     /** 用户类型 */
     userType?: string;
+  };
+
+  type listDataUsingGETParams = {
+    /** period */
+    period?: string;
+  };
+
+  type listIndicatorUsingGETParams = {
+    /** status */
+    status?: string;
+    /** indicator */
+    indicator?: string;
+    /** orgLevel */
+    orgLevel?: string;
+  };
+
+  type listMaterialArchiveUsingGETParams = {
+    /** 页码 */
+    current?: number;
+    /** 材料名称（模糊查询） */
+    materialName?: string;
+    /** 组织层级 */
+    orgLevel?: string;
+    /** 每页大小 */
+    pageSize?: number;
+    /** 发展阶段 */
+    stage?: string;
+    /** 用户姓名（模糊查询） */
+    userName?: string;
+  };
+
+  type listMaterialSubmissionUsingGETParams = {
+    /** 审核状态 */
+    auditStatus?: string;
+    /** 页码 */
+    current?: number;
+    /** 材料名称（模糊查询） */
+    materialName?: string;
+    /** 组织层级 */
+    orgLevel?: string;
+    /** 每页大小 */
+    pageSize?: number;
+    /** 发展阶段 */
+    stage?: string;
+    /** 提交状态 */
+    submitStatus?: string;
+    /** 用户 ID */
+    userId?: number;
+    /** 用户姓名（模糊查询） */
+    userName?: string;
+  };
+
+  type listMaterialTemplateUsingGETParams = {
+    /** 页码 */
+    current?: number;
+    /** 模板名称（模糊查询） */
+    name?: string;
+    /** 每页大小 */
+    pageSize?: number;
+    /** 所属发展阶段 */
+    stage?: string;
+    /** 模板状态：enable-启用/disable-停用 */
+    status?: string;
+    /** 材料类型 */
+    type?: string;
   };
 
   type listNoticeVOByPageUsingGETParams = {
@@ -602,6 +949,238 @@ declare namespace API {
   };
 
   type MapStringString_ = true;
+
+  type markAnnouncementAsReadUsingPOSTParams = {
+    /** announcementId */
+    announcementId: number;
+  };
+
+  type markAsReadUsingPOSTParams = {
+    /** announcementId */
+    announcementId: number;
+  };
+
+  type MaterialArchiveBatchExportRequest = {
+    /** 归档 ID 列表 */
+    ids: number[];
+  };
+
+  type MaterialArchiveStatVO = {
+    /** 月度增长率 */
+    growthRate?: number;
+    /** 本月归档数 */
+    monthCount?: number;
+    /** 各阶段归档统计 */
+    stageStats?: Record<string, any>;
+    /** 归档总数 */
+    totalCount?: number;
+  };
+
+  type MaterialArchiveVO = {
+    /** 归档备注 */
+    archiveRemark?: string;
+    /** 归档时间 */
+    archiveTime?: string;
+    /** 归档人 */
+    archiveUser?: string;
+    /** 归档人 ID */
+    archiveUserId?: number;
+    /** 审核时间 */
+    auditTime?: string;
+    /** 审核人 */
+    auditor?: string;
+    /** 创建时间 */
+    createTime?: string;
+    /** 文件大小 */
+    fileSize?: number;
+    /** 文件大小格式化 */
+    fileSizeFormatted?: string;
+    /** 归档文件路径 */
+    fileUrl?: string;
+    /** 归档 ID */
+    id?: number;
+    /** 材料名称 */
+    materialName?: string;
+    /** 组织层级 */
+    orgLevel?: string;
+    /** 发展阶段 */
+    stage?: string;
+    /** 提交 ID */
+    submissionId?: number;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 上传时间 */
+    uploadTime?: string;
+    /** 用户 ID */
+    userId?: number;
+    /** 用户姓名 */
+    userName?: string;
+  };
+
+  type MaterialSubmissionAuditRequest = {
+    /** 审核意见 */
+    auditOpinion?: string;
+    /** 审核结果：approved-通过/rejected-退回 */
+    auditResult: string;
+    /** 提交 ID */
+    id: number;
+  };
+
+  type MaterialSubmissionFinalAuditRequest = {
+    /** 终审意见 */
+    auditOpinion?: string;
+    /** 终审结果：approved-通过/rejected-退回 */
+    auditResult: string;
+    /** 提交 ID */
+    id: number;
+  };
+
+  type MaterialSubmissionSubmitRequest = {
+    /** 文件大小（字节） */
+    fileSize?: number;
+    /** 材料文件路径 */
+    fileUrl: string;
+    /** 材料名称 */
+    materialName: string;
+    /** 备注 */
+    remark?: string;
+    /** 发展阶段 */
+    stage: string;
+  };
+
+  type MaterialSubmissionVO = {
+    /** 审核意见 */
+    auditOpinion?: string;
+    /** 审核状态 */
+    auditStatus?: string;
+    /** 审核状态名称 */
+    auditStatusName?: string;
+    /** 审核时间 */
+    auditTime?: string;
+    /** 审核人 */
+    auditor?: string;
+    /** 审核人 ID */
+    auditorId?: number;
+    /** 创建时间 */
+    createTime?: string;
+    /** 文件大小 */
+    fileSize?: number;
+    /** 文件大小格式化 */
+    fileSizeFormatted?: string;
+    /** 材料文件路径 */
+    fileUrl?: string;
+    /** 终审意见 */
+    finalAuditOpinion?: string;
+    /** 终审时间 */
+    finalAuditTime?: string;
+    /** 终审人 */
+    finalAuditor?: string;
+    /** 终审人 ID */
+    finalAuditorId?: number;
+    /** 提交 ID */
+    id?: number;
+    /** 材料名称 */
+    materialName?: string;
+    /** 组织层级 */
+    orgLevel?: string;
+    /** 发展阶段 */
+    stage?: string;
+    /** 提交状态 */
+    submitStatus?: string;
+    /** 提交状态名称 */
+    submitStatusName?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 上传时间 */
+    uploadTime?: string;
+    /** 用户 ID */
+    userId?: number;
+    /** 用户姓名 */
+    userName?: string;
+  };
+
+  type MaterialTemplateAddRequest = {
+    /** 文件大小（字节） */
+    fileSize?: number;
+    /** 模板文件路径 */
+    fileUrl: string;
+    /** 模板名称 */
+    name: string;
+    /** 模板说明 */
+    remark?: string;
+    /** 所属发展阶段 */
+    stage: string;
+    /** 模板状态：enable-启用/disable-停用 */
+    status?: string;
+    /** 材料类型 */
+    type: string;
+  };
+
+  type MaterialTemplateBatchRequest = {
+    /** 模板 ID 列表 */
+    ids: number[];
+    /** 目标状态 */
+    targetStatus?: string;
+  };
+
+  type MaterialTemplateUpdateRequest = {
+    /** 文件大小（字节） */
+    fileSize?: number;
+    /** 模板文件路径 */
+    fileUrl?: string;
+    /** 模板 ID */
+    id: number;
+    /** 模板名称 */
+    name?: string;
+    /** 模板说明 */
+    remark?: string;
+    /** 所属发展阶段 */
+    stage?: string;
+    /** 模板状态：enable-启用/disable-停用 */
+    status?: string;
+    /** 材料类型 */
+    type?: string;
+  };
+
+  type MaterialTemplateVO = {
+    /** 创建时间 */
+    createTime?: string;
+    /** 文件大小 */
+    fileSize?: number;
+    /** 文件大小格式化 */
+    fileSizeFormatted?: string;
+    /** 模板文件路径 */
+    fileUrl?: string;
+    /** 模板 ID */
+    id?: number;
+    /** 模板名称 */
+    name?: string;
+    /** 模板说明 */
+    remark?: string;
+    /** 所属发展阶段 */
+    stage?: string;
+    /** 模板状态 */
+    status?: string;
+    /** 状态名称 */
+    statusName?: string;
+    /** 材料类型 */
+    type?: string;
+    /** 更新时间 */
+    updateTime?: string;
+    /** 上传用户 ID */
+    uploadUserId?: number;
+    /** 上传用户姓名 */
+    uploadUserName?: string;
+  };
+
+  type MaterialTodoCountVO = {
+    /** 待审核数量 */
+    toAuditCount?: number;
+    /** 待终审数量 */
+    toFinalAuditCount?: number;
+    /** 待提交数量 */
+    toSubmitCount?: number;
+  };
 
   type MyFile = {
     createTime?: string;
@@ -668,6 +1247,11 @@ declare namespace API {
     updateTime?: string;
   };
 
+  type offlineNoticeUsingPUTParams = {
+    /** id */
+    id: number;
+  };
+
   type OrderItem = {
     asc?: boolean;
     column?: string;
@@ -701,6 +1285,7 @@ declare namespace API {
     createTime?: string;
     description?: string;
     id?: number;
+    leaderId?: number;
     orgCode?: string;
     orgLevel?: number;
     orgName?: string;
@@ -930,12 +1515,72 @@ declare namespace API {
     total?: number;
   };
 
+  type previewAnnouncementAttachmentUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type previewMaterialTemplateUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
   type publishActivityUsingPOSTParams = {
     /** id */
     id?: number;
   };
 
   type publishNoticeUsingPOSTParams = {
+    /** id */
+    id: number;
+  };
+
+  type QuantifyCoreIndicatorVO = {
+    activityRate?: number;
+    materialRate?: number;
+    orgLevel?: string;
+    signRate?: number;
+    timeRange?: string;
+  };
+
+  type QuantifyData = {
+    activityRate?: number;
+    createTime?: string;
+    id?: number;
+    indicatorId?: number;
+    materialRate?: number;
+    period?: string;
+    signRate?: number;
+    targetId?: number;
+    targetType?: string;
+    updateTime?: string;
+    value?: number;
+  };
+
+  type QuantifyIndicator = {
+    createTime?: string;
+    dimension?: string;
+    id?: number;
+    isDelete?: number;
+    name?: string;
+    orgLevel?: string;
+    rule?: string;
+    status?: string;
+    updateTime?: string;
+  };
+
+  type QuantifyStatisticsVO = {
+    indicator?: string;
+    period?: string;
+    rank?: number;
+    targetId?: number;
+    targetName?: string;
+    value?: number;
+  };
+
+  type rejectMaterialUsingPUTParams = {
+    /** auditOpinion */
+    auditOpinion: string;
     /** id */
     id: number;
   };
@@ -947,11 +1592,46 @@ declare namespace API {
     userId: number;
   };
 
+  type republishNoticeUsingPUTParams = {
+    /** id */
+    id: number;
+  };
+
+  type searchAnnouncementTimelineUsingGETParams = {
+    /** current */
+    current?: number;
+    /** keyword */
+    keyword: string;
+    /** pageSize */
+    pageSize?: number;
+    /** timeRange */
+    timeRange?: string;
+  };
+
   type submitForAuditUsingPOSTParams = {
     /** 考察内容 */
     assessmentContent?: string;
     /** 发展阶段ID */
     id: number;
+  };
+
+  type toggleMaterialTemplateStatusUsingPUTParams = {
+    /** id */
+    id: number;
+  };
+
+  type toggleStatusUsingPUTParams = {
+    /** id */
+    id: number;
+    /** status */
+    status: string;
+  };
+
+  type topNoticeUsingPUTParams = {
+    /** id */
+    id: number;
+    /** isTop */
+    isTop: number;
   };
 
   type TrainerRelation = {
@@ -980,6 +1660,11 @@ declare namespace API {
   type updateActivityStatisticsUsingPOSTParams = {
     /** id */
     id?: number;
+  };
+
+  type uploadAnnouncementAttachmentUsingPOSTParams = {
+    /** announcementId */
+    announcementId: number;
   };
 
   type uploadFileUsingPOSTParams = {
@@ -1105,6 +1790,16 @@ declare namespace API {
     userName?: string;
     userRole?: string;
     userType?: string;
+  };
+
+  type viewMaterialArchiveDetailUsingGETParams = {
+    /** id */
+    id: number;
+  };
+
+  type viewMaterialUsingGETParams = {
+    /** id */
+    id: number;
   };
 
   type withdrawNoticeUsingPOSTParams = {

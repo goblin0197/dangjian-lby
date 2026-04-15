@@ -1,11 +1,11 @@
 <template>
   <div id="homeView">
     <!--登录组件-->
-    <UserLoginView />
+    <UserLoginView/>
   </div>
 </template>
 
-<script setup lang="ts">
+<script lang="ts" setup>
 import UserLoginView from "@/views/user/UserLoginView.vue";
 </script>
 

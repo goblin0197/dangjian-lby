@@ -1,8 +1,21 @@
 <template>
-  <!-- 页面整体框架 -->
-  <div class="quantify-report-page">
+  <div class="quantify-view-container">
+    <!-- 页面标题和面包屑 -->
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a-breadcrumb>
+          <a-breadcrumb-item>首页</a-breadcrumb-item>
+          <a-breadcrumb-item>量化管理</a-breadcrumb-item>
+          <a-breadcrumb-item>{{
+            activeView === "config" ? "指标配置" : "统计报表"
+          }}</a-breadcrumb-item>
+        </a-breadcrumb>
+      </div>
+      <h1>量化管理</h1>
+    </div>
+
     <!-- 视图切换栏 -->
-    <a-card style="margin-bottom: 16px">
+    <div class="view-switch-bar">
       <a-space size="large">
         <a-button
           :status="activeView === 'config' ? 'primary' : 'normal'"
@@ -12,124 +25,118 @@
           量化数据配置
         </a-button>
         <a-button
-          type="primary"
           :status="activeView === 'report' ? 'primary' : 'normal'"
+          type="primary"
           @click="switchView('report')"
         >
           <icon-chart />
           统计报表查看
         </a-button>
       </a-space>
-    </a-card>
+    </div>
 
     <!-- 统计报表核心区域 -->
-    <a-card>
+    <a-card class="list-card">
       <!-- 高级筛选区 -->
-      <div
-        class="filter-bar"
-        style="
-          margin-bottom: 20px;
-          padding-bottom: 16px;
-          border-bottom: 1px solid #eee;
-        "
-      >
-        <a-row :gutter="16" align="middle">
-          <a-col :span="4">
-            <a-form-item label="时间范围" label-col-flex="80px">
-              <a-select
-                v-model="filterParams.timeRange"
+      <div class="filter-bar">
+        <a-form :model="filterParams" class="filter-form" layout="inline">
+          <a-row :gutter="16" align="middle">
+            <a-col :span="4">
+              <a-form-item label="时间范围">
+                <a-select
+                  v-model="filterParams.timeRange"
+                  style="width: 100%"
+                  @change="refreshData"
+                >
+                  <a-option value="3month">近3个月</a-option>
+                  <a-option value="6month">近6个月</a-option>
+                  <a-option value="1year">近1年</a-option>
+                  <a-option value="custom">自定义</a-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="4">
+              <a-form-item label="组织层级">
+                <a-select
+                  v-model="filterParams.orgLevel"
+                  style="width: 100%"
+                  @change="refreshData"
+                >
+                  <a-option value="all">全部</a-option>
+                  <a-option value="党委">党委</a-option>
+                  <a-option value="党总支">党总支</a-option>
+                  <a-option value="党支部">党支部</a-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="4">
+              <a-form-item label="统计维度">
+                <a-select
+                  v-model="filterParams.dimension"
+                  style="width: 100%"
+                  @change="refreshData"
+                >
+                  <a-option value="organization">组织</a-option>
+                  <a-option value="personal">个人</a-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="4">
+              <a-form-item label="统计指标">
+                <a-select
+                  v-model="filterParams.indicator"
+                  style="width: 100%"
+                  @change="refreshData"
+                >
+                  <a-option value="all">全部</a-option>
+                  <a-option value="activityRate">活动参与率</a-option>
+                  <a-option value="signRate">签到率</a-option>
+                  <a-option value="materialRate">材料完成率</a-option>
+                </a-select>
+              </a-form-item>
+            </a-col>
+
+            <a-col :span="8" style="text-align: right">
+              <a-space size="middle">
+                <a-button type="outline" @click="refreshData">
+                  <icon-refresh />
+                  刷新数据
+                </a-button>
+                <a-button type="primary" @click="exportReport">
+                  <icon-download />
+                  导出报表
+                </a-button>
+                <!-- 图表类型切换（仅组织维度显示） -->
+                <a-select
+                  v-if="filterParams.dimension === 'organization'"
+                  v-model="chartType"
+                  style="width: 120px"
+                  @change="updateChart"
+                >
+                  <a-option value="bar">柱状图（对比）</a-option>
+                  <a-option value="line">折线图（趋势）</a-option>
+                  <a-option value="pie">饼图（占比）</a-option>
+                </a-select>
+              </a-space>
+            </a-col>
+          </a-row>
+
+          <!-- 自定义时间范围（按需显示） -->
+          <a-row
+            v-if="filterParams.timeRange === 'custom'"
+            style="margin-top: 16px"
+          >
+            <a-col :span="12">
+              <a-range-picker
+                v-model="filterParams.customTime"
                 style="width: 100%"
-                @change="refreshData"
-              >
-                <a-option value="3month">近3个月</a-option>
-                <a-option value="6month">近6个月</a-option>
-                <a-option value="1year">近1年</a-option>
-                <a-option value="custom">自定义</a-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="4">
-            <a-form-item label="组织层级" label-col-flex="80px">
-              <a-select
-                v-model="filterParams.orgLevel"
-                style="width: 100%"
-                @change="refreshData"
-              >
-                <a-option value="all">全部</a-option>
-                <a-option value="partyCommittees">党委</a-option>
-                <a-option value="branch1">教师一支部</a-option>
-                <a-option value="branch2">教师二支部</a-option>
-                <a-option value="branch3">学生一支部</a-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="4">
-            <a-form-item label="统计维度" label-col-flex="80px">
-              <a-select
-                v-model="filterParams.dimension"
-                style="width: 100%"
-                @change="refreshData"
-              >
-                <a-option value="organization">组织</a-option>
-                <a-option value="personal">个人</a-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="4">
-            <a-form-item label="统计指标" label-col-flex="80px">
-              <a-select
-                v-model="filterParams.indicator"
-                style="width: 100%"
-                @change="refreshData"
-              >
-                <a-option value="all">全部</a-option>
-                <a-option value="activityRate">活动参与率</a-option>
-                <a-option value="signRate">签到率</a-option>
-                <a-option value="materialRate">材料完成率</a-option>
-              </a-select>
-            </a-form-item>
-          </a-col>
-
-          <a-col :span="8" style="text-align: right">
-            <a-space size="middle">
-              <a-button type="outline" @click="refreshData">
-                <icon-refresh />
-                刷新数据
-              </a-button>
-              <a-button type="primary" @click="exportReport">
-                <icon-download />
-                导出报表
-              </a-button>
-              <!-- 图表类型切换（仅组织维度显示） -->
-              <a-select
-                v-if="filterParams.dimension === 'organization'"
-                v-model="chartType"
-                style="width: 120px"
-                @change="updateChart"
-              >
-                <a-option value="bar">柱状图（对比）</a-option>
-                <a-option value="line">折线图（趋势）</a-option>
-                <a-option value="pie">饼图（占比）</a-option>
-              </a-select>
-            </a-space>
-          </a-col>
-        </a-row>
-
-        <!-- 自定义时间范围（按需显示） -->
-        <a-row
-          v-if="filterParams.timeRange === 'custom'"
-          style="margin-top: 16px"
-        >
-          <a-col :span="12">
-            <a-range-picker
-              v-model="filterParams.customTime"
-              style="width: 100%"
-            />
-          </a-col>
-        </a-row>
+              />
+            </a-col>
+          </a-row>
+        </a-form>
       </div>
 
       <!-- 可视化图表区 -->
@@ -138,48 +145,76 @@
         <a-col :span="6">
           <div class="indicator-card-container">
             <a-card class="indicator-card" hoverable>
-              <div class="indicator-title">📈 活动参与率</div>
+              <div class="indicator-title">
+                <icon-line-chart style="margin-right: 8px; color: #165dff" />
+                活动参与率
+              </div>
               <div class="indicator-value">
                 {{ coreIndicators.activityRate }}
               </div>
               <div
-                class="indicator-trend"
                 :class="coreIndicators.activityTrend"
+                class="indicator-trend"
               >
+                <span
+                  v-if="coreIndicators.activityTrend === 'up'"
+                  class="trend-icon"
+                  >↑</span
+                >
+                <span v-else class="trend-icon">↓</span>
                 {{
                   coreIndicators.activityTrend === "up"
-                    ? "↑ 环比增长"
-                    : "↓ 环比下降"
-                }}2.3%
+                    ? "环比增长"
+                    : "环比下降"
+                }}
+                2.3%
               </div>
             </a-card>
 
             <a-card class="indicator-card" hoverable style="margin-top: 16px">
-              <div class="indicator-title">📝 签到率</div>
+              <div class="indicator-title">
+                <icon-check-circle style="margin-right: 8px; color: #00b42a" />
+                签到率
+              </div>
               <div class="indicator-value">{{ coreIndicators.signRate }}</div>
-              <div class="indicator-trend" :class="coreIndicators.signTrend">
+              <div :class="coreIndicators.signTrend" class="indicator-trend">
+                <span
+                  v-if="coreIndicators.signTrend === 'up'"
+                  class="trend-icon"
+                  >↑</span
+                >
+                <span v-else class="trend-icon">↓</span>
                 {{
-                  coreIndicators.signTrend === "up"
-                    ? "↑ 环比增长"
-                    : "↓ 环比下降"
-                }}1.8%
+                  coreIndicators.signTrend === "up" ? "环比增长" : "环比下降"
+                }}
+                1.8%
               </div>
             </a-card>
 
             <a-card class="indicator-card" hoverable style="margin-top: 16px">
-              <div class="indicator-title">📎 材料完成率</div>
+              <div class="indicator-title">
+                <icon-file-text style="margin-right: 8px; color: #ff7d00" />
+                材料完成率
+              </div>
               <div class="indicator-value">
                 {{ coreIndicators.materialRate }}
               </div>
               <div
-                class="indicator-trend"
                 :class="coreIndicators.materialTrend"
+                class="indicator-trend"
               >
+                <span
+                  v-if="coreIndicators.materialTrend === 'up'"
+                  class="trend-icon"
+                  >↑</span
+                >
+                <span v-else class="trend-icon">↓</span>
                 {{
                   coreIndicators.materialTrend === "up"
-                    ? "↑ 环比增长"
-                    : "↓ 环比下降"
-                }}4.5%
+                    ? "环比增长"
+                    : "环比下降"
+                }}
+                4.5%
               </div>
             </a-card>
           </div>
@@ -187,55 +222,68 @@
 
         <!-- 右侧：可视化图表 -->
         <a-col :span="18">
-          <a-card style="height: 400px">
+          <a-card style="height: 400px" hoverable>
             <template #title>
-              {{ chartTitle }}
+              <span style="font-weight: 600; color: #1890ff">{{
+                chartTitle
+              }}</span>
             </template>
-            <div ref="chartRef" style="width: 100%; height: 340px"></div>
+            <div
+              v-loading="loading"
+              ref="chartRef"
+              style="width: 100%; height: 340px"
+            ></div>
           </a-card>
         </a-col>
       </a-row>
 
       <!-- 数据明细区 -->
-      <a-card>
+      <a-card hoverable>
         <template #title>
-          {{
-            filterParams.dimension === "organization"
-              ? "组织数据明细"
-              : "个人数据明细"
-          }}
+          <span style="font-weight: 600; color: #1890ff">
+            {{
+              filterParams.dimension === "organization"
+                ? "组织数据明细"
+                : "个人数据明细"
+            }}
+          </span>
         </template>
         <a-table
           :columns="detailColumns"
           :data="detailData"
+          :loading="loading"
           :pagination="{
             showTotal: true,
             pageSize: 10,
             current: 1,
             total: detailData.length,
+            showSizeChanger: true,
           }"
+          border
+          pagination-position="bottom"
           row-key="id"
         >
           <!-- 状态色值渲染 -->
           <template #activityRate="{ record }">
-            <span :class="getRateClass(record.activityRate)">{{
+            <a-tag :color="getRateColor(record.activityRate)">{{
               record.activityRate
-            }}</span>
+            }}</a-tag>
           </template>
           <template #signRate="{ record }">
-            <span :class="getRateClass(record.signRate)">{{
+            <a-tag :color="getRateColor(record.signRate)">{{
               record.signRate
-            }}</span>
+            }}</a-tag>
           </template>
           <template #materialRate="{ record }">
-            <span :class="getRateClass(record.materialRate)">{{
+            <a-tag :color="getRateColor(record.materialRate)">{{
               record.materialRate
-            }}</span>
+            }}</a-tag>
           </template>
           <!-- 操作列 -->
           <template #operation="{ record }">
-            <a-button type="text" @click="viewDetail(record)"
-              >查看详情
+            <a-button size="small" type="primary" @click="viewDetail(record)">
+              <icon-eye />
+              查看详情
             </a-button>
           </template>
         </a-table>
@@ -250,45 +298,45 @@
       @cancel="detailModalVisible = false"
     >
       <div v-if="currentDetailData">
-        <h4 style="margin: 0 0 16px 0">
+        <h4 style="margin: 0 0 16px 0; color: #1890ff; font-weight: 600">
           {{
             filterParams.dimension === "organization" ? "支部详情" : "个人详情"
           }}：{{ currentDetailData.name }}
         </h4>
         <a-descriptions :column="2" bordered>
-          <a-descriptions-item label="统计周期"
-            >{{ currentDetailData.period }}
-          </a-descriptions-item>
-          <a-descriptions-item label="活动参与率"
-            >{{ currentDetailData.activityRate }}
-          </a-descriptions-item>
-          <a-descriptions-item label="签到率"
-            >{{ currentDetailData.signRate }}
-          </a-descriptions-item>
-          <a-descriptions-item label="材料完成率"
-            >{{ currentDetailData.materialRate }}
-          </a-descriptions-item>
+          <a-descriptions-item label="统计周期">{{
+            currentDetailData.period
+          }}</a-descriptions-item>
+          <a-descriptions-item label="活动参与率">{{
+            currentDetailData.activityRate
+          }}</a-descriptions-item>
+          <a-descriptions-item label="签到率">{{
+            currentDetailData.signRate
+          }}</a-descriptions-item>
+          <a-descriptions-item label="材料完成率">{{
+            currentDetailData.materialRate
+          }}</a-descriptions-item>
           <a-descriptions-item
-            label="参与活动数"
             v-if="filterParams.dimension === 'personal'"
+            label="参与活动数"
           >
             {{ currentDetailData.activityCount }}
           </a-descriptions-item>
           <a-descriptions-item
-            label="未完成材料数"
             v-if="filterParams.dimension === 'personal'"
+            label="未完成材料数"
           >
             {{ currentDetailData.unfinishedMaterial }}
           </a-descriptions-item>
           <a-descriptions-item
-            label="支部人数"
             v-if="filterParams.dimension === 'organization'"
+            label="支部人数"
           >
             {{ currentDetailData.personCount }}
           </a-descriptions-item>
           <a-descriptions-item
-            label="平均参与率"
             v-if="filterParams.dimension === 'organization'"
+            label="平均参与率"
           >
             {{ currentDetailData.averageRate }}
           </a-descriptions-item>
@@ -308,8 +356,14 @@ import {
   IconDownload,
   IconForm,
   IconRefresh,
+  IconLineChart,
+  IconCheckCircle,
+  IconFileText,
+  IconEye,
 } from "@arco-design/web-vue/es/icon";
 import { useRouter } from "vue-router";
+// 导入API
+import * as lianghuashuju from "@/api/lianghuashuju";
 
 const router = useRouter();
 
@@ -344,80 +398,17 @@ const chartTitle = ref("各支部核心指标对比（近3个月）");
 
 // 4. 核心指标数据
 const coreIndicators = reactive({
-  activityRate: "92%",
+  activityRate: "0%",
   activityTrend: "up",
-  signRate: "88%",
+  signRate: "0%",
   signTrend: "up",
-  materialRate: "95%",
+  materialRate: "0%",
   materialTrend: "up",
 });
 
-// 5. 明细数据（模拟不同角色的数据源）
-const orgDetailData = ref([
-  {
-    id: "1",
-    name: "教师一支部",
-    activityRate: "92%",
-    signRate: "88%",
-    materialRate: "95%",
-    period: "2025.01-03",
-    personCount: 45,
-    averageRate: "91.7%",
-  },
-  {
-    id: "2",
-    name: "教师二支部",
-    activityRate: "89%",
-    signRate: "85%",
-    materialRate: "93%",
-    period: "2025.01-03",
-    personCount: 38,
-    averageRate: "89%",
-  },
-  {
-    id: "3",
-    name: "学生一支部",
-    activityRate: "85%",
-    signRate: "82%",
-    materialRate: "88%",
-    period: "2025.01-03",
-    personCount: 120,
-    averageRate: "85%",
-  },
-]);
-
-const personDetailData = ref([
-  {
-    id: "1",
-    name: "张三（教师党员）",
-    activityRate: "98%",
-    signRate: "100%",
-    materialRate: "100%",
-    period: "2025.01-03",
-    activityCount: 12,
-    unfinishedMaterial: 0,
-  },
-  {
-    id: "2",
-    name: "李四（培养联系人）",
-    activityRate: "95%",
-    signRate: "98%",
-    materialRate: "95%",
-    period: "2025.01-03",
-    activityCount: 10,
-    unfinishedMaterial: 1,
-  },
-  {
-    id: "3",
-    name: "王五（学生党员）",
-    activityRate: "80%",
-    signRate: "75%",
-    materialRate: "85%",
-    period: "2025.01-03",
-    activityCount: 8,
-    unfinishedMaterial: 2,
-  },
-]);
+// 5. 明细数据
+const orgDetailData = ref<any[]>([]);
+const personDetailData = ref<any[]>([]);
 
 // 权限过滤后的明细数据
 const detailData = ref<any[]>([]);
@@ -486,25 +477,25 @@ const updateChart = () => {
   if (filterParams.dimension === "organization") {
     xData = orgDetailData.value.map((item) => item.name);
     yData1 = orgDetailData.value.map((item) =>
-      Number(item.activityRate.replace("%", ""))
+      Number(item.activityRate.replace("%", "")),
     );
     yData2 = orgDetailData.value.map((item) =>
-      Number(item.signRate.replace("%", ""))
+      Number(item.signRate.replace("%", "")),
     );
     yData3 = orgDetailData.value.map((item) =>
-      Number(item.materialRate.replace("%", ""))
+      Number(item.materialRate.replace("%", "")),
     );
   } else {
     // 个人维度（默认折线图）
     xData = personDetailData.value.map((item) => item.name);
     yData1 = personDetailData.value.map((item) =>
-      Number(item.activityRate.replace("%", ""))
+      Number(item.activityRate.replace("%", "")),
     );
     yData2 = personDetailData.value.map((item) =>
-      Number(item.signRate.replace("%", ""))
+      Number(item.signRate.replace("%", "")),
     );
     yData3 = personDetailData.value.map((item) =>
-      Number(item.materialRate.replace("%", ""))
+      Number(item.materialRate.replace("%", "")),
     );
   }
 
@@ -620,59 +611,69 @@ const updateChart = () => {
 };
 
 // 9. 刷新数据（筛选后）
-const refreshData = () => {
-  // 权限过滤数据
-  if (userRole.value === "admin") {
-    // 管理员：全量数据
-    detailData.value =
-      filterParams.dimension === "organization"
-        ? orgDetailData.value
-        : personDetailData.value;
-  } else if (userRole.value === "teacher") {
-    // 培养联系人：仅教师一支部+对接党员
-    detailData.value =
-      filterParams.dimension === "organization"
-        ? orgDetailData.value.filter((item) => item.name === "教师一支部")
-        : personDetailData.value.filter((item) => item.name.includes("教师"));
-  } else {
-    // 普通党员：仅个人数据
-    detailData.value = personDetailData.value.filter(
-      (item) => item.name === "王五（学生党员）"
-    );
+const refreshData = async () => {
+  try {
+    // 获取核心指标数据
+    const coreRes = await lianghuashuju.getCoreIndicatorsUsingGet({
+      timeRange: filterParams.timeRange,
+      orgLevel:
+        filterParams.orgLevel === "all" ? undefined : filterParams.orgLevel,
+      dimension: filterParams.dimension,
+    });
+    // 注意：res 是整个响应对象，res.data 才是响应体
+    const coreResponseData = coreRes.data;
+    if (coreResponseData.code === 0) {
+      coreIndicators.activityRate = coreResponseData.data?.activityRate || "0%";
+      coreIndicators.signRate = coreResponseData.data?.signRate || "0%";
+      coreIndicators.materialRate = coreResponseData.data?.materialRate || "0%";
+      // 更新趋势
+      coreIndicators.activityTrend =
+        coreResponseData.data?.activityTrend === "up" ? "up" : "down";
+      coreIndicators.signTrend =
+        coreResponseData.data?.signTrend === "up" ? "up" : "down";
+      coreIndicators.materialTrend =
+        coreResponseData.data?.materialTrend === "up" ? "up" : "down";
+    }
+
+    // 获取组织或个人统计数据
+    let detailRes;
+    if (filterParams.dimension === "organization") {
+      detailRes = await lianghuashuju.getOrganizationStatisticsUsingGet({
+        timeRange: filterParams.timeRange,
+        orgLevel:
+          filterParams.orgLevel === "all" ? undefined : filterParams.orgLevel,
+        indicator:
+          filterParams.indicator === "all" ? undefined : filterParams.indicator,
+      });
+    } else {
+      detailRes = await lianghuashuju.getPersonalStatisticsUsingGet({
+        timeRange: filterParams.timeRange,
+        orgLevel:
+          filterParams.orgLevel === "all" ? undefined : filterParams.orgLevel,
+        indicator:
+          filterParams.indicator === "all" ? undefined : filterParams.indicator,
+      });
+    }
+
+    // 注意：res 是整个响应对象，res.data 才是响应体
+    const detailResponseData = detailRes.data;
+    if (detailResponseData.code === 0) {
+      detailData.value = detailResponseData.data || [];
+      // 更新图表数据
+      if (filterParams.dimension === "organization") {
+        orgDetailData.value = detailResponseData.data || [];
+      } else {
+        personDetailData.value = detailResponseData.data || [];
+      }
+    }
+
+    // 更新图表
+    updateChart();
+    message.success("数据刷新成功");
+  } catch (error) {
+    console.error("获取量化数据失败:", error);
+    message.error("网络请求异常");
   }
-
-  // 更新核心指标（取平均值）
-  if (detailData.value.length > 0) {
-    const avgActivity =
-      (
-        detailData.value.reduce(
-          (sum, item) => sum + Number(item.activityRate.replace("%", "")),
-          0
-        ) / detailData.value.length
-      ).toFixed(0) + "%";
-    const avgSign =
-      (
-        detailData.value.reduce(
-          (sum, item) => sum + Number(item.signRate.replace("%", "")),
-          0
-        ) / detailData.value.length
-      ).toFixed(0) + "%";
-    const avgMaterial =
-      (
-        detailData.value.reduce(
-          (sum, item) => sum + Number(item.materialRate.replace("%", "")),
-          0
-        ) / detailData.value.length
-      ).toFixed(0) + "%";
-
-    coreIndicators.activityRate = avgActivity;
-    coreIndicators.signRate = avgSign;
-    coreIndicators.materialRate = avgMaterial;
-  }
-
-  // 更新图表
-  updateChart();
-  message.success("数据刷新成功");
 };
 
 // 10. 辅助方法
@@ -684,26 +685,79 @@ const getRateClass = (rate: string) => {
   return "rate-low";
 };
 
+// 比率颜色
+const getRateColor = (rate: string) => {
+  const num = Number(rate.replace("%", ""));
+  if (num >= 90) return "success";
+  if (num >= 80) return "warning";
+  return "danger";
+};
+
 // 查看详情
-const viewDetail = (record: any) => {
-  currentDetailData.value = record;
-  detailModalVisible.value = true;
+const viewDetail = async (record: any) => {
+  try {
+    const res = await lianghuashuju.getQuantifyDataDetailUsingGet({
+      id: record.id,
+      dimension: filterParams.dimension,
+    });
+    // 注意：res 是整个响应对象，res.data 才是响应体
+    const responseData = res.data;
+    if (responseData.code === 0) {
+      currentDetailData.value = responseData.data || record;
+      detailModalVisible.value = true;
+    } else {
+      message.error(responseData.message || "获取详情失败");
+    }
+  } catch (error) {
+    console.error("获取详情失败:", error);
+    // 失败时使用本地数据
+    currentDetailData.value = record;
+    detailModalVisible.value = true;
+  }
 };
 
 // 导出报表
-const exportReport = () => {
-  message.success(
-    `已导出${
-      filterParams.dimension === "organization" ? "组织" : "个人"
-    }统计报表（Excel格式）`
-  );
-  // 实际项目中对接后端导出接口，此处模拟
+const exportReport = async () => {
+  try {
+    const res = await lianghuashuju.exportQuantifyReportUsingGet({
+      timeRange: filterParams.timeRange,
+      orgLevel:
+        filterParams.orgLevel === "all" ? undefined : filterParams.orgLevel,
+      dimension: filterParams.dimension,
+      indicator:
+        filterParams.indicator === "all" ? undefined : filterParams.indicator,
+    });
+    // 注意：res 是整个响应对象，res.data 才是响应体
+    const responseData = res.data;
+    if (responseData.code === 0) {
+      message.success(
+        `已导出${
+          filterParams.dimension === "organization" ? "组织" : "个人"
+        }统计报表（Excel格式）`,
+      );
+      // 实际项目中处理下载
+      if (responseData.data) {
+        // 创建下载链接
+        const link = document.createElement("a");
+        link.href = responseData.data;
+        link.download = `${
+          filterParams.dimension === "organization" ? "组织" : "个人"
+        }统计报表.xlsx`;
+        link.click();
+      }
+    } else {
+      message.error(responseData.message || "导出报表失败");
+    }
+  } catch (error) {
+    console.error("导出报表失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 11. 生命周期
-onMounted(() => {
+onMounted(async () => {
   initChart();
-  refreshData();
+  await refreshData();
   // 自适应窗口大小
   window.addEventListener("resize", () => chartInstance?.resize());
 });
@@ -727,8 +781,50 @@ const toShowQuantifyManagerView = () => {
 
 <style scoped>
 /* 页面基础样式 */
-.quantify-report-page {
+.quantify-view-container {
+  padding: 20px;
+  background-color: #f0f2f5;
+  min-height: 100vh;
+}
+
+/* 页面标题和面包屑 */
+.page-header {
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.page-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1890ff;
+  margin: 0;
+  margin-top: 8px;
+}
+
+.breadcrumb {
+  margin-bottom: 8px;
+}
+
+/* 视图切换栏 */
+.view-switch-bar {
+  margin-bottom: 20px;
   padding: 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 筛选表单 */
+.filter-form {
+  padding: 20px;
+}
+
+/* 列表卡片 */
+.list-card {
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
 }
 
 /* 指标卡片样式 */
@@ -742,29 +838,49 @@ const toShowQuantifyManagerView = () => {
 .indicator-card {
   text-align: center;
   padding: 20px 0;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.indicator-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
 }
 
 .indicator-title {
   font-size: 14px;
   color: #666;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .indicator-value {
   font-size: 32px;
-  font-weight: bold;
+  font-weight: 600;
   color: #1d2129;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
+}
+
+.indicator-trend {
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
 }
 
 .indicator-trend.up {
   color: #00b42a;
-  font-size: 12px;
 }
 
 .indicator-trend.down {
   color: #f53f3f;
-  font-size: 12px;
+}
+
+.trend-icon {
+  font-size: 14px;
+  font-weight: 600;
 }
 
 /* 比率颜色 */
@@ -783,11 +899,50 @@ const toShowQuantifyManagerView = () => {
   font-weight: 600;
 }
 
+/* 表格样式适配 */
+:deep(.arco-table) {
+  --arco-table-header-text-color: #1d2129;
+  --arco-table-body-text-color: #4e5969;
+}
+
 /* 响应式适配 */
 @media (max-width: 1200px) {
   :deep(.arco-row) {
     --arco-grid-col-span-6: 12;
     --arco-grid-col-span-18: 12;
+  }
+  
+  .indicator-card-container {
+    height: auto;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .quantify-view-container {
+    padding: 10px;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .view-switch-bar {
+    padding: 12px;
+  }
+  
+  .filter-form {
+    padding: 12px;
+  }
+  
+  .indicator-card {
+    padding: 16px 0;
+  }
+  
+  .indicator-value {
+    font-size: 24px;
   }
 }
 </style>

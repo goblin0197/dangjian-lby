@@ -1,6 +1,6 @@
 export const data = () => {
-  return {
-    popupVisible1: true,
-    // popupVisible2: true,
-  };
+    return {
+        popupVisible1: true,
+        // popupVisible2: true,
+    };
 };

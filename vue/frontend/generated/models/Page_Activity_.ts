@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Activity } from './Activity';
-import type { OrderItem } from './OrderItem';
+import type {Activity} from './Activity';
+import type {OrderItem} from './OrderItem';
+
 export type Page_Activity_ = {
     countId?: string;
     current?: number;

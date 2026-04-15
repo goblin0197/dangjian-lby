@@ -7,10 +7,10 @@
     <!-- 背景动态粒子 -->
     <div class="particles">
       <div
-        v-for="i in 50"
-        :key="i"
-        class="particle"
-        :style="{ animationDelay: `${i * 0.1}s` }"
+          v-for="i in 50"
+          :key="i"
+          :style="{ animationDelay: `${i * 0.1}s` }"
+          class="particle"
       ></div>
     </div>
 
@@ -19,7 +19,7 @@
       <div class="card-header">
         <div class="logo">
           <div class="logo-icon">
-            <icon-shield class="icon" />
+            <icon-shield class="icon"/>
           </div>
           <h1 class="logo-text">智慧党建系统</h1>
         </div>
@@ -31,35 +31,35 @@
         <!-- 浮动标签输入框 -->
         <div class="form-group">
           <div class="input-wrapper">
-            <icon-user class="input-icon" />
+            <icon-user class="input-icon"/>
             <input
-              id="username"
-              v-model="form.userAccount"
-              required
-              type="text"
-              autocomplete="off"
-              placeholder="请输入用户名"
+                id="username"
+                v-model="form.userAccount"
+                autocomplete="off"
+                placeholder="请输入用户名"
+                required
+                type="text"
             />
           </div>
         </div>
 
         <div class="form-group">
           <div class="input-wrapper">
-            <icon-lock class="input-icon" />
+            <icon-lock class="input-icon"/>
             <input
-              id="password"
-              v-model="form.userPassword"
-              required
-              type="password"
-              autocomplete="off"
-              placeholder="请输入密码"
+                id="password"
+                v-model="form.userPassword"
+                autocomplete="off"
+                placeholder="请输入密码"
+                required
+                type="password"
             />
           </div>
         </div>
 
         <!-- 测试账号信息 -->
         <div class="test-account">
-          <icon-info-circle class="info-icon" />
+          <icon-info-circle class="info-icon"/>
           <span>测试账号：superadmin</span>
           <span>测试密码：123456</span>
         </div>
@@ -67,16 +67,16 @@
         <!-- 动态错误提示 -->
         <transition name="shake">
           <div v-if="errorMessage" class="error-message">
-            <icon-exclamation-circle />
+            <icon-exclamation-circle/>
             <span>{{ errorMessage }}</span>
           </div>
         </transition>
 
         <!-- 提交按钮 -->
-        <button type="submit" class="submit-btn" :disabled="isSubmitting">
+        <button :disabled="isSubmitting" class="submit-btn" type="submit">
           <span class="btn-text">{{
-            isSubmitting ? "登录中..." : "立即登录"
-          }}</span>
+              isSubmitting ? "登录中..." : "立即登录"
+            }}</span>
           <div class="btn-effect"></div>
         </button>
       </form>
@@ -84,8 +84,8 @@
       <!-- 底部装饰 -->
       <div class="card-footer">
         <div class="footer-links">
-          <a href="#" class="footer-link">忘记密码？</a>
-          <a href="#" class="footer-link">联系管理员</a>
+          <a class="footer-link" href="#">忘记密码？</a>
+          <a class="footer-link" href="#">联系管理员</a>
         </div>
         <div class="copyright">© 2026 智慧党建系统. 版权所有</div>
       </div>
@@ -93,18 +93,12 @@
   </div>
 </template>
 
-<script setup lang="ts">
-import { reactive, ref } from "vue";
+<script lang="ts" setup>
+import {reactive, ref} from "vue";
 import * as yonghuguanli from "@/api/yonghuguanli";
-import { useRouter } from "vue-router";
-import { useStore } from "vuex";
-import {
-  IconLock,
-  IconUser,
-  IconExclamationCircle,
-  IconInfoCircle,
-  IconShield,
-} from "@arco-design/web-vue/es/icon";
+import {useRouter} from "vue-router";
+import {useStore} from "vuex";
+import {IconExclamationCircle, IconInfoCircle, IconLock, IconShield, IconUser} from "@arco-design/web-vue/es/icon";
 
 const form = reactive({
   userAccount: "",
@@ -176,8 +170,8 @@ const showError = (msg) => {
   background-image: linear-gradient(
       rgba(255, 255, 255, 0.05) 1px,
       transparent 1px
-    ),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  ),
+  linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
   background-size: 50px 50px;
   z-index: 1;
 }
@@ -433,10 +427,10 @@ input::placeholder {
   width: 200%;
   height: 200%;
   background: linear-gradient(
-    45deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
+      45deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
   );
   transform: rotate(45deg);
   transition: all 0.6s ease;

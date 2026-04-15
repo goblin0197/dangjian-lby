@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { ActivityVO } from './ActivityVO';
+import type {ActivityVO} from './ActivityVO';
+
 export type BaseResponse_ActivityVO_ = {
     code?: number;
     data?: ActivityVO;

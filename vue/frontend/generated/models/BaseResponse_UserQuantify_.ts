@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UserQuantify } from './UserQuantify';
+import type {UserQuantify} from './UserQuantify';
+
 export type BaseResponse_UserQuantify_ = {
     code?: number;
     data?: UserQuantify;

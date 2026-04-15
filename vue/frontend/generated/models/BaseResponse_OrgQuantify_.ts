@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { OrgQuantify } from './OrgQuantify';
+import type {OrgQuantify} from './OrgQuantify';
+
 export type BaseResponse_OrgQuantify_ = {
     code?: number;
     data?: OrgQuantify;

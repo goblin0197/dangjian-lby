@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Page_OrgRelationTransfer_ } from './Page_OrgRelationTransfer_';
+import type {Page_OrgRelationTransfer_} from './Page_OrgRelationTransfer_';
+
 export type BaseResponse_Page_OrgRelationTransfer_ = {
     code?: number;
     data?: Page_OrgRelationTransfer_;

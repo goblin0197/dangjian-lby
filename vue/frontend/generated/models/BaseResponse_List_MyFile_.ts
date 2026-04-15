@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { MyFile } from './MyFile';
+import type {MyFile} from './MyFile';
+
 export type BaseResponse_List_MyFile_ = {
     code?: number;
     data?: Array<MyFile>;

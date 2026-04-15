@@ -39,37 +39,37 @@ import checkAccess from "@/access/checkAccess";
 // });
 
 router.beforeEach(async (to, from, next) => {
-  console.log("导航到:", to.fullPath);
-  let loginUser = store.state.user.loginUser;
-  console.log("当前用户:", loginUser);
-  if (!loginUser || !loginUser.userRole) {
-    await store.dispatch("user/getLoginUser");
-    loginUser = store.state.user.loginUser;
-    console.log("获取用户后:", loginUser);
-  }
-  const needAccess = (to.meta?.access ?? ACCESS_ENUM.NOT_LOGIN) as string;
-  console.log("needAccess:", needAccess);
-  if (needAccess !== ACCESS_ENUM.NOT_LOGIN) {
-    console.log("登录状态检查:", {
-      noUser: !loginUser,
-      noRole: !loginUser?.userRole,
-      isNotLogin: loginUser?.userRole === ACCESS_ENUM.NOT_LOGIN,
-    });
-    if (
-      !loginUser ||
-      !loginUser.userRole ||
-      loginUser.userRole === ACCESS_ENUM.NOT_LOGIN
-    ) {
-      console.log("未登录，重定向到登录页");
-      next(`/user/login?redirect=${to.fullPath}`);
-      return;
+    console.log("导航到:", to.fullPath);
+    let loginUser = store.state.user.loginUser;
+    console.log("当前用户:", loginUser);
+    if (!loginUser || !loginUser.userRole) {
+        await store.dispatch("user/getLoginUser");
+        loginUser = store.state.user.loginUser;
+        console.log("获取用户后:", loginUser);
     }
-    if (!checkAccess(loginUser, needAccess)) {
-      console.log("权限不足，跳转到无权限页");
-      next("noAuth");
-      return;
+    const needAccess = (to.meta?.access ?? ACCESS_ENUM.NOT_LOGIN) as string;
+    console.log("needAccess:", needAccess);
+    if (needAccess !== ACCESS_ENUM.NOT_LOGIN) {
+        console.log("登录状态检查:", {
+            noUser: !loginUser,
+            noRole: !loginUser?.userRole,
+            isNotLogin: loginUser?.userRole === ACCESS_ENUM.NOT_LOGIN,
+        });
+        if (
+            !loginUser ||
+            !loginUser.userRole ||
+            loginUser.userRole === ACCESS_ENUM.NOT_LOGIN
+        ) {
+            console.log("未登录，重定向到登录页");
+            next(`/user/login?redirect=${to.fullPath}`);
+            return;
+        }
+        if (!checkAccess(loginUser, needAccess)) {
+            console.log("权限不足，跳转到无权限页");
+            next("noAuth");
+            return;
+        }
     }
-  }
-  console.log("最终决定: 放行");
-  next();
+    console.log("最终决定: 放行");
+    next();
 });

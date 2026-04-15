@@ -6,55 +6,55 @@
       <a-space size="middle">
         <!-- 返回列表按钮 -->
         <a-button type="outline" @click="toShowAnnouncementListView">
-          <icon-arrow-left />
+          <icon-arrow-left/>
           返回公告列表
         </a-button>
 
         <!-- 角色差异化操作按钮 -->
         <a-button
-          v-if="getReadStatus === 'unread'"
-          type="primary"
-          @click="markAsRead"
-          :loading="markLoading"
+            v-if="getReadStatus === 'unread'"
+            :loading="markLoading"
+            type="primary"
+            @click="markAsRead"
         >
-          <icon-check-circle />
+          <icon-check-circle/>
           标记为已读
         </a-button>
         <a-button type="outline" @click="printNotice">
-          <icon-printer />
+          <icon-printer/>
           打印公告
         </a-button>
         <a-button
-          v-if="userRole === 'admin'"
-          type="outline"
-          @click="shareNotice"
+            v-if="userRole === 'admin'"
+            type="outline"
+            @click="shareNotice"
         >
-          <icon-share-alt />
+          <icon-share-alt/>
           分享公告
         </a-button>
         <a-button
-          v-if="userRole === 'admin'"
-          type="primary"
-          status="warning"
-          @click="editNotice"
+            v-if="userRole === 'admin'"
+            status="warning"
+            type="primary"
+            @click="editNotice"
         >
-          <icon-edit />
+          <icon-edit/>
           编辑公告
         </a-button>
         <a-button
-          v-if="userRole === 'admin' && noticeData.status === 'published'"
-          type="primary"
-          status="danger"
-          @click="offlineNotice"
+            v-if="userRole === 'admin' && noticeData.status === 'published'"
+            status="danger"
+            type="primary"
+            @click="offlineNotice"
         >
-          <icon-down-circle />
+          <icon-down-circle/>
           下架公告
         </a-button>
 
         <!-- 阅读状态标签 -->
         <a-tag
-          :color="getReadStatus === 'unread' ? 'orange' : 'green'"
-          style="margin-left: auto"
+            :color="getReadStatus === 'unread' ? 'orange' : 'green'"
+            style="margin-left: auto"
         >
           {{ getReadStatus === "unread" ? "未读" : "已读" }}
         </a-tag>
@@ -65,8 +65,8 @@
     <a-card v-loading="loading">
       <!-- 公告基础信息区 -->
       <div
-        class="notice-base-info"
-        style="
+          class="notice-base-info"
+          style="
           margin-bottom: 24px;
           padding-bottom: 20px;
           border-bottom: 1px solid #eee;
@@ -74,7 +74,7 @@
       >
         <!-- 标题区 -->
         <h1
-          style="
+            style="
             font-size: 24px;
             font-weight: 600;
             color: #1d2129;
@@ -84,17 +84,17 @@
         >
           {{ noticeData.title }}
           <a-tag
-            v-if="noticeData.isTop"
-            color="red"
-            size="small"
-            style="margin-left: 8px"
-            >置顶
+              v-if="noticeData.isTop"
+              color="red"
+              size="small"
+              style="margin-left: 8px"
+          >置顶
           </a-tag>
         </h1>
 
         <!-- 元信息区 -->
         <div
-          style="
+            style="
             font-size: 14px;
             color: #86909c;
             text-align: center;
@@ -102,7 +102,7 @@
           "
         >
           <span
-            >公告类型：<a-tag :color="getTypeColor(noticeData.type)">{{
+          >公告类型：<a-tag :color="getTypeColor(noticeData.type)">{{
               getTypeName(noticeData.type)
             }}</a-tag></span
           >
@@ -111,25 +111,25 @@
           <span style="margin: 0 12px">|</span>
           <span>发布时间：{{ noticeData.publishTime }}</span>
           <span
-            v-if="noticeData.validStart && noticeData.validEnd"
-            style="margin: 0 12px"
-            >|</span
+              v-if="noticeData.validStart && noticeData.validEnd"
+              style="margin: 0 12px"
+          >|</span
           >
           <span v-if="noticeData.validStart && noticeData.validEnd"
-            >生效时间：{{ noticeData.validStart }} -
+          >生效时间：{{ noticeData.validStart }} -
             {{ noticeData.validEnd }}</span
           >
           <span style="margin: 0 12px">|</span>
           <span
-            >阅读量：{{ noticeData.readCount + (pageJustOpened ? 1 : 0) }}</span
+          >阅读量：{{ noticeData.readCount + (pageJustOpened ? 1 : 0) }}</span
           >
         </div>
       </div>
 
       <!-- 公告正文区 -->
       <div
-        class="notice-content"
-        style="
+          class="notice-content"
+          style="
           line-height: 2;
           font-size: 16px;
           color: #1d2129;
@@ -141,9 +141,9 @@
 
       <!-- 公告附件区 -->
       <div
-        v-if="noticeData.attachments && noticeData.attachments.length"
-        class="notice-attachments"
-        style="
+          v-if="noticeData.attachments && noticeData.attachments.length"
+          class="notice-attachments"
+          style="
           margin-bottom: 32px;
           padding: 20px;
           background-color: #f9fafb;
@@ -151,7 +151,7 @@
         "
       >
         <h3
-          style="
+            style="
             font-size: 18px;
             font-weight: 600;
             color: #1d2129;
@@ -162,13 +162,13 @@
         </h3>
         <a-space direction="vertical" style="width: 100%">
           <a-card
-            v-for="(file, index) in noticeData.attachments"
-            :key="index"
-            hoverable
-            style="border: 1px solid #e5e6eb"
+              v-for="(file, index) in noticeData.attachments"
+              :key="index"
+              hoverable
+              style="border: 1px solid #e5e6eb"
           >
             <div
-              style="
+                style="
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -176,11 +176,11 @@
             >
               <div style="display: flex; align-items: center">
                 <icon-paper-clip
-                  style="font-size: 18px; color: #165dff; margin-right: 12px"
+                    style="font-size: 18px; color: #165dff; margin-right: 12px"
                 />
                 <div>
                   <div
-                    style="font-size: 14px; font-weight: 500; color: #1d2129"
+                      style="font-size: 14px; font-weight: 500; color: #1d2129"
                   >
                     {{ file.name }}
                   </div>
@@ -193,11 +193,11 @@
               </div>
               <a-space size="middle">
                 <a-button type="text" @click="previewAttachment(file)">
-                  <icon-eye />
+                  <icon-eye/>
                   预览
                 </a-button>
                 <a-button type="primary" @click="downloadAttachment(file)">
-                  <icon-download />
+                  <icon-download/>
                   下载
                 </a-button>
               </a-space>
@@ -208,33 +208,33 @@
 
       <!-- 操作按钮区（底部） -->
       <div
-        class="notice-operation"
-        style="display: flex; justify-content: center; gap: 16px"
+          class="notice-operation"
+          style="display: flex; justify-content: center; gap: 16px"
       >
         <a-button type="outline" @click="goBack">
-          <icon-arrow-left />
+          <icon-arrow-left/>
           返回列表
         </a-button>
         <a-button
-          v-if="getReadStatus === 'unread'"
-          type="primary"
-          @click="markAsRead"
-          :loading="markLoading"
+            v-if="getReadStatus === 'unread'"
+            :loading="markLoading"
+            type="primary"
+            @click="markAsRead"
         >
-          <icon-check-circle />
+          <icon-check-circle/>
           标记为已读
         </a-button>
         <a-button type="outline" @click="printNotice">
-          <icon-printer />
+          <icon-printer/>
           打印公告
         </a-button>
         <a-button
-          v-if="userRole === 'admin'"
-          type="primary"
-          status="warning"
-          @click="editNotice"
+            v-if="userRole === 'admin'"
+            status="warning"
+            type="primary"
+            @click="editNotice"
         >
-          <icon-edit />
+          <icon-edit/>
           编辑公告
         </a-button>
       </div>
@@ -242,15 +242,15 @@
 
     <!-- 附件预览弹窗 -->
     <a-modal
-      v-model:visible="previewModalVisible"
-      :title="previewFile?.name || '附件预览'"
-      width="90%"
-      height="80vh"
-      @cancel="previewModalVisible = false"
-      :footer="null"
+        v-model:visible="previewModalVisible"
+        :footer="null"
+        :title="previewFile?.name || '附件预览'"
+        height="80vh"
+        width="90%"
+        @cancel="previewModalVisible = false"
     >
       <div
-        style="
+          style="
           width: 100%;
           height: 100%;
           display: flex;
@@ -261,74 +261,74 @@
         <div v-if="previewFile" class="attachment-preview">
           <!-- PDF预览（模拟） -->
           <div
-            v-if="previewFile.name.endsWith('.pdf')"
-            style="width: 100%; height: 70vh; border: 1px solid #eee"
+              v-if="previewFile.name.endsWith('.pdf')"
+              style="width: 100%; height: 70vh; border: 1px solid #eee"
           >
             <div style="text-align: center; padding: 40px; color: #86909c">
-              <icon-file-text style="font-size: 48px; margin-bottom: 16px" />
+              <icon-file-text style="font-size: 48px; margin-bottom: 16px"/>
               <div>PDF预览功能需集成PDF.js实现</div>
               <div style="margin-top: 8px">
                 当前展示模拟预览界面，实际项目中可接入pdfjs-dist库
               </div>
               <a-button
-                type="primary"
-                style="margin-top: 16px"
-                @click="downloadAttachment(previewFile)"
+                  style="margin-top: 16px"
+                  type="primary"
+                  @click="downloadAttachment(previewFile)"
               >
-                <icon-download />
+                <icon-download/>
                 下载原文件
               </a-button>
             </div>
           </div>
           <!-- 文档预览（模拟） -->
           <div
-            v-else-if="
+              v-else-if="
               previewFile.name.endsWith('.docx') ||
               previewFile.name.endsWith('.doc')
             "
-            style="width: 100%; height: 70vh; border: 1px solid #eee"
+              style="width: 100%; height: 70vh; border: 1px solid #eee"
           >
             <div style="text-align: center; padding: 40px; color: #86909c">
-              <icon-file-text style="font-size: 48px; margin-bottom: 16px" />
+              <icon-file-text style="font-size: 48px; margin-bottom: 16px"/>
               <div>Word文档预览功能需接入第三方预览服务（如kkfileview）</div>
               <a-button
-                type="primary"
-                style="margin-top: 16px"
-                @click="downloadAttachment(previewFile)"
+                  style="margin-top: 16px"
+                  type="primary"
+                  @click="downloadAttachment(previewFile)"
               >
-                <icon-download />
+                <icon-download/>
                 下载原文件
               </a-button>
             </div>
           </div>
           <!-- 表格预览（模拟） -->
           <div
-            v-else-if="
+              v-else-if="
               previewFile.name.endsWith('.xlsx') ||
               previewFile.name.endsWith('.xls')
             "
-            style="width: 100%; height: 70vh; border: 1px solid #eee"
+              style="width: 100%; height: 70vh; border: 1px solid #eee"
           >
             <div style="text-align: center; padding: 40px; color: #86909c">
-              <icon-file-text style="font-size: 48px; margin-bottom: 16px" />
+              <icon-file-text style="font-size: 48px; margin-bottom: 16px"/>
               <div>Excel表格预览功能需接入第三方预览服务（如kkfileview）</div>
               <a-button
-                type="primary"
-                style="margin-top: 16px"
-                @click="downloadAttachment(previewFile)"
+                  style="margin-top: 16px"
+                  type="primary"
+                  @click="downloadAttachment(previewFile)"
               >
-                <icon-download />
+                <icon-download/>
                 下载原文件
               </a-button>
             </div>
           </div>
           <!-- 图片预览 -->
           <div
-            v-else-if="
+              v-else-if="
               previewFile.name.endsWith('.jpg') ||
               previewFile.name.endsWith('.png')
             "
-            style="
+              style="
               width: 100%;
               height: 70vh;
               display: flex;
@@ -337,21 +337,21 @@
             "
           >
             <img
-              :src="previewFile.url"
-              alt="图片预览"
-              style="max-width: 100%; max-height: 100%; object-fit: contain"
+                :src="previewFile.url"
+                alt="图片预览"
+                style="max-width: 100%; max-height: 100%; object-fit: contain"
             />
           </div>
           <!-- 其他格式 -->
           <div v-else style="text-align: center; padding: 40px; color: #86909c">
-            <icon-file-text style="font-size: 48px; margin-bottom: 16px" />
+            <icon-file-text style="font-size: 48px; margin-bottom: 16px"/>
             <div>暂不支持该格式预览，请下载后查看</div>
             <a-button
-              type="primary"
-              style="margin-top: 16px"
-              @click="downloadAttachment(previewFile)"
+                style="margin-top: 16px"
+                type="primary"
+                @click="downloadAttachment(previewFile)"
             >
-              <icon-download />
+              <icon-download/>
               下载原文件
             </a-button>
           </div>
@@ -362,9 +362,12 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, onUnmounted, reactive, ref } from "vue";
-import { useRoute, useRouter } from "vue-router"; // 路由相关（实际项目需配置路由）
+import {onMounted, onUnmounted, reactive, ref} from "vue";
+import {useRoute, useRouter} from "vue-router"; // 路由相关（实际项目需配置路由）
 import message from "@arco-design/web-vue/es/message";
+// 导入API
+import * as gonggaoguanli from "@/api/gonggaoguanli";
+import * as gonggaokuozhangongneng from "@/api/gonggaokuozhangongneng";
 // 导入Arco图标
 import {
   IconArrowLeft,
@@ -461,87 +464,30 @@ const getReadStatus = () => {
 };
 
 // 6. 核心方法
-// 获取公告详情（模拟接口调用）
+// 获取公告详情（调用真实API）
 const getNoticeDetail = async () => {
   loading.value = true;
   try {
-    // 模拟接口延迟
-    await new Promise((resolve) => setTimeout(resolve, 800));
+    // 调用API获取公告详情
+    const res = await gonggaoguanli.getNoticeVoUsingGet({ id: noticeId.value });
+    if (res.code === 0) {
+      // 赋值到响应式数据
+      Object.assign(noticeData, res.data);
 
-    // 模拟公告详情数据（实际项目中替换为接口请求）
-    const mockNoticeData = {
-      id: noticeId.value,
-      title:
-        noticeId.value === "1"
-          ? "关于2025年党员发展工作安排"
-          : noticeId.value === "2"
-          ? "3月主题党日活动通知"
-          : "党建知识学习提醒",
-      type:
-        noticeId.value === "1"
-          ? "notice"
-          : noticeId.value === "2"
-          ? "activity"
-          : "remind",
-      publisher: "管理员-王五",
-      status: "published",
-      publishTime:
-        noticeId.value === "1"
-          ? "2025-03-01"
-          : noticeId.value === "2"
-          ? "2025-02-28"
-          : "2025-02-27",
-      isTop: noticeId.value === "1",
-      validStart:
-        noticeId.value === "1"
-          ? "2025-03-01"
-          : noticeId.value === "2"
-          ? "2025-02-28"
-          : "2025-02-27",
-      validEnd:
-        noticeId.value === "1"
-          ? "2025-12-31"
-          : noticeId.value === "2"
-          ? "2025-03-31"
-          : "2025-02-28",
-      content:
-        noticeId.value === "1"
-          ? "<p>各支部：</p><p>为做好2025年党员发展工作，现将有关事项通知如下：</p><p>一、发展计划：2025年计划发展党员50名，各支部需于3月10日前提报推荐名单。</p><p>二、提报要求：推荐名单需包含基本信息、政治表现、培养情况等。</p><p>三、时间安排：3月中旬开展初审，4月完成考察，5月进行公示。</p><p style='color: #f53f3f; font-weight: 600'>重要提醒：所有推荐名单需经支部委员会审核通过后方可上报。</p>"
-          : noticeId.value === "2"
-          ? "<p>各支部：</p><p>3月5日将开展“学习二十大 奋进新征程”主题党日活动，具体安排如下：</p><ul><li>活动时间：3月5日下午2点</li><li>活动地点：党员活动室</li><li>参与人员：全体党员</li><li>活动要求：携带学习笔记，提前做好学习准备</li></ul><p>请各支部书记组织好本支部党员按时参加。</p>"
-          : "<p>各位党员：</p><p>本月党建知识线上学习需在2月28日前完成，未完成将影响量化考核，请及时完成学习。</p><p>学习地址：<a href='#' style='color: #165dff'>http://dangjian.com/study</a></p><p style='color: #faad14; margin-top: 16px'>温馨提示：学习完成后需截图上传至支部群备案。</p>",
-      attachments:
-        noticeId.value === "1"
-          ? [
-              {
-                name: "2025年党员发展工作细则.pdf",
-                url: "/attachments/2025党员发展细则.pdf",
-                size: "2.4MB",
-              },
-              {
-                name: "党员发展申请表模板.docx",
-                url: "/attachments/党员发展申请表.docx",
-                size: "1.2MB",
-              },
-            ]
-          : noticeId.value === "2"
-          ? []
-          : [],
-      readCount:
-        noticeId.value === "1" ? 128 : noticeId.value === "2" ? 96 : 85,
-    };
+      // 增加阅读量
+      await gonggaokuozhangongneng.incrementReadCountUsingPut({ announcementId: noticeId.value });
+      
+      // 自动标记已读（打开详情页即标记）
+      if (!readNoticeIds.value.includes(noticeData.id)) {
+        await markAsRead(true); // 静默标记（不显示提示）
+        // 阅读量+1
+        noticeData.readCount += 1;
+      }
 
-    // 赋值到响应式数据
-    Object.assign(noticeData, mockNoticeData);
-
-    // 自动标记已读（打开详情页即标记）
-    if (!readNoticeIds.value.includes(noticeData.id)) {
-      await markAsRead(true); // 静默标记（不显示提示）
-      // 阅读量+1（模拟后端统计）
-      noticeData.readCount += 1;
+      pageJustOpened.value = false;
+    } else {
+      message.error(res.message || "获取公告详情失败");
     }
-
-    pageJustOpened.value = false;
   } catch (error) {
     message.error("获取公告详情失败，请刷新重试");
     console.error("获取公告详情失败：", error);
@@ -566,14 +512,15 @@ const markAsRead = async (silent = false) => {
 
   markLoading.value = true;
   try {
-    // 模拟接口调用
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    // 标记已读
-    readNoticeIds.value.push(noticeData.id);
-
-    // 通知后端更新已读状态（实际项目中调用接口）
-    !silent && message.success("已成功标记为已读");
+    // 调用API标记已读
+    const res = await gonggaokuozhangongneng.markAsReadUsingPost({ announcementId: noticeData.id });
+    if (res.code === 0) {
+      // 标记已读
+      readNoticeIds.value.push(noticeData.id);
+      !silent && message.success("已成功标记为已读");
+    } else {
+      !silent && message.error(res.message || "标记已读失败");
+    }
   } catch (error) {
     !silent && message.error("标记已读失败，请重试");
     console.error("标记已读失败：", error);
@@ -607,7 +554,7 @@ const printNotice = () => {
           <h1>${noticeData.title}</h1>
           <div class="meta">
             公告类型：${getTypeName(noticeData.type)} | 发布人：${
-      noticeData.publisher
+        noticeData.publisher
     } | 发布时间：${noticeData.publishTime}
           </div>
           <div class="content">${noticeData.content}</div>
@@ -626,22 +573,31 @@ const shareNotice = () => {
     return;
   }
 
-  // 模拟分享逻辑
+  // 调用API生成分享链接
   message.confirm({
     title: "分享公告",
     content: `确定要分享【${noticeData.title}】吗？分享后将生成链接可发送给指定人员`,
-    onOk: () => {
-      // 模拟生成分享链接
-      const shareUrl = `${window.location.origin}/notice/share/${noticeData.id}`;
-      // 复制到剪贴板
-      navigator.clipboard
-        .writeText(shareUrl)
-        .then(() => {
-          message.success(`分享链接已复制到剪贴板：${shareUrl}`);
-        })
-        .catch(() => {
-          message.success(`分享链接：${shareUrl}（请手动复制）`);
-        });
+    onOk: async () => {
+      try {
+        const res = await gonggaokuozhangongneng.generateShareUsingPost({ announcementId: noticeData.id });
+        if (res.code === 0) {
+          const shareUrl = `${window.location.origin}/notice/share/${res.data?.shareCode}`;
+          // 复制到剪贴板
+          navigator.clipboard
+              .writeText(shareUrl)
+              .then(() => {
+                message.success(`分享链接已复制到剪贴板：${shareUrl}`);
+              })
+              .catch(() => {
+                message.success(`分享链接：${shareUrl}（请手动复制）`);
+              });
+        } else {
+          message.error(res.message || "生成分享链接失败");
+        }
+      } catch (error) {
+        console.error("生成分享链接失败:", error);
+        message.error("网络请求异常");
+      }
     },
   });
 };
@@ -655,8 +611,8 @@ const editNotice = () => {
 
   // 实际项目中跳转到公告编辑路由
   router
-    .push(`/notice/manage/edit/${noticeData.id}`)
-    .catch((err) => console.error(err));
+      .push(`/notice/manage/edit/${noticeData.id}`)
+      .catch((err) => console.error(err));
   message.info("即将跳转到公告编辑页面");
 };
 
@@ -673,12 +629,16 @@ const offlineNotice = () => {
     onOk: async () => {
       loading.value = true;
       try {
-        // 模拟接口调用
-        await new Promise((resolve) => setTimeout(resolve, 800));
-        noticeData.status = "offline";
-        message.success("公告已成功下架");
-        // 跳回列表
-        setTimeout(() => goBack(), 1000);
+        // 调用API下架公告
+        const res = await gonggaoguanli.offlineNoticeUsingPut({ id: noticeData.id });
+        if (res.code === 0) {
+          noticeData.status = "offline";
+          message.success("公告已成功下架");
+          // 跳回列表
+          setTimeout(() => goBack(), 1000);
+        } else {
+          message.error(res.message || "下架公告失败");
+        }
       } catch (error) {
         message.error("下架公告失败，请重试");
         console.error("下架公告失败：", error);
@@ -690,21 +650,36 @@ const offlineNotice = () => {
 };
 
 // 预览附件
-const previewAttachment = (file: any) => {
-  previewFile.value = file;
-  previewModalVisible.value = true;
-  message.info(`正在预览【${file.name}】`);
+const previewAttachment = async (file: any) => {
+  try {
+    const res = await gonggaokuozhangongneng.previewAnnouncementAttachmentUsingGet({ attachmentId: file.id });
+    if (res.code === 0) {
+      previewFile.value = file;
+      previewModalVisible.value = true;
+      message.info(`正在预览【${file.name}】`);
+    } else {
+      message.error(res.message || "预览附件失败");
+    }
+  } catch (error) {
+    console.error("预览附件失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 下载附件
-const downloadAttachment = (file: any) => {
-  message.success(`已开始下载【${file.name}】`);
-  // 实际项目中调用下载接口
-  // const link = document.createElement('a');
-  // link.href = file.url;
-  // link.download = file.name;
-  // link.click();
-  // URL.revokeObjectURL(link.href);
+const downloadAttachment = async (file: any) => {
+  try {
+    const res = await gonggaokuozhangongneng.downloadAnnouncementAttachmentUsingGet({ attachmentId: file.id });
+    if (res.code === 0) {
+      message.success(`已开始下载【${file.name}】`);
+      // 实际项目中处理下载
+    } else {
+      message.error(res.message || "下载附件失败");
+    }
+  } catch (error) {
+    console.error("下载附件失败:", error);
+    message.error("网络请求异常");
+  }
 };
 
 // 7. 生命周期
