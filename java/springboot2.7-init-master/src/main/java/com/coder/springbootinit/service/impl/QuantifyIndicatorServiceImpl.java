@@ -60,9 +60,9 @@ public class QuantifyIndicatorServiceImpl extends ServiceImpl<QuantifyIndicatorM
                 QuantifyIndicator indicator = new QuantifyIndicator();
                 indicator.setName(name);
                 indicator.setRule(rule != null ? rule : "");
-                indicator.setDimension(dimension != null ? dimension : "both");
+                indicator.setDimension(getDimensionValue(dimension));
                 indicator.setOrgLevel(orgLevel != null ? orgLevel : "[]");
-                indicator.setStatus(status != null ? status : "enable");
+                indicator.setStatus(getStatusValue(status));
                 
                 indicatorList.add(indicator);
             }
@@ -101,5 +101,35 @@ public class QuantifyIndicatorServiceImpl extends ServiceImpl<QuantifyIndicatorM
             default:
                 return null;
         }
+    }
+
+    /**
+     * 组织：organization
+     * 个人：personal
+     * 两者：both
+     * @param dimension
+     * @return
+     */
+    private String getDimensionValue(String dimension) {
+        if(dimension == "组织"){
+            return "organization";
+        }
+        if(dimension == "个人"){
+            return "personal";
+        }
+        return "both";
+    }
+
+    /**
+     * 启用：enable
+     * 禁用：disable
+     * @param status
+     * @return
+     */
+    private String getStatusValue(String status) {
+        if(status == "启用"){
+            return "enable";
+        }
+        return "disable";
     }
 }

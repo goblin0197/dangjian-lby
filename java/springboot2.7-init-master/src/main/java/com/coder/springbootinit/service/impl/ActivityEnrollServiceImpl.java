@@ -50,9 +50,12 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
         Activity activity = activityService.getById(activityId);
         ThrowUtils.throwIf(activity == null, ErrorCode.NOT_FOUND_ERROR, "活动不存在");
 
-        // 检查活动是否已发布
-        if (activity.getStatus() != ActivityStatusEnum.PUBLISHED.getCode() && activity.getStatus() != ActivityStatusEnum.ENDED.getCode()) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "活动未发布或已结束");
+        if(activity.getStatus() == ActivityStatusEnum.PENDING.getCode()){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "活动未发布");
+        }
+
+        if(activity.getStatus() == ActivityStatusEnum.ENDED.getCode()){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "活动已结束");
         }
 
         // 检查是否已过报名截止时间
