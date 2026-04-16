@@ -1,0 +1,15 @@
+袁新,刘姝含,周诚,等.“党建+数据”模式下全业务智能辅助管理系统的设计与实施[C]//中国电机工程学会农村电气化专业委员会,中国红色文化研究会培训专业委员会,中国能源研究会城乡电力（农电）分会,中国能源研究会科技成果转化与专利评价工作委员会.全国能源电力优秀党建典型案例（2024）.国网山东省电力公司桓台县供电公司,2025:416-417.
+姜帆,阚兴,孟文涛,等.京能集团数字化党建管理体系[J].创新世界周刊,2024,(09):54-60.                                                                    
+洛云飞.智慧党建管理信息系统的设计与实现[D].长沙:中南大学,2024.                                                                      
+王薇.基于新媒体的高校学生党建工作创新研究[J].中国军转民,2024,(10):71-73.                                                                      
+周立平.基于“互联网+”背景的国企党建管理工作研究[J].活力,2023,41(16):37-39.               
+沈建,徐博,包姗姗.为党建工作插上“数智化翅膀”[N].中国航空报,2023-07-21(005).             
+范姚琦.党建管理系统的设计与实现[D].成都:电子科技大学,2020.                                                                        
+黄卫兵.微服务架构在企业级应用开发中的实现方案优化[C]//郑州市社会学学会.2025年社会学研讨会人文与发展分论坛论文集（上册）.维沃移动通信(杭州)有限公司,2025: 230-232.                                                                        
+谭沛卓.基于微服务架构的信息系统集成方法优化[J].数字技术与应用,2025, 43(09):156-158.                                                                                
+滕明星,张恒,李超.ECharts多端图表引擎在变形监测数据可视化中的应用[J].北京测绘,2024,38(03):318-324.                                                                      
+刘雪梅.MySQL数据库复杂多表联合查询的优化策略及性能分析[J].软件,2025, 46(10):138-140.                                                                           
+夏祎忞.Vue.js框架下Web前端组件化开发模式实践分析[J].信息与电脑,2025, 37(22):125-127.                       
+Akinola S.Trends in open source RDBMS: performance, scalability and security insights [J].Journal of Research in Science and Engineering,2024,6(7):22-28.                                                                               
+Krill P.Java 8 still dominates, but Java 17 wave is coming – survey[J/OL].[2022-3-3], https://www.infoworld.com/article/2334591/java-8-still-dominates-but-java-17-wave-is-coming-survey.html                                                                             
+Rodriguez R S K ,Galindo A D J ,Juan T J , et al.Secure development methodology for full stack web applications: proof of the methodology applied to Vue.js, Spring Boot and MySQL[J].Computers, Materials and Continua,2025,85(1):1807-1858.
