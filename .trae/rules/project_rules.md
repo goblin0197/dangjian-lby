@@ -1,181 +1,124 @@
-# 智慧党建综合管理系统——项目规则文档
+# 智慧党建管理系统——项目规则文档
 
 ## 一、项目概述
 
-本项目为**智慧党建综合管理系统**，是一套面向高校党组织管理的全栈Web应用系统。系统旨在通过信息化手段提升党建工作效率，实现党员发展流程规范化、组织管理数字化、活动开展便捷化、材料归档自动化。系统支持多角色权限控制（超级管理员、党支部管理员、培养人/党员、入党积极分子/发展对象），覆盖从入党积极分子到正式党员的全生命周期管理。
+本项目为**智慧党建管理系统**，是一套面向高校党建工作的综合性信息管理平台。系统采用前后端分离架构，旨在实现党组织管理、党员发展全流程跟踪、活动组织与签到、材料提交审核、量化数据统计等核心业务的数字化管理，提升党建工作效率和信息化水平。
 
-**项目名称：** 智慧党建综合管理系统（Party Building Management System）
-
-**项目路径：**
-- 后端：`java/springboot2.7-init-master/`
-- 前端：`vue/frontend/`
+系统服务于高校党建场景，主要用户角色包括超级管理员、组织管理员（党支部书记/委员）、党员、入党积极分子等不同层级人员，各角色拥有差异化的功能权限。
 
 ## 二、技术栈
 
-### 2.1 后端技术栈
+### 后端技术栈
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| Java | 11 | 开发语言 |
+| Spring Boot | 2.7.2 | 基础框架 |
+| MyBatis-Plus | 3.5.2 | ORM框架 |
+| MySQL | 8.x | 关系型数据库 |
+| Redis | — | 缓存与会话存储（Spring Session） |
+| Knife4j | 4.4.0 | 接口文档（Swagger增强） |
+| Tencent COS | 5.6.89 | 对象存储（预留） |
+| EasyExcel | 3.1.1 | Excel文件处理 |
+| Hutool | 5.8.8 | 工具类库 |
+| Lombok | 1.18.30 | 代码简化 |
+| Spring AOP | — | 面向切面编程（鉴权、日志） |
+| wx-java | 4.4.0 | 微信公众号集成（预留） |
 
-| 技术项 | 版本/说明 |
-|--------|-----------|
-| 开发语言 | Java 11 |
-| 核心框架 | Spring Boot 2.7.2 |
-| ORM框架 | MyBatis-Plus 3.5.2 |
-| 数据库 | MySQL 8.x（数据库名：party_building） |
-| 缓存中间件 | Redis（Spring Session + Spring Data Redis） |
-| 接口文档 | Knife4j 4.4.0（Swagger增强） |
-| 文件存储 | 腾讯云COS SDK 5.6.89 |
-| Excel处理 | Alibaba EasyExcel 3.1.1 |
-| 工具库 | Hutool 5.8.8、Apache Commons Lang3 |
-| 微信集成 | WxJava 4.4.0（微信公众平台SDK） |
-| AOP切面 | Spring AOP（用于权限校验与日志记录） |
-| API设计风格 | RESTful API |
-
-### 2.2 前端技术栈
-
-| 技术项 | 版本/说明 |
-|--------|-----------|
-| 核心框架 | Vue 3.2.13 |
-| 开发语言 | TypeScript 4.5.5 |
-| 构建工具 | Vue CLI 5.0.0 |
-| UI组件库 | Ant Design Vue 4.2.6 / Arco Design Vue 2.56.3 |
-| 状态管理 | Vuex 4.0.0 |
-| 路由管理 | Vue Router 4.0.3 |
-| HTTP客户端 | Axios 1.14.0 |
-| 图表库 | ECharts 6.0.0 |
-| 富文本编辑器 | WangEditor 5.1.23（@wangeditor/editor-for-vue） |
-| 日期处理 | Day.js 1.11.19 / Moment.js 2.30.1 |
-| API代码生成 | openapi-typescript-codegen 0.29.0 |
+### 前端技术栈
+| 技术 | 版本 | 说明 |
+|------|------|------|
+| Vue | 3.x | 前端框架 |
+| TypeScript | ~4.5.5 | 类型安全 |
+| Vue Router | 4.0.3 | 路由管理 |
+| Vuex | 4.0.0 | 状态管理 |
+| Ant Design Vue | 4.2.6 | UI组件库 |
+| Arco Design Vue | 2.56.3 | 辅助UI组件库 |
+| Axios | 1.14.0 | HTTP请求库 |
+| ECharts | 6.0.0 | 数据可视化图表 |
+| WangEditor | 5.1.23 | 富文本编辑器 |
+| Day.js | 1.11.19 | 日期处理 |
+| Moment | 2.30.1 | 日期处理 |
+| openapi-typescript-codegen | 0.29.0 | API类型自动生成 |
 
 ## 三、后端配置
 
-### 3.1 项目基础配置
+### 核心配置项
+- **服务端口**：8101
+- **上下文路径**：/api
+- **数据库**：MySQL（party_building）
+- **Redis**：localhost:6379，database=2
+- **Session**：Redis存储，30天过期
+- **MyBatis-Plus**：全局ID自增策略、逻辑删除字段isDelete
+- **文件上传限制**：单文件最大100MB
+- **接口文档**：Knife4j启用，扫描controller包
 
-- **服务端口：** 8101
-- **上下文路径：** `/api`
-- **会话管理：** Redis Session（30天过期）
-- **数据库连接：** MySQL（localhost:3306/party_building）
-- **Redis连接：** localhost:6379（database: 2）
-- **文件上传限制：** 单文件最大100MB
-- **全局ID策略：** 自增（AUTO）
-- **逻辑删除字段：** isDelete（0未删除/1已删除）
-
-### 3.2 包结构
-
+### 项目包结构
 ```
 com.coder.springbootinit/
 ├── annotation/          # 自定义注解（AuthCheck、DevelopmentStageLogAnnotation）
 ├── aop/                 # 切面实现（AuthInterceptor、LogInterceptor、DevelopmentStageLogAspect）
-├── common/              # 公共类（BaseResponse、DeleteRequest、ErrorCode、PageRequest、ResultUtils）
-├── config/              # 配置类（CorsConfig、CosClientConfig、JsonConfig、MyBatisPlusConfig、WxOpenConfig）
-├── constant/            # 常量定义（ActivityConstant、CommonConstant、FileConstant、UserConstant等）
-├── controller/          # 控制器层（18个Controller）
-├── exception/           # 全局异常处理（BusinessException、GlobalExceptionHandler、ThrowUtils）
-├── generate/            # 代码生成器（CodeGenerator）
-├── manager/             # 第三方服务封装（CosManager）
-├── mapper/              # MyBatis Mapper接口层（23个Mapper）
-├── model/               # 数据模型
-│   ├── dto/             # 数据传输对象（按模块分目录）
-│   ├── entity/          # 数据库实体类
-│   ├── enums/           # 枚举定义（UserRoleEnum、DevelopmentStageOperationEnum等）
-│   └── vo/              # 视图对象
-├── service/             # 业务逻辑层（24个Service接口及实现）
+├── common/              # 公共类（BaseResponse、ErrorCode、ResultUtils等）
+├── config/              # 配置类（CORS、COS、JSON、MyBatis-Plus、WxOpen）
+├── constant/            # 常量定义
+├── controller/          # 控制器层（19个Controller）
+├── exception/           # 异常处理（BusinessException、GlobalExceptionHandler）
+├── generate/            # 代码生成器
+├── manager/             # 第三方服务管理（CosManager）
+├── mapper/              # 数据访问层接口（23个Mapper）
+├── model/               # 数据模型（entity/dto/enums/vo）
+├── service/             # 业务逻辑层（26个Service接口及实现）
 ├── task/                # 定时任务（QuantifyScheduledTask）
-├── utils/               # 工具类（EncryptUtils、NetUtils、SqlUtils、SpringContextUtils）
-└── wxmp/                # 微信公众号相关（WxMpConstant、WxMpMsgRouter）
+├── utils/               # 工具类
+└── wxmp/                # 微信公众号相关
 ```
 
-### 3.3 角色权限体系
-
-| 角色编码 | 角色名称 | 说明 |
-|----------|----------|------|
-| super_admin | 超级管理员 | 系统最高权限，可管理所有组织和用户 |
-| org_admin | 组织管理员（党支部管理员） | 管理所属支部的组织、成员、活动等 |
-| party_member | 党员 | 参与活动、提交材料、查看统计 |
-| activist_development | 积极分子/发展对象 | 参与活动、上传发展材料、查看个人发展阶段 |
-
-### 3.4 核心机制
-
-- **权限校验：** 通过`@AuthCheck`注解 + `AuthInterceptor`AOP切面实现基于角色的访问控制
-- **日志记录：** 通过`@DevelopmentStageLogAnnotation`注解 + `DevelopmentStageLogAspect`切面实现操作日志自动记录
-- **统一响应格式：** `BaseResponse<T>`包装所有API返回值
-- **全局异常处理：** `GlobalExceptionHandler`统一捕获并处理业务异常
-- **密码加密：** `EncryptUtils.encryptPassword()`对用户密码进行加密存储
+### 关键设计模式
+- **分层架构**：Controller → Service → Mapper
+- **统一响应**：BaseResponse<T>包装所有API返回值
+- **鉴权机制**：@AuthCheck注解 + AuthInterceptor切面实现角色级权限控制
+- **异常处理**：GlobalExceptionHandler全局捕获 + ErrorCode错误码枚举
+- **操作审计**：@DevelopmentStageLogAnnotation注解记录关键操作日志
 
 ## 四、前端配置
 
-### 4.1 项目结构
+### 构建工具
+- Vue CLI 5.x 脚手架
+- TypeScript严格模式
+- ESLint代码规范检查
 
+### 目录结构
 ```
-vue/frontend/src/
-├── api/                  # API接口定义（按模块分文件）
-│   ├── index.ts         # API入口
-│   ├── typings.d.ts     # 类型声明
-│   ├── yonghuguanli.ts          # 用户管理
-│   ├── dangzuzhiguanli.ts       # 党组织管理
-│   ├── zuzhiguanxizhuanyiguanli.ts  # 组织关系转移
-│   ├── zuzhichengyuanguanli.ts  # 组织成员
-│   ├── peiyangrenguanlianguanli.ts # 培养人关联
-│   ├── huodongguanli.ts         # 活动管理
-│   ├── huodongbaomingguanli.ts  # 活动报名
-│   ├── fazhanjieduanguanli.ts   # 发展阶段
-│   ├── fazhanjieduanbiangengrizhi.ts # 发展阶段变更日志
-│   ├── wenjianguanli.ts         # 文件管理
-│   ├── gonggaoguanli.ts         # 公告管理
-│   └── lianghuatongji.ts        # 量化统计
-├── assets/               # 静态资源（图片等）
-├── components/           # 公共组件（GlobalHeader、HelloWorld）
-├── layouts/              # 布局组件（BasicLayout、UserLayout）
-├── plugins/              # 插件（axios配置）
-├── router/               # 路由配置
-│   ├── index.ts          # 路由入口
-│   └── routes.ts         # 路由定义
-├── store/                # Vuex状态管理
-│   ├── index.ts
-│   ├── user.ts           # 用户状态
-│   └── headerMenu.ts     # 菜单状态
-├── views/                # 页面视图（按模块分目录）
-│   ├── user/UserLoginView.vue           # 登录页
-│   ├── organization/OrganizationView.vue    # 组织管理
-│   ├── activity/ActivityView.vue           # 活动管理
-│   ├── trainerRelation/TrainerRelationView.vue # 发展阶段
-│   ├── quantify/QuantifyView.vue           # 量化统计(用户)
-│   ├── quantify/QuantifyManagerView.vue    # 量化统计(管理员)
-│   ├── material/MaterialTemplateManagementView.vue  # 材料模板管理
-│   ├── material/MaterialSubmissionReviewView.vue    # 材料提交审核
-│   ├── material/MaterialArchivingQueryView.vue      # 材料归档查询
-│   ├── notice/AnnouncementManagementView.vue        # 公告管理
-│   ├── notice/AnnouncementListView.vue              # 公告列表
-│   ├── notice/AnnouncementDetailsView.vue           # 公告详情
-│   ├── HomeView.vue                        # 首页
-│   ├── NoAuthView.vue                      # 无权限页
-│   └── AboutView.vue                       # 关于页
-├── access/               # 权限控制
-│   ├── index.ts         # 权限入口
-│   ├── checkAccess.ts   # 权限校验逻辑
-│   └── accessEnum.ts    # 权限枚举
-├── App.vue               # 根组件
-├── main.ts               # 入口文件
-├── request.ts            # 请求封装
-└── shims-vue.d.ts        # Vue类型声明
+src/
+├── api/                 # API接口定义（按模块划分，18个api文件）
+├── assets/              # 静态资源（图片等）
+├── components/          # 公共组件（GlobalHeader、HelloWorld）
+├── generated/           # OpenAPI自动生成的类型和Service
+├── layouts/             # 布局组件（BasicLayout、UserLayout）
+├── plugins/             # 插件（axios封装）
+├── router/              # 路由配置（routes.ts、index.ts）
+├── store/               # Vuex状态管理（user、index、headerMenu）
+├── views/               # 页面视图（按功能模块组织）
+│   ├── activity/        # 活动管理
+│   ├── material/        # 材料管理（模板/提交审核/归档查询）
+│   ├── notice/          # 公告通知（列表/详情/管理/内容查看）
+│   ├── organization/    # 党组织管理
+│   ├── quantify/        # 量化统计（个人/管理员）
+│   ├── trainerRelation/# 培养人关系
+│   └── user/            # 用户登录
+├── access/              # 权限校验（accessEnum、checkAccess）
+├── App.vue              # 根组件
+├── main.ts              # 入口文件
+└── request.ts           # 请求封装
 ```
 
-### 4.2 路由配置要点
+### 前端特性
+- **路由守卫**：基于access目录实现页面级权限控制
+- **API自动生成**：通过openapi2ts从后端Swagger自动生成TypeScript类型
+- **状态管理**：Vuex管理用户登录态、菜单状态
+- **富文本编辑**：WangEditor用于公告内容编辑
+- **数据可视化**：ECharts展示量化统计数据图表
 
-- 默认路由重定向到登录页（`/` → `/user/login`）
-- 使用`meta.hideInMenu`控制菜单隐藏项
-- 权限控制通过`access`字段结合`ACCESS_ENUM`实现
-- 主要功能路由：组织管理、活动管理、发展阶段、量化统计、材料管理、公告管理
-
-### 4.3 前端核心依赖版本
-
-- vue: ^3.2.13
-- ant-design-vue: ^4.2.6
-- @arco-design/web-vue: ^2.56.3
-- axios: ^1.14.0
-- echarts: ^6.0.0
-- vuex: ^4.0.0
-- vue-router: ^4.0.3
-- @wangeditor/editor-for-vue: ^5.1.12
 
 ## 五、系统功能模块文档
 
-详细功能模块说明请参阅：#system_function_module.md
+详细的功能模块说明请参考：#system_function_module.md
