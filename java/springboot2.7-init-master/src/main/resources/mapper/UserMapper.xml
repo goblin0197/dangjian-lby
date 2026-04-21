@@ -30,4 +30,13 @@
         orgId, phone, email, userType, status, joinDate, positiveDate, politicalStatus, 
         createTime, updateTime, isDelete
     </sql>
+
+    <!-- 移除组织成员：清空组织 ID 并重置角色为积极分子/发展对象 -->
+    <update id="removeOrgMember" parameterType="java.lang.Long">
+        UPDATE user
+        SET orgId = NULL,
+            <!-- userRole = 'activist_development', -->
+            updateTime = NOW()
+        WHERE id = #{userId}
+    </update>
 </mapper>

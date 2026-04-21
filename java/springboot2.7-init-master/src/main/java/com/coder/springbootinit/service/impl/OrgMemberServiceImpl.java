@@ -45,6 +45,9 @@ public class OrgMemberServiceImpl extends ServiceImpl<UserMapper, User> implemen
     @Resource
     private OrganizationService organizationService;
 
+    @Resource
+    private UserMapper userMapper;
+
     /**
      * 获取组织成员查询条件
      *
@@ -154,35 +157,46 @@ public class OrgMemberServiceImpl extends ServiceImpl<UserMapper, User> implemen
     /**
      * 移除组织成员
      *
-     * @param userId 用户ID
-     * @param orgId 组织ID
+     * @param userId 用户 ID
+     * @param orgId 组织 ID
      * @return 是否成功
      */
     @Override
     public boolean removeOrgMember(Long userId, Long orgId) {
         if (userId == null || orgId == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户ID和组织ID不能为空");
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户 ID 和组织 ID 不能为空");
         }
         
-        User user = this.getById(userId);
+        // 验证组织是否存在
+        Organization organization = organizationService.getById(orgId);
+        if (organization == null) {
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "组织不存在");
+        }
+        
+        // 验证用户是否存在
+        User user = userService.getById(userId);
         if (user == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "用户不存在");
         }
         
+        // 验证用户是否属于该组织
         if (!orgId.equals(user.getOrgId())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "该用户不属于此组织");
         }
 
+        // 不能移除超级管理员
         if (UserConstant.SUPER_ADMIN_ROLE.equals(user.getUserRole())) {
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR, "不能移除超级管理员");
         }
 
-        User updateUser = new User();
-        updateUser.setId(userId);
-        updateUser.setOrgId(null);
-        // updateUser.setUserRole(UserConstant.ACTIVIST_DEVELOPMENT_ROLE);
+        // 使用 XML 方式更新用户信息：清空组织 ID，重置角色为积极分子/发展对象
+        int result = userMapper.removeOrgMember(userId);
+        if (result <= 0) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "移除组织成员失败");
+        }
         
-        return this.updateById(updateUser);
+        log.info("移除组织成员成功，userId: {}, orgId: {}", userId, orgId);
+        return true;
     }
 
     /**

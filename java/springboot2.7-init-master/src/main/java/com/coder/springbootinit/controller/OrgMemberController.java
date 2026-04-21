@@ -69,16 +69,16 @@ public class OrgMemberController {
     /**
      * 移除组织成员
      *
-     * @param userId 用户ID
-     * @param orgId 组织ID
+     * @param userId 用户 ID
+     * @param orgId 组织 ID
      * @return 是否成功
      */
     @PostMapping("/remove")
-    // @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
     @ApiOperation(value = "移除组织成员")
     public BaseResponse<Boolean> removeOrgMember(@RequestParam Long userId, @RequestParam Long orgId) {
         if (userId == null || orgId == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户 ID 和组织 ID 不能为空");
         }
         boolean result = orgMemberService.removeOrgMember(userId, orgId);
         return ResultUtils.success(result);
