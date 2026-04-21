@@ -20,7 +20,11 @@ public enum NoticeStatusEnum {
     /**
      * 已发布
      */
-    PUBLISHED(1, "已发布");
+    PUBLISHED(1, "已发布"),
+    /**
+     * 已下架
+     */
+    OFFLINE(2, "已下架");
 
     @EnumValue
     private final Integer code;

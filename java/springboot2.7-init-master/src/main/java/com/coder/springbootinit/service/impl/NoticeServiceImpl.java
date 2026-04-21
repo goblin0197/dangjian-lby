@@ -19,12 +19,14 @@ import com.coder.springbootinit.service.OrganizationService;
 import com.coder.springbootinit.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +41,14 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
 
     @Resource
     private UserService userService;
+
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+
+    /**
+     * 用户已读公告的Redis Key前缀
+     */
+    private static final String NOTICE_READ_KEY_PREFIX = "notice:read:";
 
     @Override
     public Notice addNotice(NoticeAddRequest noticeAddRequest, Long publisherId) {
@@ -219,8 +229,15 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         if (announcementId == null || userId == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "公告 ID 和用户 ID 不能为空");
         }
-        // TODO: 实现标记已读逻辑
-        return true;
+        String redisKey = NOTICE_READ_KEY_PREFIX + userId;
+        String noticeIdStr = String.valueOf(announcementId);
+        Boolean isMember = stringRedisTemplate.opsForSet().isMember(redisKey, noticeIdStr);
+        if (Boolean.TRUE.equals(isMember)) {
+            return true;
+        }
+        stringRedisTemplate.opsForSet().add(redisKey, noticeIdStr);
+        stringRedisTemplate.expire(redisKey, 30, TimeUnit.DAYS);
+        return incrementReadCount(announcementId);
     }
 
     @Override
@@ -228,8 +245,16 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         if (userId == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户 ID 不能为空");
         }
-        // TODO: 实现获取未读数量逻辑
-        return 0;
+        QueryWrapper<Notice> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("status", NoticeStatusEnum.PUBLISHED.getCode());
+        queryWrapper.eq("isDelete", 0);
+        Long totalCount = this.count(queryWrapper);
+        String redisKey = NOTICE_READ_KEY_PREFIX + userId;
+        Long readCount = stringRedisTemplate.opsForSet().size(redisKey);
+        if (readCount == null) {
+            readCount = 0L;
+        }
+        return Math.max(0, (int)(totalCount - readCount));
     }
 
     @Override
@@ -328,8 +353,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "只有已发布的公告可以下架");
         }
         
-        // 更新公告状态为下架（使用OFFLINE状态，如果枚举中没有则使用2表示下架）
-        notice.setStatus(2); // 2-已下架
+        notice.setStatus(NoticeStatusEnum.OFFLINE.getCode());
         
         return this.updateById(notice);
     }
@@ -346,7 +370,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
         }
         
         // 检查公告状态，只有下架的公告才能重新发布
-        if (!Integer.valueOf(2).equals(notice.getStatus()) && !NoticeStatusEnum.DRAFT.getCode().equals(notice.getStatus())) {
+        if (!NoticeStatusEnum.OFFLINE.getCode().equals(notice.getStatus()) && !NoticeStatusEnum.DRAFT.getCode().equals(notice.getStatus())) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "只有下架或草稿状态的公告可以重新发布");
         }
         
@@ -363,6 +387,9 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice> impleme
     public boolean topNotice(Long id, Integer isTop) {
         if (id == null || isTop == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
+        }
+        if (isTop != 0 && isTop != 1) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "置顶参数值无效，只能为0（否）或1（是）");
         }
         
         Notice notice = this.getById(id);

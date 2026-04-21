@@ -236,6 +236,9 @@ public class NoticeController {
         if (id == null || isTop == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数不能为空");
         }
+        if (isTop != 0 && isTop != 1) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "置顶参数无效，只能为0（取消置顶）或1（置顶）");
+        }
         boolean result = noticeService.topNotice(id, isTop);
         return ResultUtils.success(result);
     }
