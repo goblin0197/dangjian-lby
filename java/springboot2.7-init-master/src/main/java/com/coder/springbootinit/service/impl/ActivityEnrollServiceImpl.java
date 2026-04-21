@@ -1,6 +1,7 @@
 package com.coder.springbootinit.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.common.ErrorCode;
 import com.coder.springbootinit.exception.BusinessException;
@@ -8,12 +9,14 @@ import com.coder.springbootinit.exception.ThrowUtils;
 import com.coder.springbootinit.mapper.ActivityEnrollMapper;
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollAddRequest;
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollCancelRequest;
+import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollListRequest;
 import com.coder.springbootinit.model.entity.Activity;
 import com.coder.springbootinit.model.entity.ActivityEnroll;
 import com.coder.springbootinit.model.entity.User;
-import com.coder.springbootinit.model.enums.ActivityEnrollStatusEnum;
 import com.coder.springbootinit.model.enums.ActivityEnrollSignEnum;
+import com.coder.springbootinit.model.enums.ActivityEnrollStatusEnum;
 import com.coder.springbootinit.model.enums.ActivityStatusEnum;
+import com.coder.springbootinit.model.vo.ActivityEnrollUserVO;
 import com.coder.springbootinit.service.ActivityEnrollService;
 import com.coder.springbootinit.service.ActivityService;
 import com.coder.springbootinit.service.OrganizationService;
@@ -84,6 +87,7 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
         QueryWrapper<ActivityEnroll> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("activityId", activityId);
         queryWrapper.eq("userId", userId);
+        queryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
         ActivityEnroll existingEnroll = this.getOne(queryWrapper);
         if (existingEnroll != null && existingEnroll.getParticipantStatus() == ActivityEnrollStatusEnum.ENROLLED.getCode()) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "已经报名该活动");
@@ -131,6 +135,7 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
         QueryWrapper<ActivityEnroll> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("activityId", activityId);
         queryWrapper.eq("userId", userId);
+        queryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
         queryWrapper.eq("isDelete", 0);
         ActivityEnroll activityEnroll = this.getOne(queryWrapper);
         ThrowUtils.throwIf(activityEnroll == null, ErrorCode.NOT_FOUND_ERROR, "未找到报名记录");
@@ -213,5 +218,13 @@ public class ActivityEnrollServiceImpl extends ServiceImpl<ActivityEnrollMapper,
         queryWrapper.eq("userId", userId);
         ActivityEnroll activityEnroll = this.getOne(queryWrapper);
         return activityEnroll != null ? activityEnroll.getParticipantStatus() : null;
+    }
+
+    @Override
+    public List<ActivityEnrollUserVO> listEnrolledUsers(ActivityEnrollListRequest activityEnrollListRequest) {
+        Long activityId = activityEnrollListRequest.getActivityId();
+        ThrowUtils.throwIf(activityId == null || activityId <= 0, ErrorCode.PARAMS_ERROR, "活动ID无效");
+
+        return this.baseMapper.listEnrolledUsers(activityId);
     }
 }

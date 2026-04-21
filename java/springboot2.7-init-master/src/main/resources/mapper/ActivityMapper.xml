@@ -36,8 +36,8 @@
     <!-- 活动当前参与人数自减1 -->
     <update id="decreaseCurrentNum">
         UPDATE activity
-        SET current_num = current_num - 1
+        SET currentNum = currentNum - 1
         WHERE id = #{id}
-        AND current_num > 0
+        AND currentNum > 0
     </update>
 </mapper>

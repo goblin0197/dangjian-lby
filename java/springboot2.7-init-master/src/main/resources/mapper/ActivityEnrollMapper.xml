@@ -33,4 +33,36 @@
         WHERE id = #{id}
         AND is_delete = 0
     </update> -->
+
+    <select id="listEnrolledUsers" resultType="com.coder.springbootinit.model.vo.ActivityEnrollUserVO">
+        SELECT
+            ae.id AS enrollId,
+            ae.activityId,
+            ae.userId,
+            u.userAccount,
+            u.userName,
+            u.userAvatar,
+            u.orgId,
+            o.orgName,
+            u.phone,
+            u.userType,
+            u.politicalStatus,
+            ae.enrollTime,
+            ae.participantStatus,
+            '已报名' AS participantStatusName,
+            ae.isSign,
+            CASE 
+                WHEN ae.isSign = 0 THEN '未签到'
+                WHEN ae.isSign = 1 THEN '已签到'
+                ELSE '未知状态'
+            END AS isSignName,
+            ae.createTime
+        FROM activity_enroll ae
+        LEFT JOIN user u ON ae.userId = u.id AND u.isDelete = 0
+        LEFT JOIN organization o ON u.orgId = o.id AND o.isDelete = 0
+        WHERE ae.activityId = #{activityId}
+        AND ae.participantStatus = 1
+        AND ae.isDelete = 0
+        ORDER BY ae.createTime DESC
+    </select>
 </mapper>

@@ -3,12 +3,16 @@ package com.coder.springbootinit.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollAddRequest;
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollCancelRequest;
+import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollListRequest;
 import com.coder.springbootinit.model.entity.ActivityEnroll;
+import com.coder.springbootinit.model.vo.ActivityEnrollUserVO;
+
+import java.util.List;
 
 /**
  * 活动报名服务
  *
-*/
+ */
 public interface ActivityEnrollService extends IService<ActivityEnroll> {
 
     /**
@@ -51,4 +55,11 @@ public interface ActivityEnrollService extends IService<ActivityEnroll> {
      * @return 报名状态
      */
     Integer getEnrollStatus(Long activityId, Long userId);
+
+    /**
+     * 获取指定活动已报名人员列表（只返回已报名未取消的人员）
+     * @param activityEnrollListRequest 查询请求
+     * @return 已报名人员列表
+     */
+    List<ActivityEnrollUserVO> listEnrolledUsers(ActivityEnrollListRequest activityEnrollListRequest);
 }

@@ -6,10 +6,14 @@ import com.coder.springbootinit.common.ResultUtils;
 import com.coder.springbootinit.exception.BusinessException;
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollAddRequest;
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollCancelRequest;
+import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollListRequest;
 import com.coder.springbootinit.model.dto.activityEnroll.ActivityEnrollSignInRequest;
 import com.coder.springbootinit.model.entity.User;
+import com.coder.springbootinit.model.vo.ActivityEnrollUserVO;
 import com.coder.springbootinit.service.ActivityEnrollService;
 import com.coder.springbootinit.service.UserService;
+
+import java.util.List;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -73,8 +77,7 @@ public class ActivityEnrollController {
     /**
      * 签到
      *
-     * @param activityId
-     * @param userId
+     * @param activityEnrollSignInRequest
      * @param request
      * @return
      */
@@ -106,6 +109,23 @@ public class ActivityEnrollController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
         boolean result = activityEnrollService.checkEnrolled(activityId, userId);
+        return ResultUtils.success(result);
+    }
+
+    /**
+     * 获取指定活动已报名人员列表
+     *
+     * @param activityEnrollListRequest
+     * @param request
+     * @return
+     */
+    @PostMapping("/list")
+    @ApiOperation(value = "获取指定活动已报名人员列表")
+    public BaseResponse<List<ActivityEnrollUserVO>> listEnrolledUsers(@RequestBody ActivityEnrollListRequest activityEnrollListRequest, HttpServletRequest request) {
+        if (activityEnrollListRequest == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        List<ActivityEnrollUserVO> result = activityEnrollService.listEnrolledUsers(activityEnrollListRequest);
         return ResultUtils.success(result);
     }
 }
