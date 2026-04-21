@@ -180,7 +180,7 @@ public class OrgMemberServiceImpl extends ServiceImpl<UserMapper, User> implemen
         User updateUser = new User();
         updateUser.setId(userId);
         updateUser.setOrgId(null);
-        updateUser.setUserRole(UserConstant.ACTIVIST_DEVELOPMENT_ROLE);
+        // updateUser.setUserRole(UserConstant.ACTIVIST_DEVELOPMENT_ROLE);
         
         return this.updateById(updateUser);
     }
