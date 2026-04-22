@@ -33,12 +33,22 @@ public class OrgRelationTransferServiceImpl extends ServiceImpl<OrgRelationTrans
     @Resource
     private OrganizationService organizationService;
 
+    @Resource
+    private OrgRelationTransferMapper orgRelationTransferMapper;
+
     @Override
     public boolean createOrgRelationTransfer(OrgRelationTransfer orgRelationTransfer) {
         // 验证用户ID、原党组织ID和目标党组织ID是否为空
+        if (orgRelationTransfer.getUserId() == null || orgRelationTransfer.getFromOrgId() == null || orgRelationTransfer.getToOrgId() == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户ID、原党组织ID和目标党组织ID不能为空");
+        }
         long userId = orgRelationTransfer.getUserId();
         long fromOrgId = orgRelationTransfer.getFromOrgId();
         long toOrgId = orgRelationTransfer.getToOrgId();
+        Long count = orgRelationTransferMapper.getPendingCountByUserId(userId);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户已存在待处理的组织关系转移记录");
+        }
         List<String> nameList = this.validOrgRelationTransfer(userId, fromOrgId, toOrgId);
         if (nameList.size() != 2) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);

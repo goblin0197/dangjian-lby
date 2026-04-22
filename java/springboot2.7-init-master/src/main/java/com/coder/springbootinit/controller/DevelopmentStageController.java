@@ -198,4 +198,13 @@ public class DevelopmentStageController {
         List<DevelopmentStage> developmentStages = developmentStageService.getDevelopmentStagesList(query);
         return ResultUtils.success(developmentStages);
     }
+
+    @PostMapping("/updateAttachment/byId")
+    public BaseResponse<Boolean> updateAttachmentById(@RequestParam String attachment , @RequestParam Long id){
+        DevelopmentStage developmentStage = new DevelopmentStage();
+        developmentStage.setId(id);
+        developmentStage.setAttachment(attachment);
+        boolean result = developmentStageService.updateById(developmentStage);
+        return ResultUtils.success(result);
+    }
 }

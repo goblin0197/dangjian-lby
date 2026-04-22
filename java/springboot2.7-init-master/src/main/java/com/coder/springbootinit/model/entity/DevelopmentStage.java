@@ -91,6 +91,11 @@ public class DevelopmentStage implements Serializable {
     private Date updateTime;
 
     /**
+     * json数组，关联file表的id字段
+     */
+    private String attachment;
+
+    /**
      * 是否删除
      */
     @TableLogic
