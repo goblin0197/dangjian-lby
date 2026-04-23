@@ -132,4 +132,17 @@ public class TrainerRelationController {
 //        return ResultUtils.success(isValid);
 //    }
 
+    /**
+     * 全量获取培养关系列表
+     * @param orgId 组织ID
+     * @return 培养关系列表
+     */
+    @GetMapping("/list")
+    @ApiOperation(value = "全量获取培养关系列表")
+    // @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
+    public BaseResponse<List<TrainerRelation>> getTrainerRelationsList() {
+        List<TrainerRelation> trainerRelations = trainerRelationService.list();
+        return ResultUtils.success(trainerRelations);
+    }
+
 }
