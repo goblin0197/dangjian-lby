@@ -103,12 +103,12 @@
                 @page-change="handlePageChange"
                 @page-size-change="handlePageSizeChange"
               >
-                <template #cell(role)="{ record }">
-                  <a-tag :color="roleColorMap[record.role]">
-                    {{ roleMap[record.role] }}
+                <template #role="{ record }">
+                  <a-tag :color="roleColorMap[record.userRole]">
+                    {{ roleMap[record.userRole] }}
                   </a-tag>
                 </template>
-                <template #cell(actions)="{ record }">
+                <template #actions="{ record }">
                   <a-space size="small">
                     <a-button
                       size="small"
@@ -151,22 +151,7 @@
                 :pagination="false"
                 row-key="id"
               >
-                <template #cell(mentor)="{ record }">
-                  <div class="user-info">
-                    <a-avatar :src="record.mentor.avatar" size="small" />
-                    <span>{{ record.mentor.name }}</span>
-                  </div>
-                </template>
-                <template #cell(mentee)="{ record }">
-                  <div class="user-info">
-                    <a-avatar :src="record.mentee.avatar" size="small" />
-                    <span>{{ record.mentee.name }}</span>
-                  </div>
-                </template>
-                <template #cell(menteeType)="{ record }">
-                  <a-tag>{{ menteeTypeMap[record.menteeType] }}</a-tag>
-                </template>
-                <template #cell(actions)="{ record }">
+                <template #actions="{ record }">
                   <a-button
                     danger
                     size="small"
@@ -384,6 +369,30 @@
         </a-form-item>
       </a-form>
     </a-modal>
+
+    <!-- 编辑成员弹窗 -->
+    <a-modal
+      v-model:visible="editMemberModalVisible"
+      title="编辑成员"
+      @cancel="handleEditMemberModalCancel"
+      @ok="handleEditMemberModalOk"
+    >
+      <a-form
+        ref="editMemberFormRef"
+        :model="editMemberForm"
+        :rules="editMemberFormRules"
+        layout="vertical"
+      >
+        <a-form-item field="userRole" label="角色" required>
+          <a-select v-model="editMemberForm.userRole" placeholder="请选择角色">
+            <a-option value="super_admin">超级管理员</a-option>
+            <a-option value="org_admin">组织管理员</a-option>
+            <a-option value="org_member">党员</a-option>
+            <a-option value="activist_development">积极分子/发展对象</a-option>
+          </a-select>
+        </a-form-item>
+      </a-form>
+    </a-modal>
   </div>
 </template>
 
@@ -399,6 +408,7 @@ import * as zuzhichengyuanguanli from "@/api/zuzhichengyuanguanli";
 import * as zuzhiguanxizhuanyiguanli from "@/api/zuzhiguanxizhuanyiguanli";
 import * as yonghuguanli from "@/api/yonghuguanli";
 import * as peiyangrenguanlianguanli from "@/api/peiyangrenguanlianguanli";
+import { useStore } from "vuex";
 
 // 类型定义
 interface Organization {
@@ -423,23 +433,6 @@ interface Member {
   joinDate: string;
   position?: string;
 }
-
-interface MentorRelation {
-  id: string;
-  mentor: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
-  mentee: {
-    id: string;
-    name: string;
-    avatar: string;
-  };
-  menteeType: "active" | "developing" | "probationary";
-  startDate: string;
-}
-
 // 状态管理
 const selectedOrgKeys = ref<string[]>([]);
 const selectedOrg = ref<any | null>(null);
@@ -457,12 +450,14 @@ const orgModalTitle = ref("新增组织");
 const memberModalVisible = ref(false);
 const transferModalVisible = ref(false);
 const relationModalVisible = ref(false);
+const editMemberModalVisible = ref(false);
 
 // 表单引用
 const orgFormRef = ref<FormInstance>();
 const memberFormRef = ref<FormInstance>();
 const transferFormRef = ref<FormInstance>();
 const relationFormRef = ref<FormInstance>();
+const editMemberFormRef = ref<FormInstance>();
 
 // 表单数据
 const orgForm = ref({
@@ -499,6 +494,14 @@ const relationForm = ref({
   orgId: "",
 });
 
+const store = useStore();
+
+const editMemberForm = ref({
+  userId: "",
+  orgId: "",
+  userRole: "",
+});
+
 // 表单验证规则
 const orgFormRules = ref({
   orgName: [{ required: true, message: "请输入组织名称", trigger: "blur" }],
@@ -528,17 +531,23 @@ const relationFormRules = ref({
   startDate: [{ required: true, message: "请选择开始日期", trigger: "change" }],
 });
 
+const editMemberFormRules = ref({
+  userRole: [{ required: true, message: "请选择角色", trigger: "change" }],
+});
+
 // 映射关系（完全适配后端返回的中文类型）
 const roleMap = {
-  leader: "负责人",
-  member: "普通成员",
-  mentor: "培养联系人",
+  super_admin: "超级管理员",
+  org_admin: "组织管理员",
+  org_member: "党员",
+  activist_development: "积极分子/发展对象",
 };
 
 const roleColorMap = {
-  leader: "red",
-  member: "blue",
-  mentor: "green",
+  super_admin: "#f5222d",
+  org_admin: "#1890ff",
+  org_member: "#52c41a",
+  activist_development: "#faad14",
 };
 
 const menteeTypeMap = {
@@ -554,7 +563,7 @@ const orgOptions = ref<{ label: string; value: number }[]>([]);
 const organizationTree = ref<any[]>([]);
 
 const memberList = ref<Member[]>([]);
-const mentorRelationList = ref<MentorRelation[]>([]);
+const mentorRelationList = ref<any>([]);
 
 // 负责人信息
 const leaderInfo = ref<any>(null);
@@ -642,16 +651,10 @@ const memberColumns = ref<TableColumn<Member>[]>([
   { title: "操作", width: 200, slotName: "actions" },
 ]);
 
-const relationColumns = ref<TableColumn<MentorRelation>[]>([
-  { title: "培养人", dataIndex: "mentor", slotName: "mentor", width: 180 },
-  { title: "培养对象", dataIndex: "mentee", slotName: "mentee", width: 180 },
-  {
-    title: "对象类型",
-    dataIndex: "menteeType",
-    slotName: "menteeType",
-    width: 120,
-  },
-  { title: "开始日期", dataIndex: "startDate", width: 150 },
+const relationColumns = ref<TableColumn[any]>([
+  { title: "培养人", dataIndex: "trainerName", width: 150 },
+  { title: "培养对象", dataIndex: "userName", width: 150 },
+  { title: "开始日期", dataIndex: "startDate", width: 180 },
   { title: "操作", width: 100, slotName: "actions" },
 ]);
 
@@ -835,35 +838,12 @@ const loadMentorRelationList = async (orgId: string) => {
       await peiyangrenguanlianguanli.getTrainerRelationsByOrgIdUsingGet({
         orgId: Number(orgId),
       });
-    if (res.data.code === 0) {
-      const relations = res.data.data || [];
-      // 转换数据格式以适配前端显示
-      mentorRelationList.value = await Promise.all(
-        relations.map(async (relation: any) => {
-          // 获取培养人信息
-          const mentorInfo = await getUserInfo(relation.trainerId);
-          // 获取培养对象信息
-          const menteeInfo = await getUserInfo(relation.userId);
 
-          return {
-            id: relation.id,
-            mentor: {
-              id: relation.trainerId,
-              name: mentorInfo?.userName || "未知",
-              avatar: mentorInfo?.userAvatar || "",
-            },
-            mentee: {
-              id: relation.userId,
-              name: menteeInfo?.userName || "未知",
-              avatar: menteeInfo?.userAvatar || "",
-            },
-            menteeType: relation.menteeType || "active",
-            startDate: relation.createTime || new Date().toISOString(),
-          };
-        }),
-      );
+    if (res.data.code === 0) {
+      mentorRelationList.value = res.data.data || [];
+      console.log("mentorRelationList.value:", mentorRelationList.value);
     } else {
-      Message.error(res.message || "获取培养人对接关系失败");
+      Message.error(res.data.message || "获取培养人对接关系失败");
     }
   } catch (error) {
     console.error("获取培养人对接关系失败:", error);
@@ -1094,7 +1074,17 @@ const handleMemberModalCancel = () => {
 };
 
 const handleEditMember = (record: Member) => {
-  console.log("编辑成员", record);
+  if (!selectedOrg.value) {
+    Message.error("请先选择组织");
+    return;
+  }
+  console.log("record,", record);
+  Object.assign(editMemberForm.value, {
+    userId: record.id,
+    orgId: selectedOrg.value.id,
+    userRole: record.userRole || "org_member",
+  });
+  editMemberModalVisible.value = true;
 };
 
 const handleRemoveMember = async (memberId: string) => {
@@ -1118,8 +1108,38 @@ const handleRemoveMember = async (memberId: string) => {
   }
 };
 
+const handleEditMemberModalOk = async () => {
+  try {
+    if (!selectedOrg.value) {
+      Message.error("请先选择组织");
+      return;
+    }
+    const res = await zuzhichengyuanguanli.updateOrgMemberRoleUsingPost({
+      orgId: Number(editMemberForm.value.orgId),
+      userId: Number(editMemberForm.value.userId),
+      userRole: editMemberForm.value.userRole,
+    });
+    if (res.data.code === 0) {
+      Message.success("编辑成员成功");
+      editMemberModalVisible.value = false;
+      await loadMemberList(selectedOrg.value.id);
+    } else {
+      Message.error(res.data.message || "编辑成员失败");
+    }
+  } catch (error) {
+    console.error("编辑成员失败:", error);
+    Message.error("网络请求异常");
+  }
+};
+
+const handleEditMemberModalCancel = () => {
+  editMemberFormRef.value?.resetFields();
+  editMemberModalVisible.value = false;
+};
+
 // 组织关系转移
 const showTransferModal = (member: Member) => {
+  console.log("member:", member);
   Object.assign(transferForm, {
     memberId: member.id,
     memberName: member.name,

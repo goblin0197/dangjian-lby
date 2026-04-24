@@ -18,5 +18,7 @@ module.exports = {
         "comma-dangle": ["error", "only-multiline"],
         // 关闭不必要的语法解析严格校验
         "@typescript-eslint/comma-dangle": ["error", "only-multiline"],
+        // 允许使用 @ts-ignore 注释
+        "@typescript-eslint/ban-ts-comment": "off",
     },
 };

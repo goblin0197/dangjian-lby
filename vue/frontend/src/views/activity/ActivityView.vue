@@ -5,7 +5,7 @@
       <h1>党建活动管理</h1>
       <div class="header-actions">
         <a-button type="primary" @click="handleCreateActivity">
-          <icon-plus/>
+          <icon-plus />
           创建活动
         </a-button>
       </div>
@@ -45,18 +45,18 @@
       <a-form :model="filterForm" class="filter-form" layout="inline">
         <a-form-item label="活动名称">
           <a-input
-              v-model="filterForm.activityName"
-              allow-clear
-              placeholder="请输入活动名称"
-              style="width: 200px"
+            v-model="filterForm.activityName"
+            allow-clear
+            placeholder="请输入活动名称"
+            style="width: 200px"
           />
         </a-form-item>
         <a-form-item label="活动类型">
           <a-select
-              v-model="filterForm.activityType"
-              allow-clear
-              placeholder="请选择活动类型"
-              style="width: 150px"
+            v-model="filterForm.activityType"
+            allow-clear
+            placeholder="请选择活动类型"
+            style="width: 150px"
           >
             <a-option value="1">会议</a-option>
             <a-option value="2">志愿活动</a-option>
@@ -66,15 +66,15 @@
         </a-form-item>
         <a-form-item label="所属党组织">
           <a-select
-              v-model="filterForm.orgId"
-              allow-clear
-              placeholder="请选择所属党组织"
-              style="width: 200px"
+            v-model="filterForm.orgId"
+            allow-clear
+            placeholder="请选择所属党组织"
+            style="width: 200px"
           >
             <a-option
-                v-for="option in orgOptions"
-                :key="option.value"
-                :value="option.value.toString()"
+              v-for="option in orgOptions"
+              :key="option.value"
+              :value="option.value.toString()"
             >
               {{ option.label }}
             </a-option>
@@ -82,10 +82,10 @@
         </a-form-item>
         <a-form-item label="活动状态">
           <a-select
-              v-model="filterForm.status"
-              allow-clear
-              placeholder="请选择活动状态"
-              style="width: 120px"
+            v-model="filterForm.status"
+            allow-clear
+            placeholder="请选择活动状态"
+            style="width: 120px"
           >
             <a-option value="1">待发布</a-option>
             <a-option value="2">已发布</a-option>
@@ -95,17 +95,17 @@
         </a-form-item>
         <a-form-item label="活动时间">
           <a-range-picker
-              v-model="filterForm.timeRange"
-              format="YYYY-MM-DD"
-              placeholder="请选择活动时间范围"
-              style="width: 300px"
+            v-model="filterForm.timeRange"
+            format="YYYY-MM-DD"
+            placeholder="请选择活动时间范围"
+            style="width: 300px"
           />
         </a-form-item>
         <a-form-item label="排序方式">
           <a-select
-              v-model="filterForm.sortBy"
-              placeholder="请选择排序方式"
-              style="width: 150px"
+            v-model="filterForm.sortBy"
+            placeholder="请选择排序方式"
+            style="width: 150px"
           >
             <a-option value="createTime">创建时间</a-option>
             <a-option value="startTime">开始时间</a-option>
@@ -129,13 +129,13 @@
     <a-card class="list-card" style="margin-top: 16px">
       <template #loading>
         <div style="display: flex; justify-content: center; padding: 40px">
-          <a-spin size="large" tip="加载中..."/>
+          <a-spin size="large" tip="加载中..." />
         </div>
       </template>
       <a-table
-          :data="activityList"
-          :loading="loading"
-          :pagination="{
+        :data="activityList"
+        :loading="loading"
+        :pagination="{
           current: pagination.current,
           pageSize: pagination.pageSize,
           total: pagination.total,
@@ -144,13 +144,13 @@
           onChange: handlePageChange,
           onShowSizeChange: handleSizeChange,
         }"
-          border
-          pagination-position="bottom"
-          row-key="id"
+        border
+        pagination-position="bottom"
+        row-key="id"
       >
         <template #columns>
-          <a-table-column data-index="id" title="活动ID" width="100"/>
-          <a-table-column data-index="activityName" title="活动名称"/>
+          <a-table-column data-index="id" title="活动ID" width="100" />
+          <a-table-column data-index="activityName" title="活动名称" />
           <a-table-column data-index="orgId" title="所属党组织">
             <template #cell="{ record }">
               {{ record.orgName || "未知组织" }}
@@ -184,14 +184,13 @@
           <a-table-column title="参与数据">
             <template #cell="{ record }">
               <div>
-                报名人数：{{ record.totalParticipant }}/{{
-                  record.maxNum
-                }}<br/>
-                签到人数：{{ record.actualParticipant }}<br/>
+                报名人数：{{ record.totalParticipant }}/{{ record.maxNum
+                }}<br />
+                签到人数：{{ record.actualParticipant }}<br />
                 签到率：{{
                   record.signRate
-                      ? (record.signRate * 100).toFixed(2) + "%"
-                      : "0%"
+                    ? (record.signRate * 100).toFixed(2) + "%"
+                    : "0%"
                 }}
               </div>
             </template>
@@ -203,59 +202,59 @@
               </a-button>
               <!-- 新增：报名/取消报名按钮 -->
               <a-button
-                  v-if="[2, 3].includes(record.status) && !record.hasEnrolled"
-                  size="small"
-                  type="primary"
-                  @click="handleEnrollActivity(record)"
+                v-if="[2, 3].includes(record.status) && !record.hasEnrolled"
+                size="small"
+                type="primary"
+                @click="handleEnrollActivity(record)"
               >
                 报名
               </a-button>
               <a-button
-                  v-if="[2, 3].includes(record.status) && record.hasEnrolled"
-                  size="small"
-                  type="warning"
-                  @click="handleCancelEnroll(record)"
+                v-if="[2, 3].includes(record.status) && record.hasEnrolled"
+                size="small"
+                type="warning"
+                @click="handleCancelEnroll(record)"
               >
                 取消报名
               </a-button>
               <!-- 原有按钮 -->
               <a-button
-                  v-if="record.status === 1"
-                  size="small"
-                  type="success"
-                  @click="handlePublishActivity(record)"
+                v-if="record.status === 1"
+                size="small"
+                type="success"
+                @click="handlePublishActivity(record)"
               >
                 发布
               </a-button>
               <a-button
-                  v-if="[1, 2].includes(record.status)"
-                  size="small"
-                  type="primary"
-                  @click="handleEditActivity(record)"
+                v-if="[1, 2].includes(record.status)"
+                size="small"
+                type="primary"
+                @click="handleEditActivity(record)"
               >
                 编辑
               </a-button>
               <a-button
-                  v-if="record.status === 3"
-                  size="small"
-                  type="success"
-                  @click="handleSignIn(record)"
+                v-if="record.status === 3"
+                size="small"
+                type="success"
+                @click="handleSignIn(record)"
               >
                 签到管理
               </a-button>
               <a-button
-                  v-if="record.status === 4"
-                  size="small"
-                  type="warning"
-                  @click="handleActivityReview(record)"
+                v-if="record.status === 4"
+                size="small"
+                type="warning"
+                @click="handleActivityReview(record)"
               >
                 活动回顾
               </a-button>
               <a-button
-                  v-if="record.status === 1"
-                  size="small"
-                  type="danger"
-                  @click="handleDeleteActivity(record.id)"
+                v-if="record.status === 1"
+                size="small"
+                type="danger"
+                @click="handleDeleteActivity(record.id)"
               >
                 删除
               </a-button>
@@ -267,30 +266,30 @@
 
     <!-- 创建/编辑活动弹窗 -->
     <a-modal
-        v-model:visible="activityModalVisible"
-        :ok-loading="buttonLoading.save"
-        :title="isEdit ? '编辑活动' : '创建活动'"
-        width="800px"
-        @ok="handleSaveActivity"
+      v-model:visible="activityModalVisible"
+      :ok-loading="buttonLoading.save"
+      :title="isEdit ? '编辑活动' : '创建活动'"
+      width="800px"
+      @ok="handleSaveActivity"
     >
       <a-form
-          ref="activityFormRef"
-          :model="activityForm"
-          :rules="activityFormRules"
-          layout="vertical"
+        ref="activityFormRef"
+        :model="activityForm"
+        :rules="activityFormRules"
+        layout="vertical"
       >
         <a-form-item field="activityName" label="活动名称">
           <a-input
-              v-model="activityForm.activityName"
-              placeholder="请输入活动名称"
+            v-model="activityForm.activityName"
+            placeholder="请输入活动名称"
           />
         </a-form-item>
         <a-form-item field="orgId" label="所属党组织">
           <a-select v-model="activityForm.orgId" placeholder="请选择所属党组织">
             <a-option
-                v-for="option in orgOptions"
-                :key="option.value"
-                :value="option.value"
+              v-for="option in orgOptions"
+              :key="option.value"
+              :value="option.value"
             >
               {{ option.label }}
             </a-option>
@@ -298,8 +297,8 @@
         </a-form-item>
         <a-form-item field="activityType" label="活动类型">
           <a-select
-              v-model="activityForm.activityType"
-              placeholder="请选择活动类型"
+            v-model="activityForm.activityType"
+            placeholder="请选择活动类型"
           >
             <a-option value="1">会议</a-option>
             <a-option value="2">志愿活动</a-option>
@@ -309,49 +308,49 @@
         </a-form-item>
         <a-form-item field="startTime" label="活动开始时间">
           <a-date-picker
-              v-model="activityForm.startTime"
-              format="YYYY-MM-DD HH:mm:ss"
-              placeholder="请选择活动开始时间"
-              show-time
-              value-format="YYYY-MM-DD HH:mm:ss"
+            v-model="activityForm.startTime"
+            format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择活动开始时间"
+            show-time
+            value-format="YYYY-MM-DD HH:mm:ss"
           />
         </a-form-item>
         <a-form-item field="endTime" label="活动结束时间">
           <a-date-picker
-              v-model="activityForm.endTime"
-              format="YYYY-MM-DD HH:mm:ss"
-              placeholder="请选择活动结束时间"
-              show-time
-              value-format="YYYY-MM-DD HH:mm:ss"
+            v-model="activityForm.endTime"
+            format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择活动结束时间"
+            show-time
+            value-format="YYYY-MM-DD HH:mm:ss"
           />
         </a-form-item>
         <a-form-item field="enrollDeadline" label="报名截止时间">
           <a-date-picker
-              v-model="activityForm.enrollDeadline"
-              format="YYYY-MM-DD HH:mm:ss"
-              placeholder="请选择报名截止时间"
-              show-time
-              value-format="YYYY-MM-DD HH:mm:ss"
+            v-model="activityForm.enrollDeadline"
+            format="YYYY-MM-DD HH:mm:ss"
+            placeholder="请选择报名截止时间"
+            show-time
+            value-format="YYYY-MM-DD HH:mm:ss"
           />
         </a-form-item>
         <a-form-item field="location" label="活动地点">
           <a-input
-              v-model="activityForm.location"
-              placeholder="请输入活动地点"
+            v-model="activityForm.location"
+            placeholder="请输入活动地点"
           />
         </a-form-item>
         <a-form-item field="maxNum" label="最大参与人数">
           <a-input-number
-              v-model="activityForm.maxNum"
-              min="1"
-              placeholder="请输入最大参与人数"
+            v-model="activityForm.maxNum"
+            min="1"
+            placeholder="请输入最大参与人数"
           />
         </a-form-item>
         <a-form-item field="activityContent" label="活动描述">
           <a-textarea
-              v-model="activityForm.activityContent"
-              :rows="4"
-              placeholder="请输入活动详细描述"
+            v-model="activityForm.activityContent"
+            :rows="4"
+            placeholder="请输入活动详细描述"
           />
         </a-form-item>
         <a-form-item v-if="isEdit" field="status" label="活动状态">
@@ -367,16 +366,16 @@
 
     <!-- 活动详情弹窗 -->
     <a-modal
-        v-model:visible="detailModalVisible"
-        :footer="null"
-        title="活动详情"
-        width="1000px"
+      v-model:visible="detailModalVisible"
+      :footer="null"
+      title="活动详情"
+      width="1000px"
     >
       <a-tabs v-model:active-key="detailActiveKey">
         <a-tab-pane key="base" title="基本信息">
           <!-- 操作按钮区域 -->
           <div
-              style="
+            style="
               margin-bottom: 20px;
               display: flex;
               gap: 12px;
@@ -384,50 +383,50 @@
             "
           >
             <a-button
-                v-if="
+              v-if="
                 [2, 3].includes(currentActivity?.status) &&
                 !currentActivity?.hasEnrolled
               "
-                type="primary"
-                @click="handleEnrollActivity(currentActivity)"
+              type="primary"
+              @click="handleEnrollActivity(currentActivity)"
             >
               报名活动
             </a-button>
             <a-button
-                v-if="
+              v-if="
                 [2, 3].includes(currentActivity?.status) &&
                 currentActivity?.hasEnrolled
               "
-                type="warning"
-                @click="handleCancelEnroll(currentActivity)"
+              type="warning"
+              @click="handleCancelEnroll(currentActivity)"
             >
               取消报名
             </a-button>
             <a-button
-                v-if="currentActivity?.status === 1"
-                type="success"
-                @click="handlePublishActivity(currentActivity)"
+              v-if="currentActivity?.status === 1"
+              type="success"
+              @click="handlePublishActivity(currentActivity)"
             >
               发布活动
             </a-button>
             <a-button
-                v-if="[1, 2].includes(currentActivity?.status)"
-                type="primary"
-                @click="handleEditActivity(currentActivity)"
+              v-if="[1, 2].includes(currentActivity?.status)"
+              type="primary"
+              @click="handleEditActivity(currentActivity)"
             >
               编辑活动
             </a-button>
             <a-button
-                v-if="currentActivity?.status === 3"
-                type="success"
-                @click="handleSignIn(currentActivity)"
+              v-if="currentActivity?.status === 3"
+              type="success"
+              @click="handleSignIn(currentActivity)"
             >
               签到管理
             </a-button>
             <a-button
-                v-if="currentActivity?.status === 1"
-                type="danger"
-                @click="handleDeleteActivity(currentActivity?.id)"
+              v-if="currentActivity?.status === 1"
+              type="danger"
+              @click="handleDeleteActivity(currentActivity?.id)"
             >
               删除活动
             </a-button>
@@ -435,7 +434,7 @@
 
           <!-- 活动状态和统计信息卡片 -->
           <div
-              style="
+            style="
               margin-bottom: 20px;
               display: flex;
               gap: 16px;
@@ -443,8 +442,8 @@
             "
           >
             <div
-                class="stat-card"
-                style="flex: 1; min-width: 150px; padding: 16px"
+              class="stat-card"
+              style="flex: 1; min-width: 150px; padding: 16px"
             >
               <div class="stat-number" style="font-size: 24px; color: #1890ff">
                 {{ currentActivity?.totalParticipant || 0 }}/{{
@@ -454,8 +453,8 @@
               <div class="stat-label">报名情况</div>
             </div>
             <div
-                class="stat-card"
-                style="flex: 1; min-width: 150px; padding: 16px"
+              class="stat-card"
+              style="flex: 1; min-width: 150px; padding: 16px"
             >
               <div class="stat-number" style="font-size: 24px; color: #52c41a">
                 {{ currentActivity?.actualParticipant || 0 }}
@@ -463,14 +462,14 @@
               <div class="stat-label">签到人数</div>
             </div>
             <div
-                class="stat-card"
-                style="flex: 1; min-width: 150px; padding: 16px"
+              class="stat-card"
+              style="flex: 1; min-width: 150px; padding: 16px"
             >
               <div class="stat-number" style="font-size: 24px; color: #faad14">
                 {{
                   currentActivity?.signRate
-                      ? (currentActivity.signRate * 100).toFixed(0) + "%"
-                      : "0%"
+                    ? (currentActivity.signRate * 100).toFixed(0) + "%"
+                    : "0%"
                 }}
               </div>
               <div class="stat-label">签到率</div>
@@ -480,19 +479,19 @@
           <!-- 活动基本信息 -->
           <a-descriptions :column="2" bordered style="margin-bottom: 20px">
             <a-descriptions-item label="活动ID"
-            >{{ currentActivity?.id }}
+              >{{ currentActivity?.id }}
             </a-descriptions-item>
             <a-descriptions-item label="活动名称"
-            >{{ currentActivity?.activityName }}
+              >{{ currentActivity?.activityName }}
             </a-descriptions-item>
             <a-descriptions-item label="所属党组织">
               {{ currentActivity?.orgName || "未知组织" }}
             </a-descriptions-item>
             <a-descriptions-item label="创建人ID"
-            >{{ currentActivity?.userId || "-" }}
+              >{{ currentActivity?.userId || "-" }}
             </a-descriptions-item>
             <a-descriptions-item label="活动类型"
-            >{{ typeLabelMap[currentActivity?.activityType] }}
+              >{{ typeLabelMap[currentActivity?.activityType] }}
             </a-descriptions-item>
             <a-descriptions-item label="活动状态">
               <a-tag :color="statusColorMap[currentActivity?.status]">
@@ -500,34 +499,34 @@
               </a-tag>
             </a-descriptions-item>
             <a-descriptions-item label="活动开始时间"
-            >{{ formatDate(currentActivity?.startTime) }}
+              >{{ formatDate(currentActivity?.startTime) }}
             </a-descriptions-item>
             <a-descriptions-item label="活动结束时间"
-            >{{ formatDate(currentActivity?.endTime) }}
+              >{{ formatDate(currentActivity?.endTime) }}
             </a-descriptions-item>
             <a-descriptions-item label="报名截止时间"
-            >{{ formatDate(currentActivity?.enrollDeadline) }}
+              >{{ formatDate(currentActivity?.enrollDeadline) }}
             </a-descriptions-item>
             <a-descriptions-item label="活动地点"
-            >{{ currentActivity?.location || "-" }}
+              >{{ currentActivity?.location || "-" }}
             </a-descriptions-item>
             <a-descriptions-item label="最大参与人数"
-            >{{ currentActivity?.maxNum || 0 }}
+              >{{ currentActivity?.maxNum || 0 }}
             </a-descriptions-item>
             <a-descriptions-item label="当前参与人数"
-            >{{ currentActivity?.currentNum || 0 }}
+              >{{ currentActivity?.currentNum || 0 }}
             </a-descriptions-item>
             <a-descriptions-item label="总报名人数"
-            >{{ currentActivity?.totalParticipant || 0 }}
+              >{{ currentActivity?.totalParticipant || 0 }}
             </a-descriptions-item>
             <a-descriptions-item label="实际签到人数"
-            >{{ currentActivity?.actualParticipant || 0 }}
+              >{{ currentActivity?.actualParticipant || 0 }}
             </a-descriptions-item>
             <a-descriptions-item label="创建时间"
-            >{{ formatDate(currentActivity?.createTime) }}
+              >{{ formatDate(currentActivity?.createTime) }}
             </a-descriptions-item>
             <a-descriptions-item label="更新时间"
-            >{{ formatDate(currentActivity?.updateTime) }}
+              >{{ formatDate(currentActivity?.updateTime) }}
             </a-descriptions-item>
           </a-descriptions>
 
@@ -553,7 +552,7 @@
         </a-tab-pane>
         <a-tab-pane key="participant" title="参与人员">
           <div
-              style="
+            style="
               margin-bottom: 16px;
               display: flex;
               justify-content: space-between;
@@ -562,51 +561,52 @@
           >
             <div>
               <span style="margin-right: 16px"
-              >总参与人数：{{ currentActivity?.totalParticipant || 0 }}</span
+                >总参与人数：{{ currentActivity?.totalParticipant || 0 }}</span
               >
               <span
-              >已签到人数：{{ currentActivity?.actualParticipant || 0 }}</span
+                >已签到人数：{{ currentActivity?.actualParticipant || 0 }}</span
               >
             </div>
             <a-button
-                v-if="currentActivity?.status === 3"
-                type="primary"
-                @click="handleSignIn(currentActivity)"
+              v-if="currentActivity?.status === 3"
+              type="primary"
+              @click="handleSignIn(currentActivity)"
             >
               进入签到管理
             </a-button>
           </div>
           <a-table
-              :data="currentActivity?.participants || []"
-              :pagination="{
+            :data="currentActivity?.participants || []"
+            :pagination="{
               current: 1,
               pageSize: 10,
               showSizeChanger: true,
               showTotal: (total) => `共 ${total} 条记录`,
             }"
-              border
-              row-key="id"
+            border
+            row-key="enrollId"
           >
             <template #columns>
-              <a-table-column title="序号" type="index" width="80"/>
-              <a-table-column data-index="id" title="党员ID"/>
-              <a-table-column data-index="name" title="姓名"/>
-              <a-table-column data-index="type" title="党员类型">
-                <template #cell="{ value }">
-                  <a-tag :color="value === 'student' ? 'blue' : 'green'">
-                    {{ value === "student" ? "学生党员" : "教师党员" }}
+              <a-table-column title="序号" type="index" width="80" />
+              <a-table-column data-index="userId" title="党员ID" />
+              <a-table-column data-index="userName" title="姓名" />
+              <a-table-column data-index="userType" title="党员类型">
+                <template #userType="{ value }">
+                  <a-tag :color="value === '学生' ? 'blue' : 'green'">
+                    {{ value }}
                   </a-tag>
                 </template>
               </a-table-column>
-              <a-table-column data-index="signUpTime" title="报名时间">
-                <template #cell="{ value }">
+              <a-table-column data-index="orgName" title="所属组织" />
+              <a-table-column data-index="enrollTime" title="报名时间">
+                <template #enrollTime="{ value }">
                   {{ formatDate(value) }}
                 </template>
               </a-table-column>
-              <a-table-column data-index="signStatus" title="签到状态">
-                <template #cell="{ value }">
-                  <a-tag :color="value ? 'green' : 'red'">
-                    {{ value ? "已签到" : "未签到" }}
+              <a-table-column data-index="isSign" title="签到状态">
+                <template #cell="{ record }">
+                  <a-tag :color="record.isSign === 1 ? 'green' : 'red'">
+                    {{ record.isSign === 1 ? "已签到" : "未签到" }}
                   </a-tag>
                 </template>
               </a-table-column>
@@ -618,79 +618,76 @@
 
     <!-- 签到管理弹窗 -->
     <a-modal
-        v-model:visible="signInModalVisible"
-        :ok-loading="buttonLoading.signIn"
-        title="签到管理"
-        width="800px"
-        @ok="handleSignInConfirm"
+      v-model:visible="signInModalVisible"
+      :ok-loading="buttonLoading.signIn"
+      title="签到管理"
+      width="800px"
+      @ok="handleSignInConfirm"
     >
       <div v-if="currentActivity">
-        <div style="margin-bottom: 20px;">
+        <div style="margin-bottom: 20px">
           <h3>{{ currentActivity.activityName }}</h3>
-          <p style="color: #666;">
-            活动时间：{{ formatDate(currentActivity.startTime) }} 至 {{ formatDate(currentActivity.endTime) }}
+          <p style="color: #666">
+            活动时间：{{ formatDate(currentActivity.startTime) }} 至
+            {{ formatDate(currentActivity.endTime) }}
           </p>
-          <p style="color: #666;">
-            活动地点：{{ currentActivity.location }}
-          </p>
+          <p style="color: #666">活动地点：{{ currentActivity.location }}</p>
         </div>
-        
-        <div style="margin-bottom: 16px;">
-          <a-input
-              v-model:value="signInSearchKey"
-              placeholder="搜索参与人员姓名"
-            >
-              <template #prefix>
-                <a-icon name="search" />
-              </template>
-            </a-input>
+
+        <div style="margin-bottom: 16px">
+          <a-input v-model="signInSearchKey" placeholder="搜索参与人员姓名">
+            <template #prefix>
+              <a-icon name="search" />
+            </template>
+          </a-input>
         </div>
-        
+
         <a-table
-            :data="filteredParticipants"
-            :pagination="{
+          :data="filteredParticipants"
+          :pagination="{
             current: 1,
             pageSize: 10,
             showSizeChanger: true,
             showTotal: (total) => `共 ${total} 条记录`,
           }"
-            border
-            row-key="id"
+          border
+          row-key="enrollId"
         >
           <template #columns>
-            <a-table-column title="序号" type="index" width="80"/>
-            <a-table-column data-index="id" title="党员ID"/>
-            <a-table-column data-index="name" title="姓名"/>
-            <a-table-column data-index="type" title="党员类型">
-              <template #cell="{ value }">
-                <a-tag :color="value === 'student' ? 'blue' : 'green'">
-                  {{ value === "student" ? "学生党员" : "教师党员" }}
+            <a-table-column title="序号" type="index" width="80" />
+            <a-table-column data-index="userId" title="党员ID" />
+            <a-table-column data-index="userName" title="姓名" />
+            <a-table-column data-index="userType" title="党员类型">
+              <template #userType="{ value }">
+                <a-tag :color="value === '学生' ? 'blue' : 'green'">
+                  {{ value }}
                 </a-tag>
               </template>
             </a-table-column>
-            <a-table-column data-index="signUpTime" title="报名时间">
-              <template #cell="{ value }">
+            <a-table-column data-index="orgName" title="所属组织" />
+            <a-table-column data-index="enrollTime" title="报名时间">
+              <template #enrollTime="{ value }">
                 {{ formatDate(value) }}
               </template>
             </a-table-column>
-            <a-table-column data-index="signStatus" title="签到状态">
-              <template #cell="{ value }">
-                <a-tag :color="value ? 'green' : 'red'">
-                  {{ value ? "已签到" : "未签到" }}
+            <a-table-column data-index="isSign" title="签到状态">
+              <template #cell="{ record }">
+                <a-tag :color="record.isSign === 1 ? 'green' : 'red'">
+                  {{ record.isSign === 1 ? "已签到" : "未签到" }}
                 </a-tag>
               </template>
             </a-table-column>
             <a-table-column title="操作" width="120">
               <template #cell="{ record }">
                 <a-button
-                    v-if="!record.signStatus"
-                    size="small"
-                    type="primary"
-                    @click="handleSingleSignIn(record)"
+                  v-if="record.isSign !== 1"
+                  size="small"
+                  type="primary"
+                  @click="handleSingleSignIn(record)"
                 >
                   签到
                 </a-button>
-                <span v-else style="color: #999;">已签到</span>
+                <span v-else style="color: #999">已签到</span>
               </template>
             </a-table-column>
           </template>
@@ -701,11 +698,12 @@
 </template>
 
 <script lang="ts" setup>
-import {computed, onMounted, reactive, ref} from "vue";
-import {Message} from "@arco-design/web-vue";
-import {IconPlus} from "@arco-design/web-vue/es/icon";
-import {Service} from "../../../generated"; // 请根据实际路径调整
-import {useStore} from "vuex";
+import { computed, onMounted, reactive, ref } from "vue";
+import { Message } from "@arco-design/web-vue";
+import { IconPlus } from "@arco-design/web-vue/es/icon";
+import { Service } from "../../../generated"; // 请根据实际路径调整
+import * as huodongbaomingguanli from "@/api/huodongbaomingguanli";
+import { useStore } from "vuex";
 import type {
   ActivityAddRequest,
   ActivityEnrollAddRequest,
@@ -741,30 +739,42 @@ interface Activity {
   updateTime: string | null; // 更新时间
   participants?: {
     // 参与人员（扩展字段）
-    id: string;
-    name: string;
-    type: "student" | "teacher";
-    signUpTime: string;
-    signStatus: boolean;
+    enrollId: string;
+    activityId: string;
+    userId: string;
+    userAccount: string;
+    userName: string;
+    userAvatar: string;
+    orgId: string;
+    orgName: string;
+    phone: string;
+    userType: string;
+    politicalStatus: string;
+    enrollTime: string;
+    participantStatus: number;
+    participantStatusName: string;
+    isSign: number;
+    isSignName: string;
+    createTime: string;
   }[];
   orgName?: string; // 扩展字段：党组织名称
   hasEnrolled?: boolean; // 扩展字段：当前用户是否已报名
 }
 
 interface ActivityForm
-    extends Omit<
-        Activity,
-        | "id"
-        | "currentNum"
-        | "totalParticipant"
-        | "actualParticipant"
-        | "signRate"
-        | "createTime"
-        | "updateTime"
-        | "participants"
-        | "orgName"
-        | "hasEnrolled"
-    > {
+  extends Omit<
+    Activity,
+    | "id"
+    | "currentNum"
+    | "totalParticipant"
+    | "actualParticipant"
+    | "signRate"
+    | "createTime"
+    | "updateTime"
+    | "participants"
+    | "orgName"
+    | "hasEnrolled"
+  > {
   id?: number;
 }
 
@@ -856,13 +866,13 @@ const activityForm = reactive<ActivityForm>({
 });
 
 const activityFormRules = {
-  activityName: [{required: true, message: "请输入活动名称"}],
-  orgId: [{required: true, message: "请选择所属党组织"}],
-  activityType: [{required: true, message: "请选择活动类型"}],
-  startTime: [{required: true, message: "请选择活动开始时间"}],
-  endTime: [{required: true, message: "请选择活动结束时间"}],
+  activityName: [{ required: true, message: "请输入活动名称" }],
+  orgId: [{ required: true, message: "请选择所属党组织" }],
+  activityType: [{ required: true, message: "请选择活动类型" }],
+  startTime: [{ required: true, message: "请选择活动开始时间" }],
+  endTime: [{ required: true, message: "请选择活动结束时间" }],
   maxNum: [
-    {required: true, message: "请输入最大参与人数", type: "number", min: 1},
+    { required: true, message: "请输入最大参与人数", type: "number", min: 1 },
   ],
 };
 
@@ -881,8 +891,10 @@ const activityStats = reactive({
 const filteredParticipants = computed(() => {
   if (!currentActivity.value?.participants) return [];
   if (!signInSearchKey.value) return currentActivity.value.participants;
-  return currentActivity.value.participants.filter(participant => 
-    participant.name.toLowerCase().includes(signInSearchKey.value.toLowerCase())
+  return currentActivity.value.participants.filter((participant) =>
+    participant.userName
+      .toLowerCase()
+      .includes(signInSearchKey.value.toLowerCase()),
   );
 });
 
@@ -938,7 +950,7 @@ const getOrgName = async (orgId: number | undefined) => {
   }
   try {
     const res: BaseResponse_OrganizationVO_ =
-        await Service.getOrganizationByIdUsingGet(orgId);
+      await Service.getOrganizationByIdUsingGet(orgId);
     if (res.code === 0 && res.data) {
       const orgName = res.data.orgName || "未知组织";
       orgData.value[orgId] = orgName;
@@ -964,7 +976,7 @@ const loadAllOrganizations = async () => {
           const orgId = Number(org.id);
           const orgName = org.orgName || org.name;
           orgMapTemp[orgId] = orgName;
-          optionsTemp.push({label: orgName, value: orgId});
+          optionsTemp.push({ label: orgName, value: orgId });
         }
       });
 
@@ -1043,16 +1055,16 @@ const buildQueryParams = (): ActivityQueryRequest => {
   return {
     activityName: filterForm.activityName,
     activityType: filterForm.activityType
-        ? Number(filterForm.activityType)
-        : undefined,
+      ? Number(filterForm.activityType)
+      : undefined,
     orgId: filterForm.orgId ? Number(filterForm.orgId) : undefined,
     status: filterForm.status ? Number(filterForm.status) : undefined,
     startTime: filterForm.timeRange?.[0]
-        ? new Date(filterForm.timeRange[0]).toISOString()
-        : undefined,
+      ? new Date(filterForm.timeRange[0]).toISOString()
+      : undefined,
     endTime: filterForm.timeRange?.[1]
-        ? new Date(filterForm.timeRange[1]).toISOString()
-        : undefined,
+      ? new Date(filterForm.timeRange[1]).toISOString()
+      : undefined,
     current: pagination.current,
     pageSize: pagination.pageSize,
   };
@@ -1061,11 +1073,11 @@ const buildQueryParams = (): ActivityQueryRequest => {
 // 丰富活动数据（添加党组织名称和报名状态）
 const enrichActivityData = async (activities: any[]): Promise<Activity[]> => {
   return await Promise.all(
-      activities.map(async (activity) => {
-        const orgName = await getOrgName(activity.orgId);
-        const hasEnrolled = await checkEnrolledStatus(activity.id);
-        return {...activity, orgName, hasEnrolled};
-      }),
+    activities.map(async (activity) => {
+      const orgName = await getOrgName(activity.orgId);
+      const hasEnrolled = await checkEnrolledStatus(activity.id);
+      return { ...activity, orgName, hasEnrolled };
+    }),
   );
 };
 
@@ -1188,8 +1200,8 @@ const handleEnrollActivity = async (activity: Activity) => {
       activity.totalParticipant += 1;
     } else {
       showMessage(
-          res.message || `【${activity.activityName}】报名失败`,
-          "error",
+        res.message || `【${activity.activityName}】报名失败`,
+        "error",
       );
     }
   } catch (error) {
@@ -1203,7 +1215,7 @@ const handleEnrollActivity = async (activity: Activity) => {
 const handleCancelEnroll = async (activity: Activity) => {
   try {
     // 1. 前置校验
-    const loginUser = store.state.user.currentUser;
+    const loginUser = store.state.user.loginUser;
     if (!loginUser?.id) {
       showMessage("请先登录", "error");
       return;
@@ -1229,8 +1241,8 @@ const handleCancelEnroll = async (activity: Activity) => {
       activity.totalParticipant -= 1;
     } else {
       showMessage(
-          res.message || `【${activity.activityName}】取消报名失败`,
-          "error",
+        res.message || `【${activity.activityName}】取消报名失败`,
+        "error",
       );
     }
   } catch (error) {
@@ -1309,7 +1321,22 @@ const handleViewDetail = async (record: Activity) => {
       const orgName = await getOrgName(res.data.orgId);
       // 补充报名状态
       const hasEnrolled = await checkEnrolledStatus(res.data.id);
-      currentActivity.value = {...res.data, orgName, hasEnrolled};
+
+      // 获取参与人员列表
+      const participantsRes =
+        await huodongbaomingguanli.listEnrolledUsersUsingPost({
+          activityId: record.id,
+        });
+
+      const participants =
+        participantsRes.data.code === 0 ? participantsRes.data.data || [] : [];
+
+      currentActivity.value = {
+        ...res.data,
+        orgName,
+        hasEnrolled,
+        participants,
+      };
       reviewContent.value = res.data.reviewContent || "";
       detailModalVisible.value = true;
     } else {
@@ -1323,40 +1350,70 @@ const handleViewDetail = async (record: Activity) => {
   }
 };
 
-const handleSignIn = (record: Activity) => {
-  currentActivity.value = record;
-  signInSearchKey.value = '';
-  signInModalVisible.value = true;
+const handleSignIn = async (record: Activity) => {
+  try {
+    loading.value = true;
+    currentActivity.value = record;
+    signInSearchKey.value = "";
+
+    // 调用接口获取已报名人员列表
+    const res = await huodongbaomingguanli.listEnrolledUsersUsingPost({
+      activityId: record.id,
+    });
+
+    if (res.data.code === 0) {
+      // 将返回的数据转换为前端需要的格式
+      currentActivity.value.participants = res.data.data || [];
+    } else {
+      showMessage(res.data.message || "获取参与人员列表失败", "error");
+      currentActivity.value.participants = [];
+    }
+
+    signInModalVisible.value = true;
+  } catch (error) {
+    console.error("获取参与人员列表失败:", error);
+    showMessage("网络请求异常，获取参与人员列表失败", "error");
+    currentActivity.value = record;
+    currentActivity.value.participants = [];
+    signInModalVisible.value = true;
+  } finally {
+    loading.value = false;
+  }
 };
 
 // 处理单个人员签到
 const handleSingleSignIn = async (participant: any) => {
   if (!currentActivity.value) return;
-  
+
   try {
     buttonLoading.signIn = true;
-    
+
     // 构造签到请求参数
     const signInParams: ActivityEnrollSignInRequest = {
       activityId: currentActivity.value.id,
-      userId: Number(participant.id),
+      userId: Number(participant.userId),
     };
-    
+
     // 调用签到接口
     const res = await Service.signInActivityUsingPost(signInParams);
     if (res.code === 0) {
-      showMessage(`${participant.name} 签到成功`);
-      
+      showMessage(`${participant.userName} 签到成功`);
+
       // 更新本地数据
       if (currentActivity.value.participants) {
-        const index = currentActivity.value.participants.findIndex(p => p.id === participant.id);
+        const index = currentActivity.value.participants.findIndex(
+          (p) => p.userId === participant.userId,
+        );
         if (index !== -1) {
-          currentActivity.value.participants[index].signStatus = true;
+          currentActivity.value.participants[index].isSign = 1;
           // 更新实际签到人数
-          currentActivity.value.actualParticipant = (currentActivity.value.actualParticipant || 0) + 1;
+          currentActivity.value.actualParticipant =
+            (currentActivity.value.actualParticipant || 0) + 1;
           // 重新计算签到率
           if (currentActivity.value.totalParticipant) {
-            currentActivity.value.signRate = currentActivity.value.actualParticipant / currentActivity.value.totalParticipant;
+            currentActivity.value.signRate =
+              currentActivity.value.actualParticipant /
+              currentActivity.value.totalParticipant;
           }
         }
       }
@@ -1387,7 +1444,7 @@ const handleActivityReview = (record: Activity) => {
 const handleDeleteActivity = async (id: number) => {
   try {
     loading.value = true;
-    const deleteParams: DeleteRequest = {id};
+    const deleteParams: DeleteRequest = { id };
     const res = await Service.deleteActivityUsingPost(deleteParams);
     if (res.code === 0) {
       showMessage("删除活动成功");

@@ -352,13 +352,9 @@ import * as echarts from "echarts";
 import message from "@arco-design/web-vue/es/message";
 // 导入Arco图标
 import {
-  IconChart,
   IconDownload,
-  IconForm,
   IconRefresh,
-  IconLineChart,
   IconCheckCircle,
-  IconFileText,
   IconEye,
 } from "@arco-design/web-vue/es/icon";
 import { useRouter } from "vue-router";

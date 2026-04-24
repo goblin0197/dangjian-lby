@@ -60,11 +60,35 @@ declare namespace API {
     userId?: number;
   };
 
+  type ActivityEnrollListRequest = {
+    activityId?: number;
+  };
+
   type ActivityEnrollSignInRequest = {
     /** 活动ID */
     activityId: number;
     /** 用户ID */
     userId: number;
+  };
+
+  type ActivityEnrollUserVO = {
+    activityId?: number;
+    createTime?: string;
+    enrollId?: number;
+    enrollTime?: string;
+    isSign?: number;
+    isSignName?: string;
+    orgId?: number;
+    orgName?: string;
+    participantStatus?: number;
+    participantStatusName?: string;
+    phone?: string;
+    politicalStatus?: string;
+    userAccount?: string;
+    userAvatar?: string;
+    userId?: number;
+    userName?: string;
+    userType?: string;
   };
 
   type ActivityQueryRequest = {
@@ -220,6 +244,12 @@ declare namespace API {
   type BaseResponseInt_ = {
     code?: number;
     data?: number;
+    message?: string;
+  };
+
+  type BaseResponseListActivityEnrollUserVO_ = {
+    code?: number;
+    data?: ActivityEnrollUserVO[];
     message?: string;
   };
 
@@ -511,6 +541,7 @@ declare namespace API {
   type DevelopmentStage = {
     assessmentContent?: string;
     assessmentResult?: number;
+    attachment?: string;
     auditRemark?: string;
     auditTime?: string;
     auditUserId?: number;
@@ -854,10 +885,6 @@ declare namespace API {
   type listIndicatorUsingGETParams = {
     /** status */
     status?: string;
-    /** indicator */
-    indicator?: string;
-    /** orgLevel */
-    orgLevel?: string;
   };
 
   type listMaterialArchiveUsingGETParams = {
@@ -940,12 +967,21 @@ declare namespace API {
 
   type LoginUserVO = {
     createTime?: string;
+    email?: string;
     id?: number;
+    joinDate?: string;
+    orgId?: number;
+    phone?: string;
+    politicalStatus?: string;
+    positiveDate?: string;
+    status?: number;
     updateTime?: string;
+    userAccount?: string;
     userAvatar?: string;
     userName?: string;
-    userProfile?: string;
+    userPassword?: string;
     userRole?: string;
+    userType?: string;
   };
 
   type MapStringString_ = true;
@@ -1660,6 +1696,13 @@ declare namespace API {
   type updateActivityStatisticsUsingPOSTParams = {
     /** id */
     id?: number;
+  };
+
+  type updateAttachmentByIdUsingPOSTParams = {
+    /** attachment */
+    attachment: string;
+    /** id */
+    id: number;
   };
 
   type uploadAnnouncementAttachmentUsingPOSTParams = {
