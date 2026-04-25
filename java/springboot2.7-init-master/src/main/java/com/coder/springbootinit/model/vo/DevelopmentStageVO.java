@@ -87,6 +87,8 @@ public class DevelopmentStageVO implements Serializable {
      */
     private Date updateTime;
 
+    private String attachment;
+
     /**
      * 是否删除
      */

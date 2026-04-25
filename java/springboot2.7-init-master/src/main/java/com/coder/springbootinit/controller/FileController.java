@@ -35,6 +35,9 @@ import java.net.URLEncoder;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  * 文件接口
@@ -340,4 +343,11 @@ public class FileController {
         List<MyFile> fileList = fileService.list(queryWrapper);
         return ResultUtils.success(fileList);
     }
+
+    @GetMapping("/getFileInfo/byUrl")
+    public BaseResponse<MyFile> getFileInfoByUrl(@RequestParam String fileUrl) {
+        MyFile file = fileService.getOne(new QueryWrapper<MyFile>().eq("fileUrl", fileUrl));
+        return ResultUtils.success(file);
+    }
+    
 }

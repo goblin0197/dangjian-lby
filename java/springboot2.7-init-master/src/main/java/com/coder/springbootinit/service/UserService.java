@@ -73,6 +73,10 @@ public interface UserService extends IService<User> {
      */
     boolean isAdmin(User user);
 
+    boolean isSuperAdmin(HttpServletRequest request);
+
+    boolean isSuperAdmin(User user);
+
     /**
      * 用户注销
      *

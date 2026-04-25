@@ -174,6 +174,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return user != null && (UserRoleEnum.SUPER_ADMIN.getValue().equals(user.getUserRole()) || UserRoleEnum.ORG_ADMIN.getValue().equals(user.getUserRole()));
     }
 
+    @Override
+    public boolean isSuperAdmin(HttpServletRequest request) {
+        // 仅系统管理员可查询
+        Object userObj = request.getSession().getAttribute(USER_LOGIN_STATE);
+        User user = (User) userObj;
+        return isSuperAdmin(user);
+    }
+
+    @Override
+    public boolean isSuperAdmin(User user) {
+        return user != null && UserRoleEnum.SUPER_ADMIN.getValue().equals(user.getUserRole());
+       }
+
     /**
      * 用户注销
      *

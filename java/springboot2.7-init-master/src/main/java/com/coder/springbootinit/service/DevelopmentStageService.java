@@ -10,6 +10,8 @@ import com.coder.springbootinit.model.vo.DevelopmentStageVO;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * 发展阶段表 Service 接口
  *
@@ -35,7 +37,7 @@ public interface DevelopmentStageService extends IService<DevelopmentStage> {
      * @param id 发展阶段ID
      * @return 是否删除成功
      */
-    boolean deleteDevelopmentStage(Long id);
+    boolean deleteDevelopmentStage(Long id, HttpServletRequest request);
 
     /**
      * 根据用户ID获取发展阶段列表

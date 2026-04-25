@@ -22,6 +22,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -118,13 +120,17 @@ public class DevelopmentStageServiceImpl extends ServiceImpl<DevelopmentStageMap
      * @return 是否删除成功
      */
     @Override
-    public boolean deleteDevelopmentStage(Long id) {
+    public boolean deleteDevelopmentStage(Long id, HttpServletRequest request) {
         if (id == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "ID不能为空");
         }
         DevelopmentStage developmentStage = this.getById(id);
         if (developmentStage == null) {
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "发展阶段记录不存在");
+        }
+        // 已完成审核的发展记录不允许删除，除系统管理员外
+        if (developmentStage.getStageStatus() == DevelopmentStageStatusEnum.COMPLETED.getValue() && !userService.isSuperAdmin(request)) {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "已完成审核的发展阶段不允许删除");
         }
         return this.removeById(id);
     }

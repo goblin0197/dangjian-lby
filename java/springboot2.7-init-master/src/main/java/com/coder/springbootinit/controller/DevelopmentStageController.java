@@ -84,11 +84,11 @@ public class DevelopmentStageController {
     @ApiOperation(value = "删除发展阶段记录")
     @DevelopmentStageLogAnnotation(operationType = DevelopmentStageOperationEnum.DELETE, description = "删除发展阶段记录")
     // @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE, UserConstant.ORG_ADMIN_ROLE})
-    public BaseResponse<Boolean> deleteDevelopmentStage(@RequestBody DeleteRequest deleteRequest) {
+    public BaseResponse<Boolean> deleteDevelopmentStage(@RequestBody DeleteRequest deleteRequest, HttpServletRequest request) {
         if (deleteRequest == null || deleteRequest.getId() == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean result = developmentStageService.deleteDevelopmentStage(deleteRequest.getId());
+        boolean result = developmentStageService.deleteDevelopmentStage(deleteRequest.getId(), request);
         return ResultUtils.success(result);
     }
 
