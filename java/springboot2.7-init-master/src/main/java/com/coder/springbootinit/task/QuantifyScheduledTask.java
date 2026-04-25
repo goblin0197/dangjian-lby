@@ -68,8 +68,7 @@ public class QuantifyScheduledTask {
             }
 
             // 生成根据量化指标的量化数据
-            String period = java.time.LocalDate.now().toString();
-            boolean quantifyDataResult = quantifyDataService.generateAllDataByIndicators(period);
+            boolean quantifyDataResult = quantifyDataService.generateAllDataByIndicators();
             if (quantifyDataResult) {
                 log.info("根据量化指标生成数据成功");
             } else {

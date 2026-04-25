@@ -287,21 +287,19 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
     }
 
     @Override
-    public boolean generateDataByIndicator(Long indicatorId, String period) {
+    public boolean generateDataByIndicator(Long indicatorId) {
         try {
-            // 获取量化指标
             QuantifyIndicator indicator = quantifyIndicatorService.getById(indicatorId);
             if (indicator == null || !"enable".equals(indicator.getStatus())) {
                 return false;
             }
 
-            // 根据指标维度生成数据
             String dimension = indicator.getDimension();
             if ("organization".equals(dimension) || "both".equals(dimension)) {
-                generateOrganizationData(indicator, period);
+                generateOrganizationData(indicator);
             }
             if ("personal".equals(dimension) || "both".equals(dimension)) {
-                generatePersonalData(indicator, period);
+                generatePersonalData(indicator);
             }
 
             return true;
@@ -312,17 +310,15 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
     }
 
     @Override
-    public boolean generateAllDataByIndicators(String period) {
+    public boolean generateAllDataByIndicators() {
         try {
-            // 获取所有启用的量化指标
             List<QuantifyIndicator> indicators = quantifyIndicatorService.listByStatus("enable");
             if (indicators.isEmpty()) {
                 return true;
             }
 
-            // 为每个指标生成数据
             for (QuantifyIndicator indicator : indicators) {
-                generateDataByIndicator(indicator.getId(), period);
+                generateDataByIndicator(indicator.getId());
             }
 
             return true;
@@ -335,34 +331,30 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
     /**
      * 生成组织维度的量化数据
      */
-    private void generateOrganizationData(QuantifyIndicator indicator, String period) {
-        // 获取所有组织
+    private void generateOrganizationData(QuantifyIndicator indicator) {
+        String period = java.time.LocalDate.now().toString();
+        
         List<Organization> organizationList = organizationService.list(null);
         
         for (Organization organization : organizationList) {
             try {
-                // 获取当前组织及其所有子组织的ID列表
                 List<Long> orgIdList = organizationService.getAllSubOrgIds(organization.getId());
                 
-                // 1. 统计组织的活动次数（包含所有子组织）
                 QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
                 activityQueryWrapper.in("orgId", orgIdList);
                 List<Activity> activityList = activityService.list(activityQueryWrapper);
                 int totalActivity = activityList.size();
                 
-                // 2. 统计总参与人数和总签到人数
                 int totalParticipant = 0;
                 int totalSign = 0;
                 
                 for (Activity activity : activityList) {
-                    // 统计该活动的报名参与人数
                     QueryWrapper<ActivityEnroll> enrollQueryWrapper = new QueryWrapper<>();
                     enrollQueryWrapper.eq("activityId", activity.getId());
                     enrollQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
                     int participantCount = Math.toIntExact(activityEnrollService.count(enrollQueryWrapper));
                     totalParticipant += participantCount;
                     
-                    // 统计该活动的签到人数
                     QueryWrapper<ActivityEnroll> signQueryWrapper = new QueryWrapper<>();
                     signQueryWrapper.eq("activityId", activity.getId());
                     signQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
@@ -371,17 +363,14 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
                     totalSign += signCount;
                 }
                 
-                // 3. 计算活动参与率
                 BigDecimal activityRate = totalActivity > 0 ? 
                     BigDecimal.valueOf(totalParticipant).divide(BigDecimal.valueOf(totalActivity * 1.0), 4, RoundingMode.HALF_UP) : 
                     BigDecimal.ZERO;
                 
-                // 4. 计算签到率
                 BigDecimal signRate = totalParticipant > 0 ? 
                     BigDecimal.valueOf(totalSign).divide(BigDecimal.valueOf(totalParticipant), 4, RoundingMode.HALF_UP) : 
                     BigDecimal.ZERO;
                 
-                // 5. 计算材料完成率（获取该组织下所有用户的材料提交情况）
                 QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
                 userQueryWrapper.eq("orgId", organization.getId());
                 List<User> userList = userService.list(userQueryWrapper);
@@ -389,7 +378,6 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
                 int totalTemplates = 0;
                 int totalSubmitted = 0;
                 
-                // 获取所有启用的材料模板
                 QueryWrapper<MaterialTemplate> templateQueryWrapper = new QueryWrapper<>();
                 templateQueryWrapper.eq("status", "enable");
                 List<MaterialTemplate> templateList = materialTemplateService.list(templateQueryWrapper);
@@ -413,11 +401,9 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
                     BigDecimal.valueOf(totalSubmitted).divide(BigDecimal.valueOf(totalTemplates), 4, RoundingMode.HALF_UP) : 
                     BigDecimal.ZERO;
                 
-                // 计算综合值（平均三个比率）
                 BigDecimal totalValue = activityRate.add(signRate).add(materialRate);
                 BigDecimal value = totalValue.divide(BigDecimal.valueOf(3), 4, RoundingMode.HALF_UP);
                 
-                // 保存数据
                 saveOrUpdateQuantifyData(indicator.getId(), organization.getId(), "organization", period, 
                     value, activityRate, signRate, materialRate);
                 
@@ -432,43 +418,38 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
     /**
      * 生成个人维度的量化数据
      */
-    private void generatePersonalData(QuantifyIndicator indicator, String period) {
-        // 获取所有用户
+    private void generatePersonalData(QuantifyIndicator indicator) {
+        String period = java.time.LocalDate.now().toString();
+        
         List<User> userList = userService.list(null);
         
         for (User user : userList) {
             try {
-                // 1. 统计用户所在组织及其所有父组织的总活动数
                 List<Long> orgIdList = organizationService.getAllParentOrgIds(user.getOrgId());
                 QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
                 activityQueryWrapper.in("orgId", orgIdList);
                 int totalActivity = Math.toIntExact(activityService.count(activityQueryWrapper));
                 
-                // 2. 统计用户参与的活动数
                 QueryWrapper<ActivityEnroll> enrollQueryWrapper = new QueryWrapper<>();
                 enrollQueryWrapper.eq("userId", user.getId());
                 enrollQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
                 List<ActivityEnroll> enrollList = activityEnrollService.list(enrollQueryWrapper);
                 int participateActivity = enrollList.size();
                 
-                // 3. 计算活动参与率
                 BigDecimal activityRate = totalActivity > 0 ? 
                     BigDecimal.valueOf(participateActivity).divide(BigDecimal.valueOf(totalActivity), 4, RoundingMode.HALF_UP) : 
                     BigDecimal.ZERO;
                 
-                // 4. 统计用户报名且签到的活动数
                 QueryWrapper<ActivityEnroll> signQueryWrapper = new QueryWrapper<>();
                 signQueryWrapper.eq("userId", user.getId());
                 signQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
                 signQueryWrapper.eq("isSign", ActivityEnrollSignEnum.SIGNED.getCode());
                 int signActivity = Math.toIntExact(activityEnrollService.count(signQueryWrapper));
                 
-                // 5. 计算签到率
                 BigDecimal signRate = participateActivity > 0 ? 
                     BigDecimal.valueOf(signActivity).divide(BigDecimal.valueOf(participateActivity), 4, RoundingMode.HALF_UP) : 
                     BigDecimal.ZERO;
                 
-                // 6. 计算材料完成率
                 QueryWrapper<MaterialTemplate> templateQueryWrapper = new QueryWrapper<>();
                 templateQueryWrapper.eq("status", "enable");
                 List<MaterialTemplate> templateList = materialTemplateService.list(templateQueryWrapper);
@@ -491,11 +472,9 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
                     BigDecimal.valueOf(submittedCount).divide(BigDecimal.valueOf(totalTemplates), 4, RoundingMode.HALF_UP) : 
                     BigDecimal.ZERO;
                 
-                // 计算综合值（平均三个比率）
                 BigDecimal totalValue = activityRate.add(signRate).add(materialRate);
                 BigDecimal value = totalValue.divide(BigDecimal.valueOf(3), 4, RoundingMode.HALF_UP);
                 
-                // 保存数据
                 saveOrUpdateQuantifyData(indicator.getId(), user.getId(), "personal", period, 
                     value, activityRate, signRate, materialRate);
                 

@@ -72,11 +72,8 @@ public class QuantifyDataController {
     @PostMapping("/generate")
     @ApiOperation(value = "根据量化指标生成数据")
     @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE})
-    public BaseResponse<Boolean> generateData(@RequestParam(required = false) String period) {
-        if (period == null || period.isEmpty()) {
-            period = java.time.LocalDate.now().toString();
-        }
-        boolean result = quantifyDataService.generateAllDataByIndicators(period);
+    public BaseResponse<Boolean> generateData() {
+        boolean result = quantifyDataService.generateAllDataByIndicators();
         return ResultUtils.success(result);
     }
 
@@ -86,14 +83,11 @@ public class QuantifyDataController {
     @PostMapping("/generate/{indicatorId}")
     @ApiOperation(value = "根据单个量化指标生成数据")
     @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE})
-    public BaseResponse<Boolean> generateDataByIndicator(@PathVariable Long indicatorId, @RequestParam(required = false) String period) {
+    public BaseResponse<Boolean> generateDataByIndicator(@PathVariable Long indicatorId) {
         if (indicatorId == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        if (period == null || period.isEmpty()) {
-            period = java.time.LocalDate.now().toString();
-        }
-        boolean result = quantifyDataService.generateDataByIndicator(indicatorId, period);
+        boolean result = quantifyDataService.generateDataByIndicator(indicatorId);
         return ResultUtils.success(result);
     }
 

@@ -70,15 +70,13 @@ public interface QuantifyDataService extends IService<QuantifyData> {
     /**
      * 根据单个量化指标生成数据
      * @param indicatorId 指标ID
-     * @param period 统计周期
      * @return 是否生成成功
      */
-    boolean generateDataByIndicator(Long indicatorId, String period);
+    boolean generateDataByIndicator(Long indicatorId);
 
     /**
      * 根据所有启用的量化指标生成数据
-     * @param period 统计周期
      * @return 是否生成成功
      */
-    boolean generateAllDataByIndicators(String period);
+    boolean generateAllDataByIndicators();
 }
