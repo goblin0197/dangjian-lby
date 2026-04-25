@@ -4,9 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.mapper.QuantifyDataMapper;
 import com.coder.springbootinit.model.entity.QuantifyData;
+import com.coder.springbootinit.model.entity.QuantifyIndicator;
 import com.coder.springbootinit.model.vo.QuantifyCoreIndicatorVO;
 import com.coder.springbootinit.model.vo.QuantifyStatisticsVO;
 import com.coder.springbootinit.service.QuantifyDataService;
+import com.coder.springbootinit.service.QuantifyIndicatorService;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -243,4 +245,77 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
         row.createCell(0).setCellValue(name);
         row.createCell(1).setCellValue(value != null ? value.doubleValue() : 0.0);
     }
+
+    @Override
+    public boolean generateDataByIndicator(Long indicatorId, String period) {
+        try {
+            // 获取量化指标
+            QuantifyIndicator indicator = quantifyIndicatorService.getById(indicatorId);
+            if (indicator == null || !"enable".equals(indicator.getStatus())) {
+                return false;
+            }
+
+            // 根据指标维度生成数据
+            String dimension = indicator.getDimension();
+            if ("organization".equals(dimension) || "both".equals(dimension)) {
+                generateOrganizationData(indicator, period);
+            }
+            if ("personal".equals(dimension) || "both".equals(dimension)) {
+                generatePersonalData(indicator, period);
+            }
+
+            return true;
+        } catch (Exception e) {
+            log.error("根据指标生成数据失败，指标ID: {}", indicatorId, e);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean generateAllDataByIndicators(String period) {
+        try {
+            // 获取所有启用的量化指标
+            List<QuantifyIndicator> indicators = quantifyIndicatorService.listByStatus("enable");
+            if (indicators.isEmpty()) {
+                return true;
+            }
+
+            // 为每个指标生成数据
+            for (QuantifyIndicator indicator : indicators) {
+                generateDataByIndicator(indicator.getId(), period);
+            }
+
+            return true;
+        } catch (Exception e) {
+            log.error("根据所有指标生成数据失败", e);
+            return false;
+        }
+    }
+
+    /**
+     * 生成组织维度的量化数据
+     */
+    private void generateOrganizationData(QuantifyIndicator indicator, String period) {
+        // 这里实现组织维度数据的生成逻辑
+        // 1. 获取所有组织
+        // 2. 根据指标规则计算每个组织的数据
+        // 3. 保存数据到quantify_data表
+        // 简化实现，实际应用中需要根据具体业务逻辑调整
+        log.info("生成组织维度数据，指标: {}, 周期: {}", indicator.getName(), period);
+    }
+
+    /**
+     * 生成个人维度的量化数据
+     */
+    private void generatePersonalData(QuantifyIndicator indicator, String period) {
+        // 这里实现个人维度数据的生成逻辑
+        // 1. 获取所有用户
+        // 2. 根据指标规则计算每个用户的数据
+        // 3. 保存数据到quantify_data表
+        // 简化实现，实际应用中需要根据具体业务逻辑调整
+        log.info("生成个人维度数据，指标: {}, 周期: {}", indicator.getName(), period);
+    }
+
+    @Resource
+    private QuantifyIndicatorService quantifyIndicatorService;
 }

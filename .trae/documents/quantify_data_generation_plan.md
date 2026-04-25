@@ -15,7 +15,7 @@
 ## 2. 实现目标
 
 将量化数据的生成方式从手动添加改为根据量化指标自动生成，具体目标：
-1. 修改定时任务，使其根据量化指标生成量化数据
+1. 修改定时任务，在保留生成user_quantify和org_quantify表数据逻辑的同时，添加根据量化指标生成quantify_data表数据的逻辑
 2. 为QuantifyDataService添加根据指标生成数据的方法
 3. 移除或禁用手动添加量化数据的接口
 4. 确保生成的数据与量化指标正确关联
@@ -33,7 +33,8 @@
 - 支持不同统计周期的数据生成
 
 ### 3.3 修改QuantifyScheduledTask
-- 在`generateQuantifyDataDaily`方法中添加调用`QuantifyDataService.generateAllDataByIndicators`的逻辑
+- 在`generateQuantifyDataDaily`方法中，保留原有的生成user_quantify和org_quantify表数据的逻辑
+- 在原有逻辑执行完成后，添加调用`QuantifyDataService.generateAllDataByIndicators`的逻辑
 - 确保定时任务能够根据量化指标自动生成数据
 
 ### 3.4 更新QuantifyDataController
@@ -80,7 +81,7 @@
 - 测试单个指标的数据生成
 - 测试多个指标的数据生成
 - 测试不同维度（组织/个人）的数据生成
-- 测试定时任务的自动执行
+- 测试定时任务的自动执行，确保同时生成user_quantify、org_quantify和quantify_data表的数据
 
 ### 6.2 性能测试
 - 测试大量数据生成的性能
@@ -93,6 +94,7 @@
 - 数据生成过程自动化，减少人工操作
 - 数据与指标的关联更加清晰
 - 系统维护成本降低
+- 保留原有的user_quantify和org_quantify表数据生成逻辑
 
 ## 8. 实施时间估计
 
