@@ -49,5 +49,11 @@ public class NoticeUpdateRequest implements Serializable {
     @ApiModelProperty(value = "状态：0-草稿，1-已发布")
     private Integer status;
 
+    /**
+     * 公告类型
+     */
+    @ApiModelProperty(value = "公告类型")
+    private Integer type;
+
     private static final long serialVersionUID = 1L;
 }

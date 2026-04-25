@@ -68,6 +68,11 @@ public class NoticeVO implements Serializable {
     private Integer status;
 
     /**
+     * 公告类型
+     */
+    private Integer type;
+
+    /**
      * 状态名称
      */
     private String statusName;

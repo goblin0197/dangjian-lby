@@ -64,6 +64,11 @@ public class Notice implements Serializable {
     private Integer status;
 
     /**
+     * 公告类型
+     */
+    private Integer type;
+
+    /**
      * 创建时间
      */
     private Date createTime;

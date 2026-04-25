@@ -52,6 +52,12 @@ public class NoticeQueryRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "是否置顶:0-否,1-是,默认全部")
     private Integer isTop;
 
+    /**
+     * 公告类型
+     */
+    @ApiModelProperty(value = "公告类型,默认全部")
+    private Integer type;
+
 
     /**
      * 过期时间开始

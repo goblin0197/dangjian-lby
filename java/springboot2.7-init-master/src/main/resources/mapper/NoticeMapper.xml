@@ -14,6 +14,7 @@
         <result property="expireTime" column="expireTime" jdbcType="TIMESTAMP"/>
         <result property="isTop" column="isTop" jdbcType="TINYINT"/>
         <result property="status" column="status" jdbcType="TINYINT"/>
+        <result property="type" column="type" jdbcType="TINYINT"/>
         <result property="createTime" column="createTime" jdbcType="TIMESTAMP"/>
         <result property="updateTime" column="updateTime" jdbcType="TIMESTAMP"/>
         <result property="isDelete" column="isDelete" jdbcType="TINYINT"/>
@@ -23,7 +24,7 @@
 
     <sql id="Base_Column_List">
         id
-        , title, content, publisherId, orgId, publishTime, expireTime, isTop, status,
+        , title, content, publisherId, orgId, publishTime, expireTime, isTop, status, type,
         createTime, updateTime, isDelete, firstPublishTime, readCount
     </sql>
 </mapper>
