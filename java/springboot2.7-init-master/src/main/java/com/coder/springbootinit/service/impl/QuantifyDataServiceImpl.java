@@ -1,14 +1,30 @@
 package com.coder.springbootinit.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.coder.springbootinit.mapper.QuantifyDataMapper;
+import com.coder.springbootinit.model.entity.Activity;
+import com.coder.springbootinit.model.entity.ActivityEnroll;
+import com.coder.springbootinit.model.entity.MaterialSubmission;
+import com.coder.springbootinit.model.entity.MaterialTemplate;
+import com.coder.springbootinit.model.entity.Organization;
 import com.coder.springbootinit.model.entity.QuantifyData;
 import com.coder.springbootinit.model.entity.QuantifyIndicator;
+import com.coder.springbootinit.model.entity.User;
+import com.coder.springbootinit.model.enums.ActivityEnrollSignEnum;
+import com.coder.springbootinit.model.enums.ActivityEnrollStatusEnum;
 import com.coder.springbootinit.model.vo.QuantifyCoreIndicatorVO;
 import com.coder.springbootinit.model.vo.QuantifyStatisticsVO;
+import com.coder.springbootinit.service.ActivityEnrollService;
+import com.coder.springbootinit.service.ActivityService;
+import com.coder.springbootinit.service.MaterialSubmissionService;
+import com.coder.springbootinit.service.MaterialTemplateService;
+import com.coder.springbootinit.service.OrganizationService;
 import com.coder.springbootinit.service.QuantifyDataService;
 import com.coder.springbootinit.service.QuantifyIndicatorService;
+import com.coder.springbootinit.service.UserService;
+
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
@@ -18,14 +34,38 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 量化数据记录服务实现
  *
  */
 @Service
+@Slf4j
 public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, QuantifyData> implements QuantifyDataService {
+
+    @Resource
+    private UserService userService;
+
+    @Resource
+    private OrganizationService organizationService;
+
+    @Resource
+    private ActivityService activityService;
+
+    @Resource
+    private ActivityEnrollService activityEnrollService;
+
+    @Resource
+    private MaterialSubmissionService materialSubmissionService;
+
+    @Resource
+    private MaterialTemplateService materialTemplateService;
 
     @Override
     public List<QuantifyData> getByTargetAndPeriod(Long targetId, String targetType, String period) {
@@ -296,24 +336,213 @@ public class QuantifyDataServiceImpl extends ServiceImpl<QuantifyDataMapper, Qua
      * 生成组织维度的量化数据
      */
     private void generateOrganizationData(QuantifyIndicator indicator, String period) {
-        // 这里实现组织维度数据的生成逻辑
-        // 1. 获取所有组织
-        // 2. 根据指标规则计算每个组织的数据
-        // 3. 保存数据到quantify_data表
-        // 简化实现，实际应用中需要根据具体业务逻辑调整
-        log.info("生成组织维度数据，指标: {}, 周期: {}", indicator.getName(), period);
+        // 获取所有组织
+        List<Organization> organizationList = organizationService.list(null);
+        
+        for (Organization organization : organizationList) {
+            try {
+                // 获取当前组织及其所有子组织的ID列表
+                List<Long> orgIdList = organizationService.getAllSubOrgIds(organization.getId());
+                
+                // 1. 统计组织的活动次数（包含所有子组织）
+                QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
+                activityQueryWrapper.in("orgId", orgIdList);
+                List<Activity> activityList = activityService.list(activityQueryWrapper);
+                int totalActivity = activityList.size();
+                
+                // 2. 统计总参与人数和总签到人数
+                int totalParticipant = 0;
+                int totalSign = 0;
+                
+                for (Activity activity : activityList) {
+                    // 统计该活动的报名参与人数
+                    QueryWrapper<ActivityEnroll> enrollQueryWrapper = new QueryWrapper<>();
+                    enrollQueryWrapper.eq("activityId", activity.getId());
+                    enrollQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
+                    int participantCount = Math.toIntExact(activityEnrollService.count(enrollQueryWrapper));
+                    totalParticipant += participantCount;
+                    
+                    // 统计该活动的签到人数
+                    QueryWrapper<ActivityEnroll> signQueryWrapper = new QueryWrapper<>();
+                    signQueryWrapper.eq("activityId", activity.getId());
+                    signQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
+                    signQueryWrapper.eq("isSign", ActivityEnrollSignEnum.SIGNED.getCode());
+                    int signCount = Math.toIntExact(activityEnrollService.count(signQueryWrapper));
+                    totalSign += signCount;
+                }
+                
+                // 3. 计算活动参与率
+                BigDecimal activityRate = totalActivity > 0 ? 
+                    BigDecimal.valueOf(totalParticipant).divide(BigDecimal.valueOf(totalActivity * 1.0), 4, RoundingMode.HALF_UP) : 
+                    BigDecimal.ZERO;
+                
+                // 4. 计算签到率
+                BigDecimal signRate = totalParticipant > 0 ? 
+                    BigDecimal.valueOf(totalSign).divide(BigDecimal.valueOf(totalParticipant), 4, RoundingMode.HALF_UP) : 
+                    BigDecimal.ZERO;
+                
+                // 5. 计算材料完成率（获取该组织下所有用户的材料提交情况）
+                QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+                userQueryWrapper.eq("orgId", organization.getId());
+                List<User> userList = userService.list(userQueryWrapper);
+                
+                int totalTemplates = 0;
+                int totalSubmitted = 0;
+                
+                // 获取所有启用的材料模板
+                QueryWrapper<MaterialTemplate> templateQueryWrapper = new QueryWrapper<>();
+                templateQueryWrapper.eq("status", "enable");
+                List<MaterialTemplate> templateList = materialTemplateService.list(templateQueryWrapper);
+                
+                for (User user : userList) {
+                    totalTemplates += templateList.size();
+                    
+                    for (MaterialTemplate template : templateList) {
+                        QueryWrapper<MaterialSubmission> submissionQueryWrapper = new QueryWrapper<>();
+                        submissionQueryWrapper.eq("userId", user.getId());
+                        submissionQueryWrapper.eq("materialName", template.getName());
+                        submissionQueryWrapper.in("submitStatus", "submitted", "approved", "final_approved", "archived");
+                        long count = materialSubmissionService.count(submissionQueryWrapper);
+                        if (count > 0) {
+                            totalSubmitted++;
+                        }
+                    }
+                }
+                
+                BigDecimal materialRate = totalTemplates > 0 ? 
+                    BigDecimal.valueOf(totalSubmitted).divide(BigDecimal.valueOf(totalTemplates), 4, RoundingMode.HALF_UP) : 
+                    BigDecimal.ZERO;
+                
+                // 计算综合值（平均三个比率）
+                BigDecimal totalValue = activityRate.add(signRate).add(materialRate);
+                BigDecimal value = totalValue.divide(BigDecimal.valueOf(3), 4, RoundingMode.HALF_UP);
+                
+                // 保存数据
+                saveOrUpdateQuantifyData(indicator.getId(), organization.getId(), "organization", period, 
+                    value, activityRate, signRate, materialRate);
+                
+                log.info("组织维度数据生成成功，组织ID: {}, 指标: {}, 周期: {}", organization.getId(), indicator.getName(), period);
+                
+            } catch (Exception e) {
+                log.error("组织维度数据生成失败，组织ID: {}, 指标: {}, 周期: {}", organization.getId(), indicator.getName(), period, e);
+            }
+        }
     }
 
     /**
      * 生成个人维度的量化数据
      */
     private void generatePersonalData(QuantifyIndicator indicator, String period) {
-        // 这里实现个人维度数据的生成逻辑
-        // 1. 获取所有用户
-        // 2. 根据指标规则计算每个用户的数据
-        // 3. 保存数据到quantify_data表
-        // 简化实现，实际应用中需要根据具体业务逻辑调整
-        log.info("生成个人维度数据，指标: {}, 周期: {}", indicator.getName(), period);
+        // 获取所有用户
+        List<User> userList = userService.list(null);
+        
+        for (User user : userList) {
+            try {
+                // 1. 统计用户所在组织及其所有父组织的总活动数
+                List<Long> orgIdList = organizationService.getAllParentOrgIds(user.getOrgId());
+                QueryWrapper<Activity> activityQueryWrapper = new QueryWrapper<>();
+                activityQueryWrapper.in("orgId", orgIdList);
+                int totalActivity = Math.toIntExact(activityService.count(activityQueryWrapper));
+                
+                // 2. 统计用户参与的活动数
+                QueryWrapper<ActivityEnroll> enrollQueryWrapper = new QueryWrapper<>();
+                enrollQueryWrapper.eq("userId", user.getId());
+                enrollQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
+                List<ActivityEnroll> enrollList = activityEnrollService.list(enrollQueryWrapper);
+                int participateActivity = enrollList.size();
+                
+                // 3. 计算活动参与率
+                BigDecimal activityRate = totalActivity > 0 ? 
+                    BigDecimal.valueOf(participateActivity).divide(BigDecimal.valueOf(totalActivity), 4, RoundingMode.HALF_UP) : 
+                    BigDecimal.ZERO;
+                
+                // 4. 统计用户报名且签到的活动数
+                QueryWrapper<ActivityEnroll> signQueryWrapper = new QueryWrapper<>();
+                signQueryWrapper.eq("userId", user.getId());
+                signQueryWrapper.eq("participantStatus", ActivityEnrollStatusEnum.ENROLLED.getCode());
+                signQueryWrapper.eq("isSign", ActivityEnrollSignEnum.SIGNED.getCode());
+                int signActivity = Math.toIntExact(activityEnrollService.count(signQueryWrapper));
+                
+                // 5. 计算签到率
+                BigDecimal signRate = participateActivity > 0 ? 
+                    BigDecimal.valueOf(signActivity).divide(BigDecimal.valueOf(participateActivity), 4, RoundingMode.HALF_UP) : 
+                    BigDecimal.ZERO;
+                
+                // 6. 计算材料完成率
+                QueryWrapper<MaterialTemplate> templateQueryWrapper = new QueryWrapper<>();
+                templateQueryWrapper.eq("status", "enable");
+                List<MaterialTemplate> templateList = materialTemplateService.list(templateQueryWrapper);
+                
+                int totalTemplates = templateList.size();
+                int submittedCount = 0;
+                
+                for (MaterialTemplate template : templateList) {
+                    QueryWrapper<MaterialSubmission> submissionQueryWrapper = new QueryWrapper<>();
+                    submissionQueryWrapper.eq("userId", user.getId());
+                    submissionQueryWrapper.eq("materialName", template.getName());
+                    submissionQueryWrapper.in("submitStatus", "submitted", "approved", "final_approved", "archived");
+                    long count = materialSubmissionService.count(submissionQueryWrapper);
+                    if (count > 0) {
+                        submittedCount++;
+                    }
+                }
+                
+                BigDecimal materialRate = totalTemplates > 0 ? 
+                    BigDecimal.valueOf(submittedCount).divide(BigDecimal.valueOf(totalTemplates), 4, RoundingMode.HALF_UP) : 
+                    BigDecimal.ZERO;
+                
+                // 计算综合值（平均三个比率）
+                BigDecimal totalValue = activityRate.add(signRate).add(materialRate);
+                BigDecimal value = totalValue.divide(BigDecimal.valueOf(3), 4, RoundingMode.HALF_UP);
+                
+                // 保存数据
+                saveOrUpdateQuantifyData(indicator.getId(), user.getId(), "personal", period, 
+                    value, activityRate, signRate, materialRate);
+                
+                log.info("个人维度数据生成成功，用户ID: {}, 指标: {}, 周期: {}", user.getId(), indicator.getName(), period);
+                
+            } catch (Exception e) {
+                log.error("个人维度数据生成失败，用户ID: {}, 指标: {}, 周期: {}", user.getId(), indicator.getName(), period, e);
+            }
+        }
+    }
+
+    /**
+     * 保存或更新量化数据
+     */
+    private void saveOrUpdateQuantifyData(Long indicatorId, Long targetId, String targetType, String period, 
+                                         BigDecimal value, BigDecimal activityRate, BigDecimal signRate, BigDecimal materialRate) {
+        // 检查是否已存在该指标的统计数据
+        LambdaQueryWrapper<QuantifyData> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(QuantifyData::getIndicatorId, indicatorId)
+                .eq(QuantifyData::getTargetId, targetId)
+                .eq(QuantifyData::getTargetType, targetType)
+                .eq(QuantifyData::getPeriod, period);
+        
+        QuantifyData existing = this.getOne(queryWrapper);
+        Date now = new Date();
+        
+        QuantifyData quantifyData = new QuantifyData();
+        quantifyData.setIndicatorId(indicatorId);
+        quantifyData.setTargetId(targetId);
+        quantifyData.setTargetType(targetType);
+        quantifyData.setPeriod(period);
+        quantifyData.setValue(value);
+        quantifyData.setActivityRate(activityRate);
+        quantifyData.setSignRate(signRate);
+        quantifyData.setMaterialRate(materialRate);
+        quantifyData.setUpdateTime(now);
+        
+        if (existing != null) {
+            // 更新已存在的数据
+            quantifyData.setId(existing.getId());
+            quantifyData.setCreateTime(existing.getCreateTime());
+            this.updateById(quantifyData);
+        } else {
+            // 保存新数据
+            quantifyData.setCreateTime(now);
+            this.save(quantifyData);
+        }
     }
 
     @Resource
