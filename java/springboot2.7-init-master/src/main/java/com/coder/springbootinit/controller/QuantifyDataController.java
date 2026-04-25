@@ -67,33 +67,33 @@ public class QuantifyDataController {
     }
 
     /**
-     * 添加数据
+     * 生成数据（根据量化指标）
      */
-    @PostMapping("/add")
-    @ApiOperation(value = "添加数据")
+    @PostMapping("/generate")
+    @ApiOperation(value = "根据量化指标生成数据")
     @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE})
-    public BaseResponse<Long> addData(@RequestBody QuantifyData data) {
-        if (data == null) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+    public BaseResponse<Boolean> generateData(@RequestParam(required = false) String period) {
+        if (period == null || period.isEmpty()) {
+            period = java.time.LocalDate.now().toString();
         }
-        boolean result = quantifyDataService.save(data);
-        if (!result) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
-        }
-        return ResultUtils.success(data.getId());
+        boolean result = quantifyDataService.generateAllDataByIndicators(period);
+        return ResultUtils.success(result);
     }
 
     /**
-     * 批量添加数据
+     * 生成单个指标数据
      */
-    @PostMapping("/batchAdd")
-    @ApiOperation(value = "批量添加数据")
+    @PostMapping("/generate/{indicatorId}")
+    @ApiOperation(value = "根据单个量化指标生成数据")
     @AuthCheck(mustRole = {UserConstant.SUPER_ADMIN_ROLE})
-    public BaseResponse<Boolean> batchAddData(@RequestBody List<QuantifyData> dataList) {
-        if (dataList == null || dataList.isEmpty()) {
+    public BaseResponse<Boolean> generateDataByIndicator(@PathVariable Long indicatorId, @RequestParam(required = false) String period) {
+        if (indicatorId == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean result = quantifyDataService.saveBatch(dataList);
+        if (period == null || period.isEmpty()) {
+            period = java.time.LocalDate.now().toString();
+        }
+        boolean result = quantifyDataService.generateDataByIndicator(indicatorId, period);
         return ResultUtils.success(result);
     }
 

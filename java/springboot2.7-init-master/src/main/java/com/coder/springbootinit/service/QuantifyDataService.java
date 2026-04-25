@@ -66,4 +66,19 @@ public interface QuantifyDataService extends IService<QuantifyData> {
      * @param outputStream 输出流
      */
     void exportToExcel(String timeRange, String orgLevel, String dimension, String indicator, OutputStream outputStream);
+
+    /**
+     * 根据单个量化指标生成数据
+     * @param indicatorId 指标ID
+     * @param period 统计周期
+     * @return 是否生成成功
+     */
+    boolean generateDataByIndicator(Long indicatorId, String period);
+
+    /**
+     * 根据所有启用的量化指标生成数据
+     * @param period 统计周期
+     * @return 是否生成成功
+     */
+    boolean generateAllDataByIndicators(String period);
 }

@@ -6,6 +6,7 @@ import com.coder.springbootinit.model.entity.ActivityEnroll;
 import com.coder.springbootinit.service.ActivityEnrollService;
 import com.coder.springbootinit.service.ActivityService;
 import com.coder.springbootinit.service.OrgQuantifyService;
+import com.coder.springbootinit.service.QuantifyDataService;
 import com.coder.springbootinit.service.UserQuantifyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -34,6 +35,9 @@ public class QuantifyScheduledTask {
     @Resource
     private ActivityEnrollService activityEnrollService;
 
+    @Resource
+    private QuantifyDataService quantifyDataService;
+
     /**
      * 每日凌晨1点自动生成所有量化统计数据
      * cron表达式：秒 分 时 日 月 周
@@ -61,6 +65,15 @@ public class QuantifyScheduledTask {
                 log.info("组织量化统计数据生成成功");
             } else {
                 log.error("组织量化统计数据生成失败");
+            }
+
+            // 生成根据量化指标的量化数据
+            String period = java.time.LocalDate.now().toString();
+            boolean quantifyDataResult = quantifyDataService.generateAllDataByIndicators(period);
+            if (quantifyDataResult) {
+                log.info("根据量化指标生成数据成功");
+            } else {
+                log.error("根据量化指标生成数据失败");
             }
 
             log.info("每日量化统计数据生成任务执行完成");
